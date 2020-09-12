@@ -1,0 +1,239 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2513
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\margl1440\margr1440\vieww19080\viewh16120\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 (base) Mac-mini:gutenkunst-lab-2020 linhtran$ /Users/linhtran/opt/anaconda3/bin/python "/Users/linhtran/OneDrive - University of Arizona/gutenkunst-lab-2020/machine-learning/fs-data-set/1d-2-epoch/1d-2epoch-v3.py"\
+/Users/linhtran/opt/anaconda3/lib/python3.7/site-packages/sklearn/base.py:434: FutureWarning: The default value of multioutput (not exposed in score method) will change from 'variance_weighted' to 'uniform_average' in 0.23 to keep consistent with 'metrics.r2_score'. To specify the default value manually and avoid the warning, please either call 'metrics.r2_score' directly or make a custom scorer with 'metrics.make_scorer' (the built-in scorer 'r2' uses multioutput='uniform_average').\
+  "multioutput='uniform_average').", FutureWarning)\
+R2 score with train data/fit:  0.9838192493018749\
+Expected params:  (0.02, 0.1)  vs. Predict params:  [[0.7406 0.645 ]]\
+Expected params:  (0.02, 0.4)  vs. Predict params:  [[0.32868218 1.38579114]]\
+Expected params:  (0.02, 0.7)  vs. Predict params:  [[0.32868218 1.38579114]]\
+Expected params:  (0.02, 1.0)  vs. Predict params:  [[0.32868218 1.38579114]]\
+Expected params:  (0.02, 1.3)  vs. Predict params:  [[0.32868218 1.38579114]]\
+Expected params:  (0.02, 1.6)  vs. Predict params:  [[0.32868218 1.38579114]]\
+Expected params:  (0.02, 1.9)  vs. Predict params:  [[0.32868218 1.38579114]]\
+Expected params:  (0.08, 0.1)  vs. Predict params:  [[33.745  0.655]]\
+Expected params:  (0.08, 0.4)  vs. Predict params:  [[0.3479 0.88  ]]\
+Expected params:  (0.08, 0.7)  vs. Predict params:  [[0.10081789 1.09815025]]\
+Expected params:  (0.08, 1.0)  vs. Predict params:  [[0.1018968 1.1750136]]\
+Expected params:  (0.08, 1.3)  vs. Predict params:  [[0.1464691  0.84872343]]\
+Expected params:  (0.08, 1.6)  vs. Predict params:  [[0.32868218 1.38579114]]\
+Expected params:  (0.08, 1.9)  vs. Predict params:  [[0.32868218 1.38579114]]\
+Expected params:  (0.32, 0.1)  vs. Predict params:  [[1.00725455 0.78909091]]\
+Expected params:  (0.32, 0.4)  vs. Predict params:  [[1.0536 0.68  ]]\
+Expected params:  (0.32, 0.7)  vs. Predict params:  [[0.3926 0.81  ]]\
+Expected params:  (0.32, 1.0)  vs. Predict params:  [[0.3479 0.88  ]]\
+Expected params:  (0.32, 1.3)  vs. Predict params:  [[0.2533 1.24  ]]\
+Expected params:  (0.32, 1.6)  vs. Predict params:  [[0.28251111 1.51138889]]\
+Expected params:  (0.32, 1.9)  vs. Predict params:  [[0.22587414 1.60502525]]\
+Expected params:  (1.26, 0.1)  vs. Predict params:  [[0.347985   1.30600893]]\
+Expected params:  (1.26, 0.4)  vs. Predict params:  [[0.35008548 1.3174256 ]]\
+Expected params:  (1.26, 0.7)  vs. Predict params:  [[0.3334349  1.35035844]]\
+Expected params:  (1.26, 1.0)  vs. Predict params:  [[0.33287656 1.35577511]]\
+Expected params:  (1.26, 1.3)  vs. Predict params:  [[0.32932427 1.39232523]]\
+Expected params:  (1.26, 1.6)  vs. Predict params:  [[0.32868218 1.38579114]]\
+Expected params:  (1.26, 1.9)  vs. Predict params:  [[0.32868218 1.38579114]]\
+Expected params:  (5.01, 0.1)  vs. Predict params:  [[2.1081734  1.09985325]]\
+Expected params:  (5.01, 0.4)  vs. Predict params:  [[5.04489808 0.73072115]]\
+Expected params:  (5.01, 0.7)  vs. Predict params:  [[7.71306923 0.79038462]]\
+Expected params:  (5.01, 1.0)  vs. Predict params:  [[7.4118 0.885 ]]\
+Expected params:  (5.01, 1.3)  vs. Predict params:  [[7.275 1.04 ]]\
+Expected params:  (5.01, 1.6)  vs. Predict params:  [[6.944 1.085]]\
+Expected params:  (5.01, 1.9)  vs. Predict params:  [[6.5047375 1.1125   ]]\
+Expected params:  (19.95, 0.1)  vs. Predict params:  [[11.89481325  0.80203526]]\
+Expected params:  (19.95, 0.4)  vs. Predict params:  [[20.41156923  0.68850962]]\
+Expected params:  (19.95, 0.7)  vs. Predict params:  [[29.1734  0.81  ]]\
+Expected params:  (19.95, 1.0)  vs. Predict params:  [[28.5932  1.225 ]]\
+Expected params:  (19.95, 1.3)  vs. Predict params:  [[27.5826  1.29  ]]\
+Expected params:  (19.95, 1.6)  vs. Predict params:  [[25.3522  1.51  ]]\
+Expected params:  (19.95, 1.9)  vs. Predict params:  [[25.674  1.535]]\
+Expected params:  (79.43, 0.1)  vs. Predict params:  [[45.63280556  0.71583333]]\
+Expected params:  (79.43, 0.4)  vs. Predict params:  [[79.7042  0.64  ]]\
+Expected params:  (79.43, 0.7)  vs. Predict params:  [[84.9564  0.7   ]]\
+Expected params:  (79.43, 1.0)  vs. Predict params:  [[91.1106  1.225 ]]\
+Expected params:  (79.43, 1.3)  vs. Predict params:  [[88.3754  1.475 ]]\
+Expected params:  (79.43, 1.6)  vs. Predict params:  [[84.2726  1.59  ]]\
+Expected params:  (79.43, 1.9)  vs. Predict params:  [[63.0748  1.62  ]]\
+/Users/linhtran/opt/anaconda3/lib/python3.7/site-packages/sklearn/base.py:434: FutureWarning: The default value of multioutput (not exposed in score method) will change from 'variance_weighted' to 'uniform_average' in 0.23 to keep consistent with 'metrics.r2_score'. To specify the default value manually and avoid the warning, please either call 'metrics.r2_score' directly or make a custom scorer with 'metrics.make_scorer' (the built-in scorer 'r2' uses multioutput='uniform_average').\
+  "multioutput='uniform_average').", FutureWarning)\
+R2 score with test data:  0.9105863310375842\
+(base) Mac-mini:gutenkunst-lab-2020 linhtran$ /Users/linhtran/opt/anaconda3/bin/python "/Users/linhtran/OneDrive - University of Arizona/gutenkunst-lab-2020/machine-learning/fs-data-set/1d-2-epoch/connie-2epoch_log_only.py"\
+Expected params:  (0.01, 0.6)  vs. Predict params:  [[0.0104     1.25291613]]\
+Expected params:  (0.01, 0.8)  vs. Predict params:  [[0.0104     1.25291613]]\
+Expected params:  (0.01, 1.0)  vs. Predict params:  [[0.0104     1.25291613]]\
+Expected params:  (0.01, 1.2)  vs. Predict params:  [[0.0104     1.25291613]]\
+Expected params:  (0.01, 1.4)  vs. Predict params:  [[0.0104     1.25291613]]\
+Expected params:  (0.01, 1.6)  vs. Predict params:  [[0.0104     1.25291613]]\
+Expected params:  (0.01, 1.8)  vs. Predict params:  [[0.0104     1.25291613]]\
+Expected params:  (0.01, 2.0)  vs. Predict params:  [[0.0104     1.25291613]]\
+Expected params:  (0.02, 0.6)  vs. Predict params:  [[0.0166     1.23967009]]\
+Expected params:  (0.02, 0.8)  vs. Predict params:  [[0.0166     1.23967009]]\
+Expected params:  (0.02, 1.0)  vs. Predict params:  [[0.0166     1.23967009]]\
+Expected params:  (0.02, 1.2)  vs. Predict params:  [[0.0166     1.23967009]]\
+Expected params:  (0.02, 1.4)  vs. Predict params:  [[0.0166     1.23967009]]\
+Expected params:  (0.02, 1.6)  vs. Predict params:  [[0.0166     1.23967009]]\
+Expected params:  (0.02, 1.8)  vs. Predict params:  [[0.0166     1.23967009]]\
+Expected params:  (0.02, 2.0)  vs. Predict params:  [[0.0166     1.23967009]]\
+Expected params:  (0.03, 0.6)  vs. Predict params:  [[0.0296     1.25799206]]\
+Expected params:  (0.03, 0.8)  vs. Predict params:  [[0.0296     1.25799206]]\
+Expected params:  (0.03, 1.0)  vs. Predict params:  [[0.0296     1.25799206]]\
+Expected params:  (0.03, 1.2)  vs. Predict params:  [[0.0296     1.25799206]]\
+Expected params:  (0.03, 1.4)  vs. Predict params:  [[0.0296     1.25799206]]\
+Expected params:  (0.03, 1.6)  vs. Predict params:  [[0.0296     1.25799206]]\
+Expected params:  (0.03, 1.8)  vs. Predict params:  [[0.0296     1.25799206]]\
+Expected params:  (0.03, 2.0)  vs. Predict params:  [[0.0296     1.25799206]]\
+Expected params:  (0.04, 0.6)  vs. Predict params:  [[0.0296     1.25799206]]\
+Expected params:  (0.04, 0.8)  vs. Predict params:  [[0.0296     1.25799206]]\
+Expected params:  (0.04, 1.0)  vs. Predict params:  [[0.0296     1.25799206]]\
+Expected params:  (0.04, 1.2)  vs. Predict params:  [[0.0296     1.25799206]]\
+Expected params:  (0.04, 1.4)  vs. Predict params:  [[0.0296     1.25799206]]\
+Expected params:  (0.04, 1.6)  vs. Predict params:  [[0.0296     1.25799206]]\
+Expected params:  (0.04, 1.8)  vs. Predict params:  [[0.0296     1.25799206]]\
+Expected params:  (0.04, 2.0)  vs. Predict params:  [[0.0296     1.25799206]]\
+Expected params:  (0.06, 0.6)  vs. Predict params:  [[0.0314     1.26834921]]\
+Expected params:  (0.06, 0.8)  vs. Predict params:  [[0.0314     1.26834921]]\
+Expected params:  (0.06, 1.0)  vs. Predict params:  [[0.0314     1.26834921]]\
+Expected params:  (0.06, 1.2)  vs. Predict params:  [[0.0314     1.26834921]]\
+Expected params:  (0.06, 1.4)  vs. Predict params:  [[0.0314     1.26834921]]\
+Expected params:  (0.06, 1.6)  vs. Predict params:  [[0.0314     1.26834921]]\
+Expected params:  (0.06, 1.8)  vs. Predict params:  [[0.0314     1.26834921]]\
+Expected params:  (0.06, 2.0)  vs. Predict params:  [[0.0314     1.26834921]]\
+Expected params:  (0.1, 0.6)  vs. Predict params:  [[0.1   1.265]]\
+Expected params:  (0.1, 0.8)  vs. Predict params:  [[0.1   1.265]]\
+Expected params:  (0.1, 1.0)  vs. Predict params:  [[0.1   1.265]]\
+Expected params:  (0.1, 1.2)  vs. Predict params:  [[0.1        1.68866667]]\
+Expected params:  (0.1, 1.4)  vs. Predict params:  [[0.1        1.68866667]]\
+Expected params:  (0.1, 1.6)  vs. Predict params:  [[0.1        1.68866667]]\
+Expected params:  (0.1, 1.8)  vs. Predict params:  [[0.1        1.68866667]]\
+Expected params:  (0.1, 2.0)  vs. Predict params:  [[0.1        1.68866667]]\
+Expected params:  (0.16, 0.6)  vs. Predict params:  [[0.1044     0.73708333]]\
+Expected params:  (0.16, 0.8)  vs. Predict params:  [[0.1        0.71708333]]\
+Expected params:  (0.16, 1.0)  vs. Predict params:  [[0.1        0.71708333]]\
+Expected params:  (0.16, 1.2)  vs. Predict params:  [[0.1        0.71708333]]\
+Expected params:  (0.16, 1.4)  vs. Predict params:  [[0.1        0.71708333]]\
+Expected params:  (0.16, 1.6)  vs. Predict params:  [[0.1        0.71708333]]\
+Expected params:  (0.16, 1.8)  vs. Predict params:  [[0.1        0.71708333]]\
+Expected params:  (0.16, 2.0)  vs. Predict params:  [[0.1        0.71708333]]\
+Expected params:  (0.25, 0.6)  vs. Predict params:  [[0.3156 1.45  ]]\
+Expected params:  (0.25, 0.8)  vs. Predict params:  [[0.3046 1.725 ]]\
+Expected params:  (0.25, 1.0)  vs. Predict params:  [[0.3046 1.735 ]]\
+Expected params:  (0.25, 1.2)  vs. Predict params:  [[0.3046 1.735 ]]\
+Expected params:  (0.25, 1.4)  vs. Predict params:  [[0.3046 1.735 ]]\
+Expected params:  (0.25, 1.6)  vs. Predict params:  [[0.3046 1.735 ]]\
+Expected params:  (0.25, 1.8)  vs. Predict params:  [[0.3046 1.735 ]]\
+Expected params:  (0.25, 2.0)  vs. Predict params:  [[0.3046 1.735 ]]\
+Expected params:  (0.4, 0.6)  vs. Predict params:  [[0.4142     0.86959524]]\
+Expected params:  (0.4, 0.8)  vs. Predict params:  [[0.3246     0.85666667]]\
+Expected params:  (0.4, 1.0)  vs. Predict params:  [[0.3156 0.875 ]]\
+Expected params:  (0.4, 1.2)  vs. Predict params:  [[0.3156 0.975 ]]\
+Expected params:  (0.4, 1.4)  vs. Predict params:  [[0.3156 1.04  ]]\
+Expected params:  (0.4, 1.6)  vs. Predict params:  [[0.3156 1.06  ]]\
+Expected params:  (0.4, 1.8)  vs. Predict params:  [[0.3156 1.07  ]]\
+Expected params:  (0.4, 2.0)  vs. Predict params:  [[0.3156 1.07  ]]\
+Expected params:  (0.63, 0.6)  vs. Predict params:  [[1.0092     1.20744048]]\
+Expected params:  (0.63, 0.8)  vs. Predict params:  [[0.9412     1.15561905]]\
+Expected params:  (0.63, 1.0)  vs. Predict params:  [[0.5796     0.78692857]]\
+Expected params:  (0.63, 1.2)  vs. Predict params:  [[0.532     0.8302619]]\
+Expected params:  (0.63, 1.4)  vs. Predict params:  [[0.5184    0.8265119]]\
+Expected params:  (0.63, 1.6)  vs. Predict params:  [[0.4776    0.8465119]]\
+Expected params:  (0.63, 1.8)  vs. Predict params:  [[0.3812 0.8375]]\
+Expected params:  (0.63, 2.0)  vs. Predict params:  [[0.3676     0.84583333]]\
+Expected params:  (1.0, 0.6)  vs. Predict params:  [[1.0432     1.24044048]]\
+Expected params:  (1.0, 0.8)  vs. Predict params:  [[1.0432     1.24044048]]\
+Expected params:  (1.0, 1.0)  vs. Predict params:  [[1.0432     1.24044048]]\
+Expected params:  (1.0, 1.2)  vs. Predict params:  [[1.0432     1.24044048]]\
+Expected params:  (1.0, 1.4)  vs. Predict params:  [[1.0432     1.24044048]]\
+Expected params:  (1.0, 1.6)  vs. Predict params:  [[1.0432     1.24044048]]\
+Expected params:  (1.0, 1.8)  vs. Predict params:  [[1.0432     1.24044048]]\
+Expected params:  (1.0, 2.0)  vs. Predict params:  [[1.0432     1.24044048]]\
+Expected params:  (1.58, 0.6)  vs. Predict params:  [[2.4724     0.89109524]]\
+Expected params:  (1.58, 0.8)  vs. Predict params:  [[2.5804     0.91609524]]\
+Expected params:  (1.58, 1.0)  vs. Predict params:  [[2.6668     1.10959524]]\
+Expected params:  (1.58, 1.2)  vs. Predict params:  [[2.71      1.1500119]]\
+Expected params:  (1.58, 1.4)  vs. Predict params:  [[2.71      1.2050119]]\
+Expected params:  (1.58, 1.6)  vs. Predict params:  [[2.71      1.2250119]]\
+Expected params:  (1.58, 1.8)  vs. Predict params:  [[2.71      1.2750119]]\
+Expected params:  (1.58, 2.0)  vs. Predict params:  [[2.7532    1.3070119]]\
+Expected params:  (2.51, 0.6)  vs. Predict params:  [[2.7532     0.73502381]]\
+Expected params:  (2.51, 0.8)  vs. Predict params:  [[2.9908     0.90908333]]\
+Expected params:  (2.51, 1.0)  vs. Predict params:  [[3.0556     0.93741667]]\
+Expected params:  (2.51, 1.2)  vs. Predict params:  [[3.2068 1.253 ]]\
+Expected params:  (2.51, 1.4)  vs. Predict params:  [[3.2284 1.31  ]]\
+Expected params:  (2.51, 1.6)  vs. Predict params:  [[3.2284 1.48  ]]\
+Expected params:  (2.51, 1.8)  vs. Predict params:  [[3.4336 1.54  ]]\
+Expected params:  (2.51, 2.0)  vs. Predict params:  [[3.4336 1.57  ]]\
+Expected params:  (3.98, 0.6)  vs. Predict params:  [[2.6848     0.83419048]]\
+Expected params:  (3.98, 0.8)  vs. Predict params:  [[2.8396     0.87252381]]\
+Expected params:  (3.98, 1.0)  vs. Predict params:  [[3.0844 1.023 ]]\
+Expected params:  (3.98, 1.2)  vs. Predict params:  [[4.2508     1.15908333]]\
+Expected params:  (3.98, 1.4)  vs. Predict params:  [[4.564   1.33525]]\
+Expected params:  (3.98, 1.6)  vs. Predict params:  [[5.8384 1.535 ]]\
+Expected params:  (3.98, 1.8)  vs. Predict params:  [[7.0696 1.61  ]]\
+Expected params:  (3.98, 2.0)  vs. Predict params:  [[7.0696 1.655 ]]\
+Expected params:  (6.31, 0.6)  vs. Predict params:  [[4.0816     0.92211905]]\
+Expected params:  (6.31, 0.8)  vs. Predict params:  [[6.7384     0.84760714]]\
+Expected params:  (6.31, 1.0)  vs. Predict params:  [[9.4672     1.08041667]]\
+Expected params:  (6.31, 1.2)  vs. Predict params:  [[9.968      1.14541667]]\
+Expected params:  (6.31, 1.4)  vs. Predict params:  [[10.2632   1.44375]]\
+Expected params:  (6.31, 1.6)  vs. Predict params:  [[10.5694   1.48375]]\
+Expected params:  (6.31, 1.8)  vs. Predict params:  [[10.6594  1.515 ]]\
+Expected params:  (6.31, 2.0)  vs. Predict params:  [[10.6594  1.575 ]]\
+Expected params:  (10.0, 0.6)  vs. Predict params:  [[8.3764     0.75163095]]\
+Expected params:  (10.0, 0.8)  vs. Predict params:  [[9.8204    0.8294881]]\
+Expected params:  (10.0, 1.0)  vs. Predict params:  [[10.8356      0.97366667]]\
+Expected params:  (10.0, 1.2)  vs. Predict params:  [[12.1534  0.99  ]]\
+Expected params:  (10.0, 1.4)  vs. Predict params:  [[12.3802  1.305 ]]\
+Expected params:  (10.0, 1.6)  vs. Predict params:  [[12.3802  1.335 ]]\
+Expected params:  (10.0, 1.8)  vs. Predict params:  [[12.3802  1.565 ]]\
+Expected params:  (10.0, 2.0)  vs. Predict params:  [[13.5296  1.74  ]]\
+Expected params:  (15.85, 0.6)  vs. Predict params:  [[8.8988     0.81663095]]\
+Expected params:  (15.85, 0.8)  vs. Predict params:  [[9.8672     0.84663095]]\
+Expected params:  (15.85, 1.0)  vs. Predict params:  [[11.534    0.87575]]\
+Expected params:  (15.85, 1.2)  vs. Predict params:  [[13.7498      0.95366667]]\
+Expected params:  (15.85, 1.4)  vs. Predict params:  [[15.137  1.157]]\
+Expected params:  (15.85, 1.6)  vs. Predict params:  [[15.227  1.18 ]]\
+Expected params:  (15.85, 1.8)  vs. Predict params:  [[16.7042  1.275 ]]\
+Expected params:  (15.85, 2.0)  vs. Predict params:  [[18.0366  1.445 ]]\
+Expected params:  (25.12, 0.6)  vs. Predict params:  [[25.1878      0.72315476]]\
+Expected params:  (25.12, 0.8)  vs. Predict params:  [[25.1878      0.89815476]]\
+Expected params:  (25.12, 1.0)  vs. Predict params:  [[29.2584      0.95583333]]\
+Expected params:  (25.12, 1.2)  vs. Predict params:  [[30.3032      1.22166667]]\
+Expected params:  (25.12, 1.4)  vs. Predict params:  [[32.4094  1.265 ]]\
+Expected params:  (25.12, 1.6)  vs. Predict params:  [[32.4094  1.625 ]]\
+Expected params:  (25.12, 1.8)  vs. Predict params:  [[32.6256  1.655 ]]\
+Expected params:  (25.12, 2.0)  vs. Predict params:  [[33.2742  1.685 ]]\
+Expected params:  (39.81, 0.6)  vs. Predict params:  [[25.1878      0.76315476]]\
+Expected params:  (39.81, 0.8)  vs. Predict params:  [[26.0526      0.79815476]]\
+Expected params:  (39.81, 1.0)  vs. Predict params:  [[29.4394      0.90916667]]\
+Expected params:  (39.81, 1.2)  vs. Predict params:  [[32.1932  1.06  ]]\
+Expected params:  (39.81, 1.4)  vs. Predict params:  [[32.1932  1.07  ]]\
+Expected params:  (39.81, 1.6)  vs. Predict params:  [[32.4094  1.295 ]]\
+Expected params:  (39.81, 1.8)  vs. Predict params:  [[36.6932  1.415 ]]\
+Expected params:  (39.81, 2.0)  vs. Predict params:  [[40.3284  1.505 ]]\
+Expected params:  (63.1, 0.6)  vs. Predict params:  [[33.6292      0.73815476]]\
+Expected params:  (63.1, 0.8)  vs. Predict params:  [[77.596       0.79166667]]\
+Expected params:  (63.1, 1.0)  vs. Predict params:  [[78.496       1.03666667]]\
+Expected params:  (63.1, 1.2)  vs. Predict params:  [[91.1106  1.21  ]]\
+Expected params:  (63.1, 1.4)  vs. Predict params:  [[91.7944  1.505 ]]\
+Expected params:  (63.1, 1.6)  vs. Predict params:  [[95.8972  1.6   ]]\
+Expected params:  (63.1, 1.8)  vs. Predict params:  [[97.2648  1.62  ]]\
+Expected params:  (63.1, 2.0)  vs. Predict params:  [[97.2648  1.62  ]]\
+Expected params:  (100.0, 0.6)  vs. Predict params:  [[90.5882      0.64666667]]\
+Expected params:  (100.0, 0.8)  vs. Predict params:  [[90.8044      0.87666667]]\
+Expected params:  (100.0, 1.0)  vs. Predict params:  [[92.4782  0.925 ]]\
+Expected params:  (100.0, 1.2)  vs. Predict params:  [[92.4782  0.965 ]]\
+Expected params:  (100.0, 1.4)  vs. Predict params:  [[93.162  1.265]]\
+Expected params:  (100.0, 1.6)  vs. Predict params:  [[97.2648  1.34  ]]\
+Expected params:  (100.0, 1.8)  vs. Predict params:  [[97.2648  1.57  ]]\
+Expected params:  (100.0, 2.0)  vs. Predict params:  [[97.2648  1.695 ]]\
+/Users/linhtran/opt/anaconda3/lib/python3.7/site-packages/sklearn/base.py:434: FutureWarning: The default value of multioutput (not exposed in score method) will change from 'variance_weighted' to 'uniform_average' in 0.23 to keep consistent with 'metrics.r2_score'. To specify the default value manually and avoid the warning, please either call 'metrics.r2_score' directly or make a custom scorer with 'metrics.make_scorer' (the built-in scorer 'r2' uses multioutput='uniform_average').\
+  "multioutput='uniform_average').", FutureWarning)\
+\
+Train data fit: 0.9927941068712873\
+/Users/linhtran/opt/anaconda3/lib/python3.7/site-packages/sklearn/base.py:434: FutureWarning: The default value of multioutput (not exposed in score method) will change from 'variance_weighted' to 'uniform_average' in 0.23 to keep consistent with 'metrics.r2_score'. To specify the default value manually and avoid the warning, please either call 'metrics.r2_score' directly or make a custom scorer with 'metrics.make_scorer' (the built-in scorer 'r2' uses multioutput='uniform_average').\
+  "multioutput='uniform_average').", FutureWarning)\
+Test data fit: 0.9240444417219649 }

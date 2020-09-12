@@ -1,0 +1,93 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2513
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\margl1440\margr1440\vieww16800\viewh17280\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 (base) Mac-mini:gutenkunst-lab-2020 linhtran$ /Users/linhtran/opt/anaconda3/bin/python "/Users/linhtran/OneDrive - University of Arizona/gutenkunst-lab-2020/machine-learning/fs-data-set/1d-2-epoch/connie-2epoch_noise.py"\
+/Users/linhtran/opt/anaconda3/lib/python3.7/site-packages/sklearn/base.py:434: FutureWarning: The default value of multioutput (not exposed in score method) will change from 'variance_weighted' to 'uniform_average' in 0.23 to keep consistent with 'metrics.r2_score'. To specify the default value manually and avoid the warning, please either call 'metrics.r2_score' directly or make a custom scorer with 'metrics.make_scorer' (the built-in scorer 'r2' uses multioutput='uniform_average').\
+  "multioutput='uniform_average').", FutureWarning)\
+0.9806341798495459 \
+\
+Expected params:  (0.01, 0.5)  vs. Predict params:  [[50.3846  1.635 ]]\
+Expected params:  (0.01, 1.0)  vs. Predict params:  [[44.9466  1.65  ]]\
+Expected params:  (0.01, 1.5)  vs. Predict params:  [[58.4635  1.665 ]]\
+Expected params:  (0.01, 2.0)  vs. Predict params:  [[46.096  1.645]]\
+Expected params:  (0.03, 0.5)  vs. Predict params:  [[30.5686  1.6   ]]\
+Expected params:  (0.03, 1.0)  vs. Predict params:  [[32.33674615  1.44339161]]\
+Expected params:  (0.03, 1.5)  vs. Predict params:  [[62.29226667  1.45208333]]\
+Expected params:  (0.03, 2.0)  vs. Predict params:  [[52.0272  1.335 ]]\
+Expected params:  (0.1, 0.5)  vs. Predict params:  [[16.66684444  1.2739899 ]]\
+Expected params:  (0.1, 1.0)  vs. Predict params:  [[11.43447167  1.37608333]]\
+Expected params:  (0.1, 1.5)  vs. Predict params:  [[14.84079267  1.38514918]]\
+Expected params:  (0.1, 2.0)  vs. Predict params:  [[49.45761746  1.19288492]]\
+Expected params:  (0.32, 0.5)  vs. Predict params:  [[2.8388497  1.00263636]]\
+Expected params:  (0.32, 1.0)  vs. Predict params:  [[5.62651333 1.304     ]]\
+Expected params:  (0.32, 1.5)  vs. Predict params:  [[7.33330437 1.40666442]]\
+Expected params:  (0.32, 2.0)  vs. Predict params:  [[36.246325    0.96916667]]\
+Expected params:  (1.0, 0.5)  vs. Predict params:  [[2.71272909 1.22011178]]\
+Expected params:  (1.0, 1.0)  vs. Predict params:  [[2.76352907 1.10588849]]\
+Expected params:  (1.0, 1.5)  vs. Predict params:  [[2.32979333 1.27336911]]\
+Expected params:  (1.0, 2.0)  vs. Predict params:  [[2.12880846 1.23000333]]\
+Expected params:  (3.16, 0.5)  vs. Predict params:  [[7.44379773 1.26102273]]\
+Expected params:  (3.16, 1.0)  vs. Predict params:  [[7.08491033 1.2514764 ]]\
+Expected params:  (3.16, 1.5)  vs. Predict params:  [[7.17540165 1.36406194]]\
+Expected params:  (3.16, 2.0)  vs. Predict params:  [[5.99056439 1.48685606]]\
+Expected params:  (10.0, 0.5)  vs. Predict params:  [[13.75253636  1.01363636]]\
+Expected params:  (10.0, 1.0)  vs. Predict params:  [[16.4988  1.27  ]]\
+Expected params:  (10.0, 1.5)  vs. Predict params:  [[13.455525  1.34375 ]]\
+Expected params:  (10.0, 2.0)  vs. Predict params:  [[12.489125  1.43375 ]]\
+Expected params:  (31.62, 0.5)  vs. Predict params:  [[52.1041  0.875 ]]\
+Expected params:  (31.62, 1.0)  vs. Predict params:  [[29.3337  1.335 ]]\
+Expected params:  (31.62, 1.5)  vs. Predict params:  [[35.9828  1.61  ]]\
+Expected params:  (31.62, 2.0)  vs. Predict params:  [[29.592925  1.60875 ]]\
+Expected params:  (100.0, 0.5)  vs. Predict params:  [[56.0793  1.04  ]]\
+Expected params:  (100.0, 1.0)  vs. Predict params:  [[65.0996  1.18  ]]\
+Expected params:  (100.0, 1.5)  vs. Predict params:  [[68.7328  1.52  ]]\
+Expected params:  (100.0, 2.0)  vs. Predict params:  [[58.5462  1.66  ]]\
+/Users/linhtran/opt/anaconda3/lib/python3.7/site-packages/sklearn/base.py:434: FutureWarning: The default value of multioutput (not exposed in score method) will change from 'variance_weighted' to 'uniform_average' in 0.23 to keep consistent with 'metrics.r2_score'. To specify the default value manually and avoid the warning, please either call 'metrics.r2_score' directly or make a custom scorer with 'metrics.make_scorer' (the built-in scorer 'r2' uses multioutput='uniform_average').\
+  "multioutput='uniform_average').", FutureWarning)\
+R2 theta = 100:  0.15514316323722696\
+\
+\
+\
+Expected params:  (0.01, 0.5)  vs. Predict params:  [[2.31313568 1.18492011]]\
+Expected params:  (0.01, 1.0)  vs. Predict params:  [[2.1038673  1.19102515]]\
+Expected params:  (0.01, 1.5)  vs. Predict params:  [[2.32977692 1.19269231]]\
+Expected params:  (0.01, 2.0)  vs. Predict params:  [[1.74471403 1.05414238]]\
+Expected params:  (0.03, 0.5)  vs. Predict params:  [[1.4342354  1.07305715]]\
+Expected params:  (0.03, 1.0)  vs. Predict params:  [[1.48898541 1.20672987]]\
+Expected params:  (0.03, 1.5)  vs. Predict params:  [[1.00743727 1.25130804]]\
+Expected params:  (0.03, 2.0)  vs. Predict params:  [[2.48669026 1.23169231]]\
+Expected params:  (0.1, 0.5)  vs. Predict params:  [[0.9514 1.045 ]]\
+Expected params:  (0.1, 1.0)  vs. Predict params:  [[0.89573203 1.24004891]]\
+Expected params:  (0.1, 1.5)  vs. Predict params:  [[0.8613347  1.23124242]]\
+Expected params:  (0.1, 2.0)  vs. Predict params:  [[0.98346012 1.20217692]]\
+Expected params:  (0.32, 0.5)  vs. Predict params:  [[1.2894 0.855 ]]\
+Expected params:  (0.32, 1.0)  vs. Predict params:  [[0.9270497  1.03763636]]\
+Expected params:  (0.32, 1.5)  vs. Predict params:  [[1.00642662 1.13676807]]\
+Expected params:  (0.32, 2.0)  vs. Predict params:  [[0.8804519  1.28319048]]\
+Expected params:  (1.0, 0.5)  vs. Predict params:  [[0.89233833 1.27316667]]\
+Expected params:  (1.0, 1.0)  vs. Predict params:  [[0.95181618 1.26745212]]\
+Expected params:  (1.0, 1.5)  vs. Predict params:  [[0.89329329 1.30051807]]\
+Expected params:  (1.0, 2.0)  vs. Predict params:  [[0.94726219 1.12767385]]\
+Expected params:  (3.16, 0.5)  vs. Predict params:  [[3.58495606 1.11840018]]\
+Expected params:  (3.16, 1.0)  vs. Predict params:  [[3.84883106 1.28965018]]\
+Expected params:  (3.16, 1.5)  vs. Predict params:  [[4.01580165 1.58906194]]\
+Expected params:  (3.16, 2.0)  vs. Predict params:  [[3.54683106 1.59465018]]\
+Expected params:  (10.0, 0.5)  vs. Predict params:  [[8.1322 0.98  ]]\
+Expected params:  (10.0, 1.0)  vs. Predict params:  [[13.217325  1.18875 ]]\
+Expected params:  (10.0, 1.5)  vs. Predict params:  [[10.918525  1.51875 ]]\
+Expected params:  (10.0, 2.0)  vs. Predict params:  [[12.866325  1.69375 ]]\
+Expected params:  (31.62, 0.5)  vs. Predict params:  [[30.2867  0.785 ]]\
+Expected params:  (31.62, 1.0)  vs. Predict params:  [[34.5859  1.245 ]]\
+Expected params:  (31.62, 1.5)  vs. Predict params:  [[32.9317  1.58  ]]\
+Expected params:  (31.62, 2.0)  vs. Predict params:  [[33.402525  1.77875 ]]\
+Expected params:  (100.0, 0.5)  vs. Predict params:  [[53.0927  0.79  ]]\
+Expected params:  (100.0, 1.0)  vs. Predict params:  [[64.8814  1.275 ]]\
+Expected params:  (100.0, 1.5)  vs. Predict params:  [[70.7842  1.6   ]]\
+Expected params:  (100.0, 2.0)  vs. Predict params:  [[72.1518  1.73  ]]\
+/Users/linhtran/opt/anaconda3/lib/python3.7/site-packages/sklearn/base.py:434: FutureWarning: The default value of multioutput (not exposed in score method) will change from 'variance_weighted' to 'uniform_average' in 0.23 to keep consistent with 'metrics.r2_score'. To specify the default value manually and avoid the warning, please either call 'metrics.r2_score' directly or make a custom scorer with 'metrics.make_scorer' (the built-in scorer 'r2' uses multioutput='uniform_average').\
+  "multioutput='uniform_average').", FutureWarning)\
+R2 theta = 10000:  0.8528217845177581}

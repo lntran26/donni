@@ -1,0 +1,758 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2513
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\margl1440\margr1440\vieww17120\viewh16600\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 (base) Mac-mini:gutenkunst-lab-2020 linhtran$ /Applications/anaconda3/bin/python "/Users/linhtran/OneDrive - University of Arizona/gutenkunst-lab-2020/machine-learning/fs-data-set/1d-2-epoch/1d-2epoch-v5.py"\
+FIRST SUBCASE: Train on theta=100\
+R2 score with train data/fit:  0.8985453914565038 \
+\
+Expected params:  (0.02, 0.1)  vs. Predict params:  [[0.9758 1.15  ]]\
+Expected params:  (0.02, 0.4)  vs. Predict params:  [[1.069 1.11 ]]\
+Expected params:  (0.02, 0.7)  vs. Predict params:  [[1.069 1.11 ]]\
+Expected params:  (0.02, 1.0)  vs. Predict params:  [[1.069 1.11 ]]\
+Expected params:  (0.02, 1.3)  vs. Predict params:  [[1.069 1.11 ]]\
+Expected params:  (0.02, 1.6)  vs. Predict params:  [[1.069 1.11 ]]\
+Expected params:  (0.02, 1.9)  vs. Predict params:  [[1.069 1.11 ]]\
+Expected params:  (0.08, 0.1)  vs. Predict params:  [[0.9294 1.205 ]]\
+Expected params:  (0.08, 0.4)  vs. Predict params:  [[0.9056 1.115 ]]\
+Expected params:  (0.08, 0.7)  vs. Predict params:  [[1.069 1.11 ]]\
+Expected params:  (0.08, 1.0)  vs. Predict params:  [[1.069 1.11 ]]\
+Expected params:  (0.08, 1.3)  vs. Predict params:  [[1.069 1.11 ]]\
+Expected params:  (0.08, 1.6)  vs. Predict params:  [[1.069 1.11 ]]\
+Expected params:  (0.08, 1.9)  vs. Predict params:  [[1.069 1.11 ]]\
+Expected params:  (0.32, 0.1)  vs. Predict params:  [[0.8282 1.2   ]]\
+Expected params:  (0.32, 0.4)  vs. Predict params:  [[0.9588 1.22  ]]\
+Expected params:  (0.32, 0.7)  vs. Predict params:  [[0.9328 1.145 ]]\
+Expected params:  (0.32, 1.0)  vs. Predict params:  [[0.892 1.115]]\
+Expected params:  (0.32, 1.3)  vs. Predict params:  [[0.9578 1.085 ]]\
+Expected params:  (0.32, 1.6)  vs. Predict params:  [[1.0486 1.12  ]]\
+Expected params:  (0.32, 1.9)  vs. Predict params:  [[1.0622 1.11  ]]\
+Expected params:  (1.26, 0.1)  vs. Predict params:  [[1.023 1.095]]\
+Expected params:  (1.26, 0.4)  vs. Predict params:  [[1.2001 1.075 ]]\
+Expected params:  (1.26, 0.7)  vs. Predict params:  [[1.1785 1.085 ]]\
+Expected params:  (1.26, 1.0)  vs. Predict params:  [[1.1353 1.085 ]]\
+Expected params:  (1.26, 1.3)  vs. Predict params:  [[1.1159 1.105 ]]\
+Expected params:  (1.26, 1.6)  vs. Predict params:  [[1.0943 1.115 ]]\
+Expected params:  (1.26, 1.9)  vs. Predict params:  [[1.1101 1.1   ]]\
+Expected params:  (5.01, 0.1)  vs. Predict params:  [[1.6437 1.175 ]]\
+Expected params:  (5.01, 0.4)  vs. Predict params:  [[3.4669 1.05  ]]\
+Expected params:  (5.01, 0.7)  vs. Predict params:  [[5.5613 1.025 ]]\
+Expected params:  (5.01, 1.0)  vs. Predict params:  [[2.9121 0.985 ]]\
+Expected params:  (5.01, 1.3)  vs. Predict params:  [[2.6236 1.03  ]]\
+Expected params:  (5.01, 1.6)  vs. Predict params:  [[2.5811 1.005 ]]\
+Expected params:  (5.01, 1.9)  vs. Predict params:  [[2.5811 1.    ]]\
+Expected params:  (19.95, 0.1)  vs. Predict params:  [[2.009 1.115]]\
+Expected params:  (19.95, 0.4)  vs. Predict params:  [[15.2044  0.88  ]]\
+Expected params:  (19.95, 0.7)  vs. Predict params:  [[42.0047  0.805 ]]\
+Expected params:  (19.95, 1.0)  vs. Predict params:  [[39.3399  1.03  ]]\
+Expected params:  (19.95, 1.3)  vs. Predict params:  [[37.9723  1.12  ]]\
+Expected params:  (19.95, 1.6)  vs. Predict params:  [[38.6561  1.255 ]]\
+Expected params:  (19.95, 1.9)  vs. Predict params:  [[34.7072  1.28  ]]\
+Expected params:  (79.43, 0.1)  vs. Predict params:  [[1.9777 1.1   ]]\
+Expected params:  (79.43, 0.4)  vs. Predict params:  [[42.591  0.6  ]]\
+Expected params:  (79.43, 0.7)  vs. Predict params:  [[57.1073  1.025 ]]\
+Expected params:  (79.43, 1.0)  vs. Predict params:  [[89.0592  1.205 ]]\
+Expected params:  (79.43, 1.3)  vs. Predict params:  [[95.2134  1.4   ]]\
+Expected params:  (79.43, 1.6)  vs. Predict params:  [[90.4268  1.555 ]]\
+Expected params:  (79.43, 1.9)  vs. Predict params:  [[87.3755  1.575 ]]\
+R2 test no noise:  0.3701751287725646\
+\
+\
+Expected params:  (0.02, 0.1)  vs. Predict params:  [[2.7133 1.2   ]]\
+Expected params:  (0.02, 0.4)  vs. Predict params:  [[14.3267  1.465 ]]\
+Expected params:  (0.02, 0.7)  vs. Predict params:  [[11.5622  1.49  ]]\
+Expected params:  (0.02, 1.0)  vs. Predict params:  [[1.8294 1.09  ]]\
+Expected params:  (0.02, 1.3)  vs. Predict params:  [[10.3664  1.535 ]]\
+Expected params:  (0.02, 1.6)  vs. Predict params:  [[1.8059 0.99  ]]\
+Expected params:  (0.02, 1.9)  vs. Predict params:  [[0.6367 1.07  ]]\
+Expected params:  (0.08, 0.1)  vs. Predict params:  [[4.1318 1.22  ]]\
+Expected params:  (0.08, 0.4)  vs. Predict params:  [[0.8607 1.17  ]]\
+Expected params:  (0.08, 0.7)  vs. Predict params:  [[0.7638 1.45  ]]\
+Expected params:  (0.08, 1.0)  vs. Predict params:  [[0.948 1.45 ]]\
+Expected params:  (0.08, 1.3)  vs. Predict params:  [[0.6457 1.35  ]]\
+Expected params:  (0.08, 1.6)  vs. Predict params:  [[2.708 1.315]]\
+Expected params:  (0.08, 1.9)  vs. Predict params:  [[0.4599 1.14  ]]\
+Expected params:  (0.32, 0.1)  vs. Predict params:  [[1.0622 1.16  ]]\
+Expected params:  (0.32, 0.4)  vs. Predict params:  [[0.9738 1.19  ]]\
+Expected params:  (0.32, 0.7)  vs. Predict params:  [[1.1403 1.11  ]]\
+Expected params:  (0.32, 1.0)  vs. Predict params:  [[1.0076 1.1   ]]\
+Expected params:  (0.32, 1.3)  vs. Predict params:  [[1.6384 1.11  ]]\
+Expected params:  (0.32, 1.6)  vs. Predict params:  [[0.7501 1.465 ]]\
+Expected params:  (0.32, 1.9)  vs. Predict params:  [[1.2807 1.135 ]]\
+Expected params:  (1.26, 0.1)  vs. Predict params:  [[0.9578 1.175 ]]\
+Expected params:  (1.26, 0.4)  vs. Predict params:  [[1.3719 1.14  ]]\
+Expected params:  (1.26, 0.7)  vs. Predict params:  [[1.0693 1.09  ]]\
+Expected params:  (1.26, 1.0)  vs. Predict params:  [[0.8377 1.325 ]]\
+Expected params:  (1.26, 1.3)  vs. Predict params:  [[1.0647 1.07  ]]\
+Expected params:  (1.26, 1.6)  vs. Predict params:  [[1.2815 1.155 ]]\
+Expected params:  (1.26, 1.9)  vs. Predict params:  [[1.1956 1.14  ]]\
+Expected params:  (5.01, 0.1)  vs. Predict params:  [[1.5002 1.225 ]]\
+Expected params:  (5.01, 0.4)  vs. Predict params:  [[5.5976 1.175 ]]\
+Expected params:  (5.01, 0.7)  vs. Predict params:  [[5.2241 1.115 ]]\
+Expected params:  (5.01, 1.0)  vs. Predict params:  [[5.3421 1.11  ]]\
+Expected params:  (5.01, 1.3)  vs. Predict params:  [[2.6793 0.94  ]]\
+Expected params:  (5.01, 1.6)  vs. Predict params:  [[2.1929 1.1   ]]\
+Expected params:  (5.01, 1.9)  vs. Predict params:  [[2.5893 1.07  ]]\
+Expected params:  (19.95, 0.1)  vs. Predict params:  [[1.6522 1.095 ]]\
+Expected params:  (19.95, 0.4)  vs. Predict params:  [[12.9278  1.09  ]]\
+Expected params:  (19.95, 0.7)  vs. Predict params:  [[28.2212  0.84  ]]\
+Expected params:  (19.95, 1.0)  vs. Predict params:  [[40.389  1.235]]\
+Expected params:  (19.95, 1.3)  vs. Predict params:  [[38.2401  1.15  ]]\
+Expected params:  (19.95, 1.6)  vs. Predict params:  [[40.5077  1.18  ]]\
+Expected params:  (19.95, 1.9)  vs. Predict params:  [[38.4104  1.175 ]]\
+Expected params:  (79.43, 0.1)  vs. Predict params:  [[2.1857 1.125 ]]\
+Expected params:  (79.43, 0.4)  vs. Predict params:  [[36.1314  0.86  ]]\
+Expected params:  (79.43, 0.7)  vs. Predict params:  [[55.1206  1.14  ]]\
+Expected params:  (79.43, 1.0)  vs. Predict params:  [[96.581  1.31 ]]\
+Expected params:  (79.43, 1.3)  vs. Predict params:  [[92.1621  1.355 ]]\
+Expected params:  (79.43, 1.6)  vs. Predict params:  [[89.743  1.49 ]]\
+Expected params:  (79.43, 1.9)  vs. Predict params:  [[77.1701  1.625 ]]\
+R2 test theta=100:  0.2801472531426782\
+\
+\
+Expected params:  (0.02, 0.1)  vs. Predict params:  [[1.0057 1.14  ]]\
+Expected params:  (0.02, 0.4)  vs. Predict params:  [[1.1319 1.085 ]]\
+Expected params:  (0.02, 0.7)  vs. Predict params:  [[1.4524 1.205 ]]\
+Expected params:  (0.02, 1.0)  vs. Predict params:  [[1.2001 1.38  ]]\
+Expected params:  (0.02, 1.3)  vs. Predict params:  [[1.0752 1.515 ]]\
+Expected params:  (0.02, 1.6)  vs. Predict params:  [[0.5267 0.945 ]]\
+Expected params:  (0.02, 1.9)  vs. Predict params:  [[0.6963 1.535 ]]\
+Expected params:  (0.08, 0.1)  vs. Predict params:  [[0.9578 1.23  ]]\
+Expected params:  (0.08, 0.4)  vs. Predict params:  [[1.5826 1.04  ]]\
+Expected params:  (0.08, 0.7)  vs. Predict params:  [[1.2775 1.09  ]]\
+Expected params:  (0.08, 1.0)  vs. Predict params:  [[1.4773 1.15  ]]\
+Expected params:  (0.08, 1.3)  vs. Predict params:  [[1.3316 1.135 ]]\
+Expected params:  (0.08, 1.6)  vs. Predict params:  [[1.0593 1.305 ]]\
+Expected params:  (0.08, 1.9)  vs. Predict params:  [[1.1173 1.07  ]]\
+Expected params:  (0.32, 0.1)  vs. Predict params:  [[0.801 1.215]]\
+Expected params:  (0.32, 0.4)  vs. Predict params:  [[0.9714 1.19  ]]\
+Expected params:  (0.32, 0.7)  vs. Predict params:  [[1.1178 1.18  ]]\
+Expected params:  (0.32, 1.0)  vs. Predict params:  [[0.9486 1.12  ]]\
+Expected params:  (0.32, 1.3)  vs. Predict params:  [[0.9828 1.145 ]]\
+Expected params:  (0.32, 1.6)  vs. Predict params:  [[0.967 1.145]]\
+Expected params:  (0.32, 1.9)  vs. Predict params:  [[0.9064 1.1   ]]\
+Expected params:  (1.26, 0.1)  vs. Predict params:  [[0.9663 1.035 ]]\
+Expected params:  (1.26, 0.4)  vs. Predict params:  [[1.0572 1.03  ]]\
+Expected params:  (1.26, 0.7)  vs. Predict params:  [[1.2042 1.125 ]]\
+Expected params:  (1.26, 1.0)  vs. Predict params:  [[1.0742 1.125 ]]\
+Expected params:  (1.26, 1.3)  vs. Predict params:  [[1.2591 1.055 ]]\
+Expected params:  (1.26, 1.6)  vs. Predict params:  [[1.0821 1.1   ]]\
+Expected params:  (1.26, 1.9)  vs. Predict params:  [[1.1056 1.115 ]]\
+Expected params:  (5.01, 0.1)  vs. Predict params:  [[1.5937 1.17  ]]\
+Expected params:  (5.01, 0.4)  vs. Predict params:  [[5.7992 0.98  ]]\
+Expected params:  (5.01, 0.7)  vs. Predict params:  [[5.735 1.065]]\
+Expected params:  (5.01, 1.0)  vs. Predict params:  [[2.5569 0.95  ]]\
+Expected params:  (5.01, 1.3)  vs. Predict params:  [[2.5952 1.04  ]]\
+Expected params:  (5.01, 1.6)  vs. Predict params:  [[2.5628 1.005 ]]\
+Expected params:  (5.01, 1.9)  vs. Predict params:  [[2.6437 0.985 ]]\
+Expected params:  (19.95, 0.1)  vs. Predict params:  [[1.8925 1.16  ]]\
+Expected params:  (19.95, 0.4)  vs. Predict params:  [[13.872  0.915]]\
+Expected params:  (19.95, 0.7)  vs. Predict params:  [[40.5396  0.815 ]]\
+Expected params:  (19.95, 1.0)  vs. Predict params:  [[37.9723  1.035 ]]\
+Expected params:  (19.95, 1.3)  vs. Predict params:  [[38.6561  1.165 ]]\
+Expected params:  (19.95, 1.6)  vs. Predict params:  [[39.3399  1.24  ]]\
+Expected params:  (19.95, 1.9)  vs. Predict params:  [[34.7072  1.27  ]]\
+Expected params:  (79.43, 0.1)  vs. Predict params:  [[1.9857 1.1   ]]\
+Expected params:  (79.43, 0.4)  vs. Predict params:  [[31.3184  0.71  ]]\
+Expected params:  (79.43, 0.7)  vs. Predict params:  [[61.4263  0.975 ]]\
+Expected params:  (79.43, 1.0)  vs. Predict params:  [[94.5296  1.295 ]]\
+Expected params:  (79.43, 1.3)  vs. Predict params:  [[95.2134  1.395 ]]\
+Expected params:  (79.43, 1.6)  vs. Predict params:  [[92.4782  1.53  ]]\
+Expected params:  (79.43, 1.9)  vs. Predict params:  [[91.4783  1.615 ]]\
+R2 test theta=1000:  0.36364384044503567\
+\
+\
+Expected params:  (0.02, 0.1)  vs. Predict params:  [[0.8316 1.145 ]]\
+Expected params:  (0.02, 0.4)  vs. Predict params:  [[0.8755 1.11  ]]\
+Expected params:  (0.02, 0.7)  vs. Predict params:  [[1.1954 1.225 ]]\
+Expected params:  (0.02, 1.0)  vs. Predict params:  [[0.871 1.325]]\
+Expected params:  (0.02, 1.3)  vs. Predict params:  [[1.2896 1.095 ]]\
+Expected params:  (0.02, 1.6)  vs. Predict params:  [[1.0214 1.055 ]]\
+Expected params:  (0.02, 1.9)  vs. Predict params:  [[1.468 1.125]]\
+Expected params:  (0.08, 0.1)  vs. Predict params:  [[0.9294 1.22  ]]\
+Expected params:  (0.08, 0.4)  vs. Predict params:  [[1.1418 1.19  ]]\
+Expected params:  (0.08, 0.7)  vs. Predict params:  [[1.134 1.115]]\
+Expected params:  (0.08, 1.0)  vs. Predict params:  [[1.0385 1.095 ]]\
+Expected params:  (0.08, 1.3)  vs. Predict params:  [[0.9897 1.13  ]]\
+Expected params:  (0.08, 1.6)  vs. Predict params:  [[0.9651 1.065 ]]\
+Expected params:  (0.08, 1.9)  vs. Predict params:  [[0.8668 1.05  ]]\
+Expected params:  (0.32, 0.1)  vs. Predict params:  [[0.8214 1.23  ]]\
+Expected params:  (0.32, 0.4)  vs. Predict params:  [[0.9646 1.215 ]]\
+Expected params:  (0.32, 0.7)  vs. Predict params:  [[0.9622 1.155 ]]\
+Expected params:  (0.32, 1.0)  vs. Predict params:  [[1.0452 1.085 ]]\
+Expected params:  (0.32, 1.3)  vs. Predict params:  [[0.8353 1.13  ]]\
+Expected params:  (0.32, 1.6)  vs. Predict params:  [[1.0714 1.19  ]]\
+Expected params:  (0.32, 1.9)  vs. Predict params:  [[1.0838 1.135 ]]\
+Expected params:  (1.26, 0.1)  vs. Predict params:  [[1.1159 1.105 ]]\
+Expected params:  (1.26, 0.4)  vs. Predict params:  [[1.1297 1.075 ]]\
+Expected params:  (1.26, 0.7)  vs. Predict params:  [[1.2875 1.115 ]]\
+Expected params:  (1.26, 1.0)  vs. Predict params:  [[1.1875 1.1   ]]\
+Expected params:  (1.26, 1.3)  vs. Predict params:  [[1.2013 1.055 ]]\
+Expected params:  (1.26, 1.6)  vs. Predict params:  [[1.0989 1.08  ]]\
+Expected params:  (1.26, 1.9)  vs. Predict params:  [[1.1079 1.1   ]]\
+Expected params:  (5.01, 0.1)  vs. Predict params:  [[1.6221 1.155 ]]\
+Expected params:  (5.01, 0.4)  vs. Predict params:  [[3.4737 1.025 ]]\
+Expected params:  (5.01, 0.7)  vs. Predict params:  [[5.5926 1.005 ]]\
+Expected params:  (5.01, 1.0)  vs. Predict params:  [[2.9572 1.005 ]]\
+Expected params:  (5.01, 1.3)  vs. Predict params:  [[2.5408 1.    ]]\
+Expected params:  (5.01, 1.6)  vs. Predict params:  [[2.584 1.015]]\
+Expected params:  (5.01, 1.9)  vs. Predict params:  [[2.5811 0.98  ]]\
+Expected params:  (19.95, 0.1)  vs. Predict params:  [[1.9806 1.105 ]]\
+Expected params:  (19.95, 0.4)  vs. Predict params:  [[16.1044  0.85  ]]\
+Expected params:  (19.95, 0.7)  vs. Predict params:  [[42.3044  0.78  ]]\
+Expected params:  (19.95, 1.0)  vs. Predict params:  [[39.3399  1.04  ]]\
+Expected params:  (19.95, 1.3)  vs. Predict params:  [[38.1885  1.15  ]]\
+Expected params:  (19.95, 1.6)  vs. Predict params:  [[38.6561  1.26  ]]\
+Expected params:  (19.95, 1.9)  vs. Predict params:  [[34.0234  1.285 ]]\
+Expected params:  (79.43, 0.1)  vs. Predict params:  [[1.9777 1.115 ]]\
+Expected params:  (79.43, 0.4)  vs. Predict params:  [[42.591  0.595]]\
+Expected params:  (79.43, 0.7)  vs. Predict params:  [[59.1587  1.015 ]]\
+Expected params:  (79.43, 1.0)  vs. Predict params:  [[89.0592  1.235 ]]\
+Expected params:  (79.43, 1.3)  vs. Predict params:  [[94.5296  1.41  ]]\
+Expected params:  (79.43, 1.6)  vs. Predict params:  [[90.4268  1.55  ]]\
+Expected params:  (79.43, 1.9)  vs. Predict params:  [[89.0592  1.56  ]]\
+R2 test theta=10000:  0.35738180296781186\
+\
+\
+Expected params:  (0.01, 0.5)  vs. Predict params:  [[1.069 1.11 ]]\
+Expected params:  (0.01, 1.0)  vs. Predict params:  [[1.069 1.11 ]]\
+Expected params:  (0.01, 1.5)  vs. Predict params:  [[1.069 1.11 ]]\
+Expected params:  (0.01, 2.0)  vs. Predict params:  [[1.069 1.11 ]]\
+Expected params:  (0.03, 0.5)  vs. Predict params:  [[1.069 1.11 ]]\
+Expected params:  (0.03, 1.0)  vs. Predict params:  [[1.069 1.11 ]]\
+Expected params:  (0.03, 1.5)  vs. Predict params:  [[1.069 1.11 ]]\
+Expected params:  (0.03, 2.0)  vs. Predict params:  [[1.069 1.11 ]]\
+Expected params:  (0.1, 0.5)  vs. Predict params:  [[0.926 1.09 ]]\
+Expected params:  (0.1, 1.0)  vs. Predict params:  [[1.069 1.11 ]]\
+Expected params:  (0.1, 1.5)  vs. Predict params:  [[1.069 1.11 ]]\
+Expected params:  (0.1, 2.0)  vs. Predict params:  [[1.069 1.11 ]]\
+Expected params:  (0.32, 0.5)  vs. Predict params:  [[0.9916 1.235 ]]\
+Expected params:  (0.32, 1.0)  vs. Predict params:  [[0.892 1.115]]\
+Expected params:  (0.32, 1.5)  vs. Predict params:  [[1.0418 1.115 ]]\
+Expected params:  (0.32, 2.0)  vs. Predict params:  [[1.0622 1.11  ]]\
+Expected params:  (1.0, 0.5)  vs. Predict params:  [[1.069 1.11 ]]\
+Expected params:  (1.0, 1.0)  vs. Predict params:  [[1.069 1.11 ]]\
+Expected params:  (1.0, 1.5)  vs. Predict params:  [[1.069 1.11 ]]\
+Expected params:  (1.0, 2.0)  vs. Predict params:  [[1.069 1.11 ]]\
+Expected params:  (3.16, 0.5)  vs. Predict params:  [[2.3316 1.025 ]]\
+Expected params:  (3.16, 1.0)  vs. Predict params:  [[2.4524 1.09  ]]\
+Expected params:  (3.16, 1.5)  vs. Predict params:  [[2.4731 1.305 ]]\
+Expected params:  (3.16, 2.0)  vs. Predict params:  [[2.2313 1.285 ]]\
+Expected params:  (10.0, 0.5)  vs. Predict params:  [[13.6558  0.93  ]]\
+Expected params:  (10.0, 1.0)  vs. Predict params:  [[11.2288  1.21  ]]\
+Expected params:  (10.0, 1.5)  vs. Predict params:  [[10.0794  1.435 ]]\
+Expected params:  (10.0, 2.0)  vs. Predict params:  [[9.7948 1.575 ]]\
+Expected params:  (31.62, 0.5)  vs. Predict params:  [[45.2558  0.645 ]]\
+Expected params:  (31.62, 1.0)  vs. Predict params:  [[51.6369  1.185 ]]\
+Expected params:  (31.62, 1.5)  vs. Predict params:  [[52.5369  1.415 ]]\
+Expected params:  (31.62, 2.0)  vs. Predict params:  [[49.8017  1.57  ]]\
+Expected params:  (100.0, 0.5)  vs. Predict params:  [[59.2807  0.75  ]]\
+Expected params:  (100.0, 1.0)  vs. Predict params:  [[94.5296  1.285 ]]\
+Expected params:  (100.0, 1.5)  vs. Predict params:  [[94.5296  1.565 ]]\
+Expected params:  (100.0, 2.0)  vs. Predict params:  [[79.2215  1.57  ]]\
+R2 no theta same train params:  0.5667119229066064\
+\
+\
+\
+SECOND SUBCASE: Train on theta=1000\
+R2 score with train data/fit:  0.9300913753417432 \
+\
+Expected params:  (0.02, 0.1)  vs. Predict params:  [[0.3323 1.09  ]]\
+Expected params:  (0.02, 0.4)  vs. Predict params:  [[0.7353 1.42  ]]\
+Expected params:  (0.02, 0.7)  vs. Predict params:  [[0.7353 1.42  ]]\
+Expected params:  (0.02, 1.0)  vs. Predict params:  [[0.7353 1.42  ]]\
+Expected params:  (0.02, 1.3)  vs. Predict params:  [[0.7353 1.42  ]]\
+Expected params:  (0.02, 1.6)  vs. Predict params:  [[0.7353 1.42  ]]\
+Expected params:  (0.02, 1.9)  vs. Predict params:  [[0.7353 1.42  ]]\
+Expected params:  (0.08, 0.1)  vs. Predict params:  [[46.7549  0.965 ]]\
+Expected params:  (0.08, 0.4)  vs. Predict params:  [[0.5333 1.345 ]]\
+Expected params:  (0.08, 0.7)  vs. Predict params:  [[0.7353 1.42  ]]\
+Expected params:  (0.08, 1.0)  vs. Predict params:  [[0.7353 1.42  ]]\
+Expected params:  (0.08, 1.3)  vs. Predict params:  [[0.7353 1.42  ]]\
+Expected params:  (0.08, 1.6)  vs. Predict params:  [[0.7353 1.42  ]]\
+Expected params:  (0.08, 1.9)  vs. Predict params:  [[0.7353 1.42  ]]\
+Expected params:  (0.32, 0.1)  vs. Predict params:  [[0.2807 1.2   ]]\
+Expected params:  (0.32, 0.4)  vs. Predict params:  [[0.2985 1.11  ]]\
+Expected params:  (0.32, 0.7)  vs. Predict params:  [[0.3252 1.205 ]]\
+Expected params:  (0.32, 1.0)  vs. Predict params:  [[0.3861 1.275 ]]\
+Expected params:  (0.32, 1.3)  vs. Predict params:  [[0.6332 1.435 ]]\
+Expected params:  (0.32, 1.6)  vs. Predict params:  [[0.6816 1.44  ]]\
+Expected params:  (0.32, 1.9)  vs. Predict params:  [[0.7028 1.45  ]]\
+Expected params:  (1.26, 0.1)  vs. Predict params:  [[0.5839 1.335 ]]\
+Expected params:  (1.26, 0.4)  vs. Predict params:  [[0.7075 1.23  ]]\
+Expected params:  (1.26, 0.7)  vs. Predict params:  [[0.6985 1.225 ]]\
+Expected params:  (1.26, 1.0)  vs. Predict params:  [[0.7075 1.24  ]]\
+Expected params:  (1.26, 1.3)  vs. Predict params:  [[0.6949 1.255 ]]\
+Expected params:  (1.26, 1.6)  vs. Predict params:  [[0.6701 1.285 ]]\
+Expected params:  (1.26, 1.9)  vs. Predict params:  [[0.6633 1.32  ]]\
+Expected params:  (5.01, 0.1)  vs. Predict params:  [[2.7748 1.07  ]]\
+Expected params:  (5.01, 0.4)  vs. Predict params:  [[6.5424 0.9   ]]\
+Expected params:  (5.01, 0.7)  vs. Predict params:  [[7.174 1.025]]\
+Expected params:  (5.01, 1.0)  vs. Predict params:  [[5.8386 1.05  ]]\
+Expected params:  (5.01, 1.3)  vs. Predict params:  [[4.8126 1.11  ]]\
+Expected params:  (5.01, 1.6)  vs. Predict params:  [[4.4022 1.17  ]]\
+Expected params:  (5.01, 1.9)  vs. Predict params:  [[4.55 1.21]]\
+Expected params:  (19.95, 0.1)  vs. Predict params:  [[2.8001 1.02  ]]\
+Expected params:  (19.95, 0.4)  vs. Predict params:  [[15.1441  0.725 ]]\
+Expected params:  (19.95, 0.7)  vs. Predict params:  [[27.6307  0.96  ]]\
+Expected params:  (19.95, 1.0)  vs. Predict params:  [[29.996  1.21 ]]\
+Expected params:  (19.95, 1.3)  vs. Predict params:  [[28.4142  1.375 ]]\
+Expected params:  (19.95, 1.6)  vs. Predict params:  [[24.7036  1.505 ]]\
+Expected params:  (19.95, 1.9)  vs. Predict params:  [[20.2428  1.465 ]]\
+Expected params:  (79.43, 0.1)  vs. Predict params:  [[2.8001 1.02  ]]\
+Expected params:  (79.43, 0.4)  vs. Predict params:  [[59.7783  0.66  ]]\
+Expected params:  (79.43, 0.7)  vs. Predict params:  [[85.8916  0.755 ]]\
+Expected params:  (79.43, 1.0)  vs. Predict params:  [[98.6324  1.115 ]]\
+Expected params:  (79.43, 1.3)  vs. Predict params:  [[98.6324  1.32  ]]\
+Expected params:  (79.43, 1.6)  vs. Predict params:  [[96.581  1.585]]\
+Expected params:  (79.43, 1.9)  vs. Predict params:  [[76.067  1.71 ]]\
+R2 test no noise:  0.43071526529659704\
+\
+\
+Expected params:  (0.02, 0.1)  vs. Predict params:  [[59.9021  1.415 ]]\
+Expected params:  (0.02, 0.4)  vs. Predict params:  [[61.5966  1.69  ]]\
+Expected params:  (0.02, 0.7)  vs. Predict params:  [[60.7318  1.545 ]]\
+Expected params:  (0.02, 1.0)  vs. Predict params:  [[60.3578  1.445 ]]\
+Expected params:  (0.02, 1.3)  vs. Predict params:  [[59.3662  1.595 ]]\
+Expected params:  (0.02, 1.6)  vs. Predict params:  [[21.6524  1.51  ]]\
+Expected params:  (0.02, 1.9)  vs. Predict params:  [[89.0031  1.32  ]]\
+Expected params:  (0.08, 0.1)  vs. Predict params:  [[57.6488  0.92  ]]\
+Expected params:  (0.08, 0.4)  vs. Predict params:  [[46.9477  0.905 ]]\
+Expected params:  (0.08, 0.7)  vs. Predict params:  [[49.8377  1.06  ]]\
+Expected params:  (0.08, 1.0)  vs. Predict params:  [[46.8824  1.06  ]]\
+Expected params:  (0.08, 1.3)  vs. Predict params:  [[2.1139 1.185 ]]\
+Expected params:  (0.08, 1.6)  vs. Predict params:  [[18.0263  1.395 ]]\
+Expected params:  (0.08, 1.9)  vs. Predict params:  [[48.1393  1.055 ]]\
+Expected params:  (0.32, 0.1)  vs. Predict params:  [[46.8111  0.985 ]]\
+Expected params:  (0.32, 0.4)  vs. Predict params:  [[0.2715 1.025 ]]\
+Expected params:  (0.32, 0.7)  vs. Predict params:  [[13.0785  1.135 ]]\
+Expected params:  (0.32, 1.0)  vs. Predict params:  [[2.6649 1.41  ]]\
+Expected params:  (0.32, 1.3)  vs. Predict params:  [[1.0148 1.325 ]]\
+Expected params:  (0.32, 1.6)  vs. Predict params:  [[3.8532 1.24  ]]\
+Expected params:  (0.32, 1.9)  vs. Predict params:  [[1.9257 0.985 ]]\
+Expected params:  (1.26, 0.1)  vs. Predict params:  [[0.3592 1.5   ]]\
+Expected params:  (1.26, 0.4)  vs. Predict params:  [[1.0949 1.44  ]]\
+Expected params:  (1.26, 0.7)  vs. Predict params:  [[1.028 1.345]]\
+Expected params:  (1.26, 1.0)  vs. Predict params:  [[0.3383 1.55  ]]\
+Expected params:  (1.26, 1.3)  vs. Predict params:  [[1.3674 1.465 ]]\
+Expected params:  (1.26, 1.6)  vs. Predict params:  [[1.5312 1.55  ]]\
+Expected params:  (1.26, 1.9)  vs. Predict params:  [[0.6708 1.275 ]]\
+Expected params:  (5.01, 0.1)  vs. Predict params:  [[2.795 1.145]]\
+Expected params:  (5.01, 0.4)  vs. Predict params:  [[8.3569 1.115 ]]\
+Expected params:  (5.01, 0.7)  vs. Predict params:  [[8.3584 1.26  ]]\
+Expected params:  (5.01, 1.0)  vs. Predict params:  [[8.1536 1.06  ]]\
+Expected params:  (5.01, 1.3)  vs. Predict params:  [[4.9168 1.055 ]]\
+Expected params:  (5.01, 1.6)  vs. Predict params:  [[4.5662 1.125 ]]\
+Expected params:  (5.01, 1.9)  vs. Predict params:  [[4.2809 1.28  ]]\
+Expected params:  (19.95, 0.1)  vs. Predict params:  [[3.3945 1.11  ]]\
+Expected params:  (19.95, 0.4)  vs. Predict params:  [[15.2649  0.965 ]]\
+Expected params:  (19.95, 0.7)  vs. Predict params:  [[28.562  1.145]]\
+Expected params:  (19.95, 1.0)  vs. Predict params:  [[29.9276  1.245 ]]\
+Expected params:  (19.95, 1.3)  vs. Predict params:  [[26.7991  1.285 ]]\
+Expected params:  (19.95, 1.6)  vs. Predict params:  [[26.6846  1.415 ]]\
+Expected params:  (19.95, 1.9)  vs. Predict params:  [[24.602  1.485]]\
+Expected params:  (79.43, 0.1)  vs. Predict params:  [[45.7267  0.94  ]]\
+Expected params:  (79.43, 0.4)  vs. Predict params:  [[49.0518  0.88  ]]\
+Expected params:  (79.43, 0.7)  vs. Predict params:  [[64.2966  1.055 ]]\
+Expected params:  (79.43, 1.0)  vs. Predict params:  [[98.6324  1.165 ]]\
+Expected params:  (79.43, 1.3)  vs. Predict params:  [[89.743  1.45 ]]\
+Expected params:  (79.43, 1.6)  vs. Predict params:  [[67.6452  1.46  ]]\
+Expected params:  (79.43, 1.9)  vs. Predict params:  [[86.324  1.62 ]]\
+R2 test theta=100:  -0.16605997275666906\
+\
+\
+Expected params:  (0.02, 0.1)  vs. Predict params:  [[0.7728 1.1   ]]\
+Expected params:  (0.02, 0.4)  vs. Predict params:  [[9.7711 1.15  ]]\
+Expected params:  (0.02, 0.7)  vs. Predict params:  [[0.73  1.165]]\
+Expected params:  (0.02, 1.0)  vs. Predict params:  [[2.5595 1.265 ]]\
+Expected params:  (0.02, 1.3)  vs. Predict params:  [[31.1733  1.225 ]]\
+Expected params:  (0.02, 1.6)  vs. Predict params:  [[48.8878  0.975 ]]\
+Expected params:  (0.02, 1.9)  vs. Predict params:  [[1.7369 1.365 ]]\
+Expected params:  (0.08, 0.1)  vs. Predict params:  [[46.7765  0.89  ]]\
+Expected params:  (0.08, 0.4)  vs. Predict params:  [[1.1475 1.035 ]]\
+Expected params:  (0.08, 0.7)  vs. Predict params:  [[1.419 1.195]]\
+Expected params:  (0.08, 1.0)  vs. Predict params:  [[0.7597 1.175 ]]\
+Expected params:  (0.08, 1.3)  vs. Predict params:  [[0.3573 0.995 ]]\
+Expected params:  (0.08, 1.6)  vs. Predict params:  [[1.2859 1.42  ]]\
+Expected params:  (0.08, 1.9)  vs. Predict params:  [[0.9056 1.1   ]]\
+Expected params:  (0.32, 0.1)  vs. Predict params:  [[0.2782 1.33  ]]\
+Expected params:  (0.32, 0.4)  vs. Predict params:  [[1.9177 1.15  ]]\
+Expected params:  (0.32, 0.7)  vs. Predict params:  [[0.4777 1.29  ]]\
+Expected params:  (0.32, 1.0)  vs. Predict params:  [[0.2638 1.295 ]]\
+Expected params:  (0.32, 1.3)  vs. Predict params:  [[0.4811 1.295 ]]\
+Expected params:  (0.32, 1.6)  vs. Predict params:  [[0.4171 1.06  ]]\
+Expected params:  (0.32, 1.9)  vs. Predict params:  [[0.4549 1.1   ]]\
+Expected params:  (1.26, 0.1)  vs. Predict params:  [[0.4271 1.405 ]]\
+Expected params:  (1.26, 0.4)  vs. Predict params:  [[0.5885 1.395 ]]\
+Expected params:  (1.26, 0.7)  vs. Predict params:  [[0.6281 1.265 ]]\
+Expected params:  (1.26, 1.0)  vs. Predict params:  [[0.6434 1.295 ]]\
+Expected params:  (1.26, 1.3)  vs. Predict params:  [[0.7038 1.26  ]]\
+Expected params:  (1.26, 1.6)  vs. Predict params:  [[0.6438 1.22  ]]\
+Expected params:  (1.26, 1.9)  vs. Predict params:  [[0.5538 1.34  ]]\
+Expected params:  (5.01, 0.1)  vs. Predict params:  [[2.7525 1.085 ]]\
+Expected params:  (5.01, 0.4)  vs. Predict params:  [[7.0646 0.93  ]]\
+Expected params:  (5.01, 0.7)  vs. Predict params:  [[8.29  0.985]]\
+Expected params:  (5.01, 1.0)  vs. Predict params:  [[3.8908 1.05  ]]\
+Expected params:  (5.01, 1.3)  vs. Predict params:  [[4.186 1.095]]\
+Expected params:  (5.01, 1.6)  vs. Predict params:  [[4.197 1.12 ]]\
+Expected params:  (5.01, 1.9)  vs. Predict params:  [[4.3448 1.245 ]]\
+Expected params:  (19.95, 0.1)  vs. Predict params:  [[2.7924 1.085 ]]\
+Expected params:  (19.95, 0.4)  vs. Predict params:  [[15.8083  0.77  ]]\
+Expected params:  (19.95, 0.7)  vs. Predict params:  [[27.6307  0.91  ]]\
+Expected params:  (19.95, 1.0)  vs. Predict params:  [[27.9153  1.19  ]]\
+Expected params:  (19.95, 1.3)  vs. Predict params:  [[30.8608  1.385 ]]\
+Expected params:  (19.95, 1.6)  vs. Predict params:  [[20.8914  1.39  ]]\
+Expected params:  (19.95, 1.9)  vs. Predict params:  [[22.0408  1.5   ]]\
+Expected params:  (79.43, 0.1)  vs. Predict params:  [[2.7836 1.06  ]]\
+Expected params:  (79.43, 0.4)  vs. Predict params:  [[59.6305  0.65  ]]\
+Expected params:  (79.43, 0.7)  vs. Predict params:  [[85.6754  0.76  ]]\
+Expected params:  (79.43, 1.0)  vs. Predict params:  [[98.6324  1.12  ]]\
+Expected params:  (79.43, 1.3)  vs. Predict params:  [[98.6324  1.305 ]]\
+Expected params:  (79.43, 1.6)  vs. Predict params:  [[96.581  1.595]]\
+Expected params:  (79.43, 1.9)  vs. Predict params:  [[87.0078  1.71  ]]\
+R2 test theta=1000:  0.35445149444456375\
+\
+\
+Expected params:  (0.02, 0.1)  vs. Predict params:  [[0.5504 1.465 ]]\
+Expected params:  (0.02, 0.4)  vs. Predict params:  [[0.4066 1.345 ]]\
+Expected params:  (0.02, 0.7)  vs. Predict params:  [[0.3388 1.065 ]]\
+Expected params:  (0.02, 1.0)  vs. Predict params:  [[0.2252 1.11  ]]\
+Expected params:  (0.02, 1.3)  vs. Predict params:  [[0.656 1.27 ]]\
+Expected params:  (0.02, 1.6)  vs. Predict params:  [[0.3919 1.105 ]]\
+Expected params:  (0.02, 1.9)  vs. Predict params:  [[0.7805 1.27  ]]\
+Expected params:  (0.08, 0.1)  vs. Predict params:  [[46.7549  0.96  ]]\
+Expected params:  (0.08, 0.4)  vs. Predict params:  [[0.602 1.36 ]]\
+Expected params:  (0.08, 0.7)  vs. Predict params:  [[0.706 1.445]]\
+Expected params:  (0.08, 1.0)  vs. Predict params:  [[0.6572 1.335 ]]\
+Expected params:  (0.08, 1.3)  vs. Predict params:  [[0.4577 1.05  ]]\
+Expected params:  (0.08, 1.6)  vs. Predict params:  [[0.4115 1.04  ]]\
+Expected params:  (0.08, 1.9)  vs. Predict params:  [[0.4968 1.425 ]]\
+Expected params:  (0.32, 0.1)  vs. Predict params:  [[0.3003 1.17  ]]\
+Expected params:  (0.32, 0.4)  vs. Predict params:  [[0.3207 1.055 ]]\
+Expected params:  (0.32, 0.7)  vs. Predict params:  [[0.3568 1.135 ]]\
+Expected params:  (0.32, 1.0)  vs. Predict params:  [[0.6154 1.315 ]]\
+Expected params:  (0.32, 1.3)  vs. Predict params:  [[0.4982 1.455 ]]\
+Expected params:  (0.32, 1.6)  vs. Predict params:  [[0.728 1.45 ]]\
+Expected params:  (0.32, 1.9)  vs. Predict params:  [[0.7734 1.34  ]]\
+Expected params:  (1.26, 0.1)  vs. Predict params:  [[0.6761 1.35  ]]\
+Expected params:  (1.26, 0.4)  vs. Predict params:  [[0.6034 1.25  ]]\
+Expected params:  (1.26, 0.7)  vs. Predict params:  [[0.6956 1.23  ]]\
+Expected params:  (1.26, 1.0)  vs. Predict params:  [[0.6963 1.225 ]]\
+Expected params:  (1.26, 1.3)  vs. Predict params:  [[0.7  1.35]]\
+Expected params:  (1.26, 1.6)  vs. Predict params:  [[0.697 1.31 ]]\
+Expected params:  (1.26, 1.9)  vs. Predict params:  [[0.6751 1.39  ]]\
+Expected params:  (5.01, 0.1)  vs. Predict params:  [[2.7748 1.055 ]]\
+Expected params:  (5.01, 0.4)  vs. Predict params:  [[6.5424 0.905 ]]\
+Expected params:  (5.01, 0.7)  vs. Predict params:  [[7.1056 1.015 ]]\
+Expected params:  (5.01, 1.0)  vs. Predict params:  [[5.4966 1.035 ]]\
+Expected params:  (5.01, 1.3)  vs. Predict params:  [[4.4022 1.135 ]]\
+Expected params:  (5.01, 1.6)  vs. Predict params:  [[4.2654 1.17  ]]\
+Expected params:  (5.01, 1.9)  vs. Predict params:  [[4.2654 1.215 ]]\
+Expected params:  (19.95, 0.1)  vs. Predict params:  [[2.8001 1.02  ]]\
+Expected params:  (19.95, 0.4)  vs. Predict params:  [[15.5569  0.75  ]]\
+Expected params:  (19.95, 0.7)  vs. Predict params:  [[27.6307  0.995 ]]\
+Expected params:  (19.95, 1.0)  vs. Predict params:  [[29.996  1.205]]\
+Expected params:  (19.95, 1.3)  vs. Predict params:  [[29.279  1.36 ]]\
+Expected params:  (19.95, 1.6)  vs. Predict params:  [[25.8198  1.495 ]]\
+Expected params:  (19.95, 1.9)  vs. Predict params:  [[20.8914  1.47  ]]\
+Expected params:  (79.43, 0.1)  vs. Predict params:  [[2.8001 1.025 ]]\
+Expected params:  (79.43, 0.4)  vs. Predict params:  [[59.7783  0.66  ]]\
+Expected params:  (79.43, 0.7)  vs. Predict params:  [[85.8916  0.72  ]]\
+Expected params:  (79.43, 1.0)  vs. Predict params:  [[98.6324  1.115 ]]\
+Expected params:  (79.43, 1.3)  vs. Predict params:  [[98.6324  1.365 ]]\
+Expected params:  (79.43, 1.6)  vs. Predict params:  [[96.581  1.595]]\
+Expected params:  (79.43, 1.9)  vs. Predict params:  [[86.324  1.71 ]]\
+R2 test theta=10000:  0.40804118052549193\
+\
+\
+Expected params:  (0.01, 0.5)  vs. Predict params:  [[0.7353 1.42  ]]\
+Expected params:  (0.01, 1.0)  vs. Predict params:  [[0.7353 1.42  ]]\
+Expected params:  (0.01, 1.5)  vs. Predict params:  [[0.7353 1.42  ]]\
+Expected params:  (0.01, 2.0)  vs. Predict params:  [[0.7353 1.42  ]]\
+Expected params:  (0.03, 0.5)  vs. Predict params:  [[0.7353 1.42  ]]\
+Expected params:  (0.03, 1.0)  vs. Predict params:  [[0.7353 1.42  ]]\
+Expected params:  (0.03, 1.5)  vs. Predict params:  [[0.7353 1.42  ]]\
+Expected params:  (0.03, 2.0)  vs. Predict params:  [[0.7353 1.42  ]]\
+Expected params:  (0.1, 0.5)  vs. Predict params:  [[0.5831 1.38  ]]\
+Expected params:  (0.1, 1.0)  vs. Predict params:  [[0.7353 1.42  ]]\
+Expected params:  (0.1, 1.5)  vs. Predict params:  [[0.7353 1.42  ]]\
+Expected params:  (0.1, 2.0)  vs. Predict params:  [[0.7353 1.42  ]]\
+Expected params:  (0.32, 0.5)  vs. Predict params:  [[0.3058 1.1   ]]\
+Expected params:  (0.32, 1.0)  vs. Predict params:  [[0.3861 1.275 ]]\
+Expected params:  (0.32, 1.5)  vs. Predict params:  [[0.6952 1.405 ]]\
+Expected params:  (0.32, 2.0)  vs. Predict params:  [[0.7195 1.43  ]]\
+Expected params:  (1.0, 0.5)  vs. Predict params:  [[0.7353 1.42  ]]\
+Expected params:  (1.0, 1.0)  vs. Predict params:  [[0.7353 1.42  ]]\
+Expected params:  (1.0, 1.5)  vs. Predict params:  [[0.7353 1.42  ]]\
+Expected params:  (1.0, 2.0)  vs. Predict params:  [[0.7353 1.42  ]]\
+Expected params:  (3.16, 0.5)  vs. Predict params:  [[3.0862 0.89  ]]\
+Expected params:  (3.16, 1.0)  vs. Predict params:  [[3.1078 1.01  ]]\
+Expected params:  (3.16, 1.5)  vs. Predict params:  [[3.0862 1.37  ]]\
+Expected params:  (3.16, 2.0)  vs. Predict params:  [[3.0049 1.385 ]]\
+Expected params:  (10.0, 0.5)  vs. Predict params:  [[8.9537 0.74  ]]\
+Expected params:  (10.0, 1.0)  vs. Predict params:  [[10.386  1.22 ]]\
+Expected params:  (10.0, 1.5)  vs. Predict params:  [[10.1588  1.55  ]]\
+Expected params:  (10.0, 2.0)  vs. Predict params:  [[9.8058 1.725 ]]\
+Expected params:  (31.62, 0.5)  vs. Predict params:  [[35.9489  0.685 ]]\
+Expected params:  (31.62, 1.0)  vs. Predict params:  [[38.0608  1.175 ]]\
+Expected params:  (31.62, 1.5)  vs. Predict params:  [[33.4904  1.485 ]]\
+Expected params:  (31.62, 2.0)  vs. Predict params:  [[32.8066  1.66  ]]\
+Expected params:  (100.0, 0.5)  vs. Predict params:  [[62.031  0.65 ]]\
+Expected params:  (100.0, 1.0)  vs. Predict params:  [[98.6324  1.1   ]]\
+Expected params:  (100.0, 1.5)  vs. Predict params:  [[98.6324  1.505 ]]\
+Expected params:  (100.0, 2.0)  vs. Predict params:  [[96.581  1.745]]\
+R2 no theta same train params:  0.6594592204094618\
+\
+\
+\
+THIRD SUBCASE: Train on theta=10000\
+R2 score with train data/fit:  0.9096977549027316 \
+\
+Expected params:  (0.02, 0.1)  vs. Predict params:  [[0.344 0.715]]\
+Expected params:  (0.02, 0.4)  vs. Predict params:  [[0.6708 1.39  ]]\
+Expected params:  (0.02, 0.7)  vs. Predict params:  [[0.6708 1.39  ]]\
+Expected params:  (0.02, 1.0)  vs. Predict params:  [[0.6708 1.39  ]]\
+Expected params:  (0.02, 1.3)  vs. Predict params:  [[0.6708 1.39  ]]\
+Expected params:  (0.02, 1.6)  vs. Predict params:  [[0.6708 1.39  ]]\
+Expected params:  (0.02, 1.9)  vs. Predict params:  [[0.6708 1.39  ]]\
+Expected params:  (0.08, 0.1)  vs. Predict params:  [[32.1677  0.715 ]]\
+Expected params:  (0.08, 0.4)  vs. Predict params:  [[0.353 1.145]]\
+Expected params:  (0.08, 0.7)  vs. Predict params:  [[0.655 1.41 ]]\
+Expected params:  (0.08, 1.0)  vs. Predict params:  [[0.6708 1.39  ]]\
+Expected params:  (0.08, 1.3)  vs. Predict params:  [[0.6708 1.39  ]]\
+Expected params:  (0.08, 1.6)  vs. Predict params:  [[0.6708 1.39  ]]\
+Expected params:  (0.08, 1.9)  vs. Predict params:  [[0.6708 1.39  ]]\
+Expected params:  (0.32, 0.1)  vs. Predict params:  [[0.2706 0.85  ]]\
+Expected params:  (0.32, 0.4)  vs. Predict params:  [[1.3899 0.725 ]]\
+Expected params:  (0.32, 0.7)  vs. Predict params:  [[0.2716 0.73  ]]\
+Expected params:  (0.32, 1.0)  vs. Predict params:  [[0.3323 1.095 ]]\
+Expected params:  (0.32, 1.3)  vs. Predict params:  [[0.5417 1.385 ]]\
+Expected params:  (0.32, 1.6)  vs. Predict params:  [[0.6033 1.5   ]]\
+Expected params:  (0.32, 1.9)  vs. Predict params:  [[0.6203 1.45  ]]\
+Expected params:  (1.26, 0.1)  vs. Predict params:  [[0.568 1.42 ]]\
+Expected params:  (1.26, 0.4)  vs. Predict params:  [[0.5413 1.415 ]]\
+Expected params:  (1.26, 0.7)  vs. Predict params:  [[0.5172 1.395 ]]\
+Expected params:  (1.26, 1.0)  vs. Predict params:  [[0.5326 1.42  ]]\
+Expected params:  (1.26, 1.3)  vs. Predict params:  [[0.5979 1.49  ]]\
+Expected params:  (1.26, 1.6)  vs. Predict params:  [[0.6901 1.47  ]]\
+Expected params:  (1.26, 1.9)  vs. Predict params:  [[0.7049 1.43  ]]\
+Expected params:  (5.01, 0.1)  vs. Predict params:  [[1.8971 1.15  ]]\
+Expected params:  (5.01, 0.4)  vs. Predict params:  [[6.1914 0.865 ]]\
+Expected params:  (5.01, 0.7)  vs. Predict params:  [[7.1956 0.98  ]]\
+Expected params:  (5.01, 1.0)  vs. Predict params:  [[6.7388 1.055 ]]\
+Expected params:  (5.01, 1.3)  vs. Predict params:  [[6.1232 1.075 ]]\
+Expected params:  (5.01, 1.6)  vs. Predict params:  [[5.9974 1.105 ]]\
+Expected params:  (5.01, 1.9)  vs. Predict params:  [[5.6228 1.155 ]]\
+Expected params:  (19.95, 0.1)  vs. Predict params:  [[2.2991 1.085 ]]\
+Expected params:  (19.95, 0.4)  vs. Predict params:  [[13.1567  0.7   ]]\
+Expected params:  (19.95, 0.7)  vs. Predict params:  [[28.8798  0.735 ]]\
+Expected params:  (19.95, 1.0)  vs. Predict params:  [[30.6094  1.225 ]]\
+Expected params:  (19.95, 1.3)  vs. Predict params:  [[33.7418  1.27  ]]\
+Expected params:  (19.95, 1.6)  vs. Predict params:  [[33.777  1.525]]\
+Expected params:  (19.95, 1.9)  vs. Predict params:  [[32.9122  1.55  ]]\
+Expected params:  (79.43, 0.1)  vs. Predict params:  [[2.8998 1.07  ]]\
+Expected params:  (79.43, 0.4)  vs. Predict params:  [[49.0408  0.655 ]]\
+Expected params:  (79.43, 0.7)  vs. Predict params:  [[73.8698  0.79  ]]\
+Expected params:  (79.43, 1.0)  vs. Predict params:  [[92.9458  1.165 ]]\
+Expected params:  (79.43, 1.3)  vs. Predict params:  [[94.5296  1.39  ]]\
+Expected params:  (79.43, 1.6)  vs. Predict params:  [[91.7944  1.52  ]]\
+Expected params:  (79.43, 1.9)  vs. Predict params:  [[85.6402  1.655 ]]\
+R2 no noise:  0.4864500399296593\
+\
+\
+Expected params:  (0.02, 0.1)  vs. Predict params:  [[62.5622  1.53  ]]\
+Expected params:  (0.02, 0.4)  vs. Predict params:  [[65.1966  1.7   ]]\
+Expected params:  (0.02, 0.7)  vs. Predict params:  [[63.1472  1.585 ]]\
+Expected params:  (0.02, 1.0)  vs. Predict params:  [[55.9595  1.465 ]]\
+Expected params:  (0.02, 1.3)  vs. Predict params:  [[61.6984  1.57  ]]\
+Expected params:  (0.02, 1.6)  vs. Predict params:  [[32.6809  1.625 ]]\
+Expected params:  (0.02, 1.9)  vs. Predict params:  [[80.5093  1.46  ]]\
+Expected params:  (0.08, 0.1)  vs. Predict params:  [[43.0511  0.715 ]]\
+Expected params:  (0.08, 0.4)  vs. Predict params:  [[38.0322  1.21  ]]\
+Expected params:  (0.08, 0.7)  vs. Predict params:  [[43.2104  1.22  ]]\
+Expected params:  (0.08, 1.0)  vs. Predict params:  [[35.5177  1.1   ]]\
+Expected params:  (0.08, 1.3)  vs. Predict params:  [[9.3956 1.525 ]]\
+Expected params:  (0.08, 1.6)  vs. Predict params:  [[25.1619  1.385 ]]\
+Expected params:  (0.08, 1.9)  vs. Predict params:  [[39.1056  1.155 ]]\
+Expected params:  (0.32, 0.1)  vs. Predict params:  [[31.8571  0.735 ]]\
+Expected params:  (0.32, 0.4)  vs. Predict params:  [[1.0251 0.78  ]]\
+Expected params:  (0.32, 0.7)  vs. Predict params:  [[7.8841 0.94  ]]\
+Expected params:  (0.32, 1.0)  vs. Predict params:  [[3.2962 1.07  ]]\
+Expected params:  (0.32, 1.3)  vs. Predict params:  [[0.8176 1.065 ]]\
+Expected params:  (0.32, 1.6)  vs. Predict params:  [[8.0601 1.13  ]]\
+Expected params:  (0.32, 1.9)  vs. Predict params:  [[5.855 1.365]]\
+Expected params:  (1.26, 0.1)  vs. Predict params:  [[1.8284 1.29  ]]\
+Expected params:  (1.26, 0.4)  vs. Predict params:  [[1.1908 1.18  ]]\
+Expected params:  (1.26, 0.7)  vs. Predict params:  [[1.7342 1.31  ]]\
+Expected params:  (1.26, 1.0)  vs. Predict params:  [[0.7031 1.385 ]]\
+Expected params:  (1.26, 1.3)  vs. Predict params:  [[2.5895 1.225 ]]\
+Expected params:  (1.26, 1.6)  vs. Predict params:  [[3.5195 1.35  ]]\
+Expected params:  (1.26, 1.9)  vs. Predict params:  [[0.6254 1.28  ]]\
+Expected params:  (5.01, 0.1)  vs. Predict params:  [[2.6319 1.05  ]]\
+Expected params:  (5.01, 0.4)  vs. Predict params:  [[10.8899  1.15  ]]\
+Expected params:  (5.01, 0.7)  vs. Predict params:  [[9.7269 1.28  ]]\
+Expected params:  (5.01, 1.0)  vs. Predict params:  [[8.6911 1.025 ]]\
+Expected params:  (5.01, 1.3)  vs. Predict params:  [[5.4282 1.055 ]]\
+Expected params:  (5.01, 1.6)  vs. Predict params:  [[7.9715 1.17  ]]\
+Expected params:  (5.01, 1.9)  vs. Predict params:  [[5.5938 1.295 ]]\
+Expected params:  (19.95, 0.1)  vs. Predict params:  [[3.4309 1.155 ]]\
+Expected params:  (19.95, 0.4)  vs. Predict params:  [[20.645  0.95 ]]\
+Expected params:  (19.95, 0.7)  vs. Predict params:  [[26.5126  0.975 ]]\
+Expected params:  (19.95, 1.0)  vs. Predict params:  [[34.1762  1.17  ]]\
+Expected params:  (19.95, 1.3)  vs. Predict params:  [[32.1932  1.225 ]]\
+Expected params:  (19.95, 1.6)  vs. Predict params:  [[34.3924  1.375 ]]\
+Expected params:  (19.95, 1.9)  vs. Predict params:  [[31.9086  1.5   ]]\
+Expected params:  (79.43, 0.1)  vs. Predict params:  [[28.0933  1.035 ]]\
+Expected params:  (79.43, 0.4)  vs. Predict params:  [[41.8827  0.85  ]]\
+Expected params:  (79.43, 0.7)  vs. Predict params:  [[58.1424  1.095 ]]\
+Expected params:  (79.43, 1.0)  vs. Predict params:  [[92.9458  1.305 ]]\
+Expected params:  (79.43, 1.3)  vs. Predict params:  [[89.5268  1.4   ]]\
+Expected params:  (79.43, 1.6)  vs. Predict params:  [[77.9022  1.49  ]]\
+Expected params:  (79.43, 1.9)  vs. Predict params:  [[85.6402  1.665 ]]\
+R2 test theta=100:  -0.06319923484064027\
+\
+\
+Expected params:  (0.02, 0.1)  vs. Predict params:  [[2.3993 1.47  ]]\
+Expected params:  (0.02, 0.4)  vs. Predict params:  [[8.6084 1.14  ]]\
+Expected params:  (0.02, 0.7)  vs. Predict params:  [[3.9256 1.305 ]]\
+Expected params:  (0.02, 1.0)  vs. Predict params:  [[8.5706 1.25  ]]\
+Expected params:  (0.02, 1.3)  vs. Predict params:  [[19.4611  1.065 ]]\
+Expected params:  (0.02, 1.6)  vs. Predict params:  [[38.3728  1.205 ]]\
+Expected params:  (0.02, 1.9)  vs. Predict params:  [[5.7173 1.35  ]]\
+Expected params:  (0.08, 0.1)  vs. Predict params:  [[32.1653  0.735 ]]\
+Expected params:  (0.08, 0.4)  vs. Predict params:  [[1.5855 1.1   ]]\
+Expected params:  (0.08, 0.7)  vs. Predict params:  [[0.9383 1.33  ]]\
+Expected params:  (0.08, 1.0)  vs. Predict params:  [[0.9145 1.35  ]]\
+Expected params:  (0.08, 1.3)  vs. Predict params:  [[1.0006 1.235 ]]\
+Expected params:  (0.08, 1.6)  vs. Predict params:  [[1.8374 1.135 ]]\
+Expected params:  (0.08, 1.9)  vs. Predict params:  [[2.1297 1.285 ]]\
+Expected params:  (0.32, 0.1)  vs. Predict params:  [[0.968 0.74 ]]\
+Expected params:  (0.32, 0.4)  vs. Predict params:  [[2.2605 0.805 ]]\
+Expected params:  (0.32, 0.7)  vs. Predict params:  [[0.2752 1.13  ]]\
+Expected params:  (0.32, 1.0)  vs. Predict params:  [[0.3604 1.04  ]]\
+Expected params:  (0.32, 1.3)  vs. Predict params:  [[0.7369 1.29  ]]\
+Expected params:  (0.32, 1.6)  vs. Predict params:  [[0.4294 1.18  ]]\
+Expected params:  (0.32, 1.9)  vs. Predict params:  [[0.7394 1.32  ]]\
+Expected params:  (1.26, 0.1)  vs. Predict params:  [[0.4893 1.18  ]]\
+Expected params:  (1.26, 0.4)  vs. Predict params:  [[0.5478 1.335 ]]\
+Expected params:  (1.26, 0.7)  vs. Predict params:  [[0.589 1.455]]\
+Expected params:  (1.26, 1.0)  vs. Predict params:  [[0.5876 1.38  ]]\
+Expected params:  (1.26, 1.3)  vs. Predict params:  [[0.5323 1.495 ]]\
+Expected params:  (1.26, 1.6)  vs. Predict params:  [[0.6761 1.475 ]]\
+Expected params:  (1.26, 1.9)  vs. Predict params:  [[0.446 1.43 ]]\
+Expected params:  (5.01, 0.1)  vs. Predict params:  [[2.0292 1.155 ]]\
+Expected params:  (5.01, 0.4)  vs. Predict params:  [[6.9654 0.91  ]]\
+Expected params:  (5.01, 0.7)  vs. Predict params:  [[8.985 0.95 ]]\
+Expected params:  (5.01, 1.0)  vs. Predict params:  [[5.6334 1.03  ]]\
+Expected params:  (5.01, 1.3)  vs. Predict params:  [[5.7018 1.06  ]]\
+Expected params:  (5.01, 1.6)  vs. Predict params:  [[5.565 1.08 ]]\
+Expected params:  (5.01, 1.9)  vs. Predict params:  [[5.5328 1.185 ]]\
+Expected params:  (19.95, 0.1)  vs. Predict params:  [[2.7906 1.095 ]]\
+Expected params:  (19.95, 0.4)  vs. Predict params:  [[13.7453  0.68  ]]\
+Expected params:  (19.95, 0.7)  vs. Predict params:  [[29.0628  0.795 ]]\
+Expected params:  (19.95, 1.0)  vs. Predict params:  [[29.3122  1.17  ]]\
+Expected params:  (19.95, 1.3)  vs. Predict params:  [[33.3094  1.43  ]]\
+Expected params:  (19.95, 1.6)  vs. Predict params:  [[33.3446  1.495 ]]\
+Expected params:  (19.95, 1.9)  vs. Predict params:  [[32.9474  1.6   ]]\
+Expected params:  (79.43, 0.1)  vs. Predict params:  [[3.0789 1.095 ]]\
+Expected params:  (79.43, 0.4)  vs. Predict params:  [[48.8024  0.645 ]]\
+Expected params:  (79.43, 0.7)  vs. Predict params:  [[74.086  0.79 ]]\
+Expected params:  (79.43, 1.0)  vs. Predict params:  [[93.6296  1.14  ]]\
+Expected params:  (79.43, 1.3)  vs. Predict params:  [[93.8458  1.43  ]]\
+Expected params:  (79.43, 1.6)  vs. Predict params:  [[91.7944  1.575 ]]\
+Expected params:  (79.43, 1.9)  vs. Predict params:  [[85.6402  1.615 ]]\
+R2 test theta=1000:  0.4320430133709492\
+\
+\
+Expected params:  (0.02, 0.1)  vs. Predict params:  [[1.1413 1.02  ]]\
+Expected params:  (0.02, 0.4)  vs. Predict params:  [[0.8146 1.335 ]]\
+Expected params:  (0.02, 0.7)  vs. Predict params:  [[0.4189 0.97  ]]\
+Expected params:  (0.02, 1.0)  vs. Predict params:  [[0.7618 1.285 ]]\
+Expected params:  (0.02, 1.3)  vs. Predict params:  [[0.7385 1.25  ]]\
+Expected params:  (0.02, 1.6)  vs. Predict params:  [[0.3448 1.235 ]]\
+Expected params:  (0.02, 1.9)  vs. Predict params:  [[1.0578 1.345 ]]\
+Expected params:  (0.08, 0.1)  vs. Predict params:  [[32.1745  0.765 ]]\
+Expected params:  (0.08, 0.4)  vs. Predict params:  [[0.3293 0.945 ]]\
+Expected params:  (0.08, 0.7)  vs. Predict params:  [[0.4472 1.28  ]]\
+Expected params:  (0.08, 1.0)  vs. Predict params:  [[0.4498 1.465 ]]\
+Expected params:  (0.08, 1.3)  vs. Predict params:  [[0.5097 1.435 ]]\
+Expected params:  (0.08, 1.6)  vs. Predict params:  [[0.2693 1.185 ]]\
+Expected params:  (0.08, 1.9)  vs. Predict params:  [[0.5382 1.245 ]]\
+Expected params:  (0.32, 0.1)  vs. Predict params:  [[0.2917 0.83  ]]\
+Expected params:  (0.32, 0.4)  vs. Predict params:  [[1.3482 0.755 ]]\
+Expected params:  (0.32, 0.7)  vs. Predict params:  [[0.3058 0.765 ]]\
+Expected params:  (0.32, 1.0)  vs. Predict params:  [[0.2496 1.09  ]]\
+Expected params:  (0.32, 1.3)  vs. Predict params:  [[0.5089 1.235 ]]\
+Expected params:  (0.32, 1.6)  vs. Predict params:  [[0.2647 1.4   ]]\
+Expected params:  (0.32, 1.9)  vs. Predict params:  [[0.6392 1.43  ]]\
+Expected params:  (1.26, 0.1)  vs. Predict params:  [[0.7252 1.355 ]]\
+Expected params:  (1.26, 0.4)  vs. Predict params:  [[0.5692 1.4   ]]\
+Expected params:  (1.26, 0.7)  vs. Predict params:  [[0.5851 1.48  ]]\
+Expected params:  (1.26, 1.0)  vs. Predict params:  [[0.5609 1.44  ]]\
+Expected params:  (1.26, 1.3)  vs. Predict params:  [[0.5938 1.34  ]]\
+Expected params:  (1.26, 1.6)  vs. Predict params:  [[0.5845 1.49  ]]\
+Expected params:  (1.26, 1.9)  vs. Predict params:  [[0.6322 1.365 ]]\
+Expected params:  (5.01, 0.1)  vs. Predict params:  [[1.8532 1.135 ]]\
+Expected params:  (5.01, 0.4)  vs. Predict params:  [[6.123 0.91 ]]\
+Expected params:  (5.01, 0.7)  vs. Predict params:  [[7.264 0.965]]\
+Expected params:  (5.01, 1.0)  vs. Predict params:  [[6.3064 1.06  ]]\
+Expected params:  (5.01, 1.3)  vs. Predict params:  [[6.271 1.1  ]]\
+Expected params:  (5.01, 1.6)  vs. Predict params:  [[5.8496 1.135 ]]\
+Expected params:  (5.01, 1.9)  vs. Predict params:  [[5.5076 1.155 ]]\
+Expected params:  (19.95, 0.1)  vs. Predict params:  [[2.1778 1.09  ]]\
+Expected params:  (19.95, 0.4)  vs. Predict params:  [[13.3241  0.685 ]]\
+Expected params:  (19.95, 0.7)  vs. Predict params:  [[28.8798  0.815 ]]\
+Expected params:  (19.95, 1.0)  vs. Predict params:  [[29.9608  1.195 ]]\
+Expected params:  (19.95, 1.3)  vs. Predict params:  [[33.958  1.26 ]]\
+Expected params:  (19.95, 1.6)  vs. Predict params:  [[33.777  1.505]]\
+Expected params:  (19.95, 1.9)  vs. Predict params:  [[33.8122  1.58  ]]\
+Expected params:  (79.43, 0.1)  vs. Predict params:  [[2.9771 1.05  ]]\
+Expected params:  (79.43, 0.4)  vs. Predict params:  [[48.904  0.63 ]]\
+Expected params:  (79.43, 0.7)  vs. Predict params:  [[73.8698  0.79  ]]\
+Expected params:  (79.43, 1.0)  vs. Predict params:  [[92.262  1.165]]\
+Expected params:  (79.43, 1.3)  vs. Predict params:  [[94.5296  1.35  ]]\
+Expected params:  (79.43, 1.6)  vs. Predict params:  [[91.7944  1.54  ]]\
+Expected params:  (79.43, 1.9)  vs. Predict params:  [[86.324  1.65 ]]\
+R2 test theta=10000:  0.4882789684475456\
+\
+\
+Expected params:  (0.01, 0.5)  vs. Predict params:  [[0.6708 1.39  ]]\
+Expected params:  (0.01, 1.0)  vs. Predict params:  [[0.6708 1.39  ]]\
+Expected params:  (0.01, 1.5)  vs. Predict params:  [[0.6708 1.39  ]]\
+Expected params:  (0.01, 2.0)  vs. Predict params:  [[0.6708 1.39  ]]\
+Expected params:  (0.03, 0.5)  vs. Predict params:  [[0.6708 1.39  ]]\
+Expected params:  (0.03, 1.0)  vs. Predict params:  [[0.6708 1.39  ]]\
+Expected params:  (0.03, 1.5)  vs. Predict params:  [[0.6708 1.39  ]]\
+Expected params:  (0.03, 2.0)  vs. Predict params:  [[0.6708 1.39  ]]\
+Expected params:  (0.1, 0.5)  vs. Predict params:  [[0.4018 1.38  ]]\
+Expected params:  (0.1, 1.0)  vs. Predict params:  [[0.6708 1.39  ]]\
+Expected params:  (0.1, 1.5)  vs. Predict params:  [[0.6708 1.39  ]]\
+Expected params:  (0.1, 2.0)  vs. Predict params:  [[0.6708 1.39  ]]\
+Expected params:  (0.32, 0.5)  vs. Predict params:  [[0.7626 0.715 ]]\
+Expected params:  (0.32, 1.0)  vs. Predict params:  [[0.3323 1.095 ]]\
+Expected params:  (0.32, 1.5)  vs. Predict params:  [[0.5855 1.425 ]]\
+Expected params:  (0.32, 2.0)  vs. Predict params:  [[0.648 1.43 ]]\
+Expected params:  (1.0, 0.5)  vs. Predict params:  [[0.6708 1.39  ]]\
+Expected params:  (1.0, 1.0)  vs. Predict params:  [[0.6708 1.39  ]]\
+Expected params:  (1.0, 1.5)  vs. Predict params:  [[0.6708 1.39  ]]\
+Expected params:  (1.0, 2.0)  vs. Predict params:  [[0.6708 1.39  ]]\
+Expected params:  (3.16, 0.5)  vs. Predict params:  [[2.9226 0.855 ]]\
+Expected params:  (3.16, 1.0)  vs. Predict params:  [[3.1784 1.105 ]]\
+Expected params:  (3.16, 1.5)  vs. Predict params:  [[3.2407 1.445 ]]\
+Expected params:  (3.16, 2.0)  vs. Predict params:  [[3.1876 1.625 ]]\
+Expected params:  (10.0, 0.5)  vs. Predict params:  [[9.7281 0.74  ]]\
+Expected params:  (10.0, 1.0)  vs. Predict params:  [[11.5928  1.05  ]]\
+Expected params:  (10.0, 1.5)  vs. Predict params:  [[11.081  1.495]]\
+Expected params:  (10.0, 2.0)  vs. Predict params:  [[12.4354  1.71  ]]\
+Expected params:  (31.62, 0.5)  vs. Predict params:  [[37.4826  0.595 ]]\
+Expected params:  (31.62, 1.0)  vs. Predict params:  [[36.2608  1.13  ]]\
+Expected params:  (31.62, 1.5)  vs. Predict params:  [[36.1904  1.57  ]]\
+Expected params:  (31.62, 2.0)  vs. Predict params:  [[37.558  1.755]]\
+Expected params:  (100.0, 0.5)  vs. Predict params:  [[56.1262  0.615 ]]\
+Expected params:  (100.0, 1.0)  vs. Predict params:  [[93.6296  1.155 ]]\
+Expected params:  (100.0, 1.5)  vs. Predict params:  [[95.2134  1.525 ]]\
+Expected params:  (100.0, 2.0)  vs. Predict params:  [[99.3162  1.755 ]]\
+R2 no theta same train params:  0.6899255712816045}
