@@ -142,7 +142,7 @@ list_train_dict = make_list_dicts(train_params, theta_list)
 list_test_dict = make_list_dicts(test_params, theta_list)
 
 # open a text file to record experiment results
-sys.stdout = open('ml-dadi/results/1d-2epoch.txt', 'a')
+sys.stdout = open('results/1d-2epoch.txt', 'a')
 # print header to visually seperate each run
 print('*'*70, '\n')
 # print the date and time of run
