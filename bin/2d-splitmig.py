@@ -11,10 +11,14 @@ import numpy as np
 import random
 
 def make_list_dicts(params_list, theta_list):
-    '''Returns a list of dictionaries, each dictionary in the list has structure params:fs with expected fs for the 2D-splitmig model and corresponds with each theta value specified by user. 
-    Useful for creating many variation of training and testing data sets from the same set of parameter values by scaling with different thetas.
+    '''Returns a list of dictionaries, each dictionary in the list has structure 
+    params:fs with expected fs for the 2D-splitmig model and corresponds with each 
+    theta value specified by user. 
+    Useful for creating many variations of training and testing data sets from the same 
+    set of parameter values by scaling with different thetas.
     Input: a list of parameters from which to generate fs; a list specifying theta values.
-    NOTES: theta =! 1 && <=150 can sometimes lead to NaN errors so recommend increasing theta=100 to 150+ (>=200 works so far)
+    NOTES: theta =! 1 && <=150 can sometimes lead to NaN errors so recommend increasing 
+    theta=100 to 150+ (>=200 works so far)
     Require library: dadi
     '''
     # use the 2D-split-migration model function from dadi
@@ -23,13 +27,11 @@ def make_list_dicts(params_list, theta_list):
     # specify sample size and extrapolation grid
     ns = [20,20]
     pts_l = [40, 50, 60]
-    # specify list of theta values and initialize output list of dictionaries
-    list_theta = theta_list
+    # initialize output list of dictionaries
     list_dicts = []
     # populate fs values into each dictionary of the list of dictionaries
-    for i in range(len(list_theta)):
+    for theta in theta_list:
         data_dict = {}
-        theta = list_theta[i]
         # generate data sets by looping through list of
         # parameters and generate corresponding fs
         # then one finish the whole list save as a dictionary
@@ -57,10 +59,15 @@ def make_list_dicts(params_list, theta_list):
     return list_dicts
 
 def rfr_train(train_dict, list_test_dict):
-    '''Trains a RandomForestRegressor algorithm and tests its performance. Returns a list of R2 scores from testing the specified training data set with the specified list of testing data sets. Also print R2 score fit for the training data, all inferred parameter values for each testing data set, and R2 score for that test set.
-    The R2 scores list can be used to calculate average scores when running multiple replicate experiments on the same training and testing conditions.
+    '''Trains a RandomForestRegressor algorithm and tests its performance. 
+    Returns a list of R2 scores from testing the specified training data set 
+    with the specified list of testing data sets. Also print R2 score fit for 
+    the training data, all inferred parameter values for each testing data set, 
+    and R2 score for that test set.
+    The R2 scores list can be used to calculate average scores when running 
+    multiple replicate experiments on the same training and testing conditions.
     Input: one dictionary of training set; a list of testing set dictionaries
-    Require library: Scikit learn ensemble random forest regressor
+    Require library: Scikit learn ensemble random forest regressor.
     '''
     X, y = [], []
     for params in train_dict:
@@ -113,10 +120,11 @@ for i in range(50):
     params = (round(nu, 2), round(1-nu,2), round(T, 1), round(m, 1))
     test_params.append(params)
 
-# choose list of theta values to run scaling and add variance
+# generate a list of theta values to run scaling and add variance
 theta_list = [1]
 
-# Use function to make lists of dictionaries storing different training and testing data sets from lists of parameters
+# Use function to make lists of dictionaries storing different training and 
+# testing data sets from lists of parameters
 list_train_dict = make_list_dicts(train_params, theta_list)
 list_test_dict = make_list_dicts(test_params, theta_list)
 
@@ -182,7 +190,8 @@ for i in range(len(list_train_dict)):
     # into a np array so we can easily calculate the means of the same test
     # for each training set by columns
     mean_scores = np.mean(np.array(rep_score_list), axis=0)
-    # mean_scores is a list of test scores for 1 training set against many test sets, averaged over all replicates for that training set
+    # mean_scores is a list of test scores for 1 training set against many test sets, 
+    # averaged over all replicates for that training set
     # print out results
     print ('Average test scores for TRAINING set #', i+1,':')
     for j in range(len(mean_scores)):
