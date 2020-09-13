@@ -1,18 +1,5 @@
-### DATE UPDATED: 09/12/2020
-### LINH TRAN, CONNIE SUN
-
-### This program provide functions to make training and testing data for 
-### the RFR algorithm with the 1D, 2Epoch model, from a user-provide list of
-### parameters, and to train and ### test the RFR algorithm on those data sets.
-### Output is saved into a text file including the inferred parameter values
-### and the avarage R2 scores to determine how the algorithm performs
-### with different training and testing data sets.
-
-### User guide: user may want to customize: 
-### List of theta values: theta_list, 
-### Number of experimental replicates: num_rep,
-### Parameter values for testing and training: train_params and test_params   
-### and local output directory and file name: path/to/file/output.txt
+### DRAFT scripts for testing RFR on 2D-split-migration model
+### DATE: 09/12/2020
 
 import os
 import sys
@@ -24,18 +11,17 @@ import numpy as np
 import random
 
 def make_list_dicts(params_list, theta_list):
-    '''Returns a list of dictionaries, each dictionary in the list has structure params:fs with expected fs for the 1D-2epoch model and corresponds with each theta value specified by user. 
+    '''Returns a list of dictionaries, each dictionary in the list has structure params:fs with expected fs for the 2D-splitmig model and corresponds with each theta value specified by user. 
     Useful for creating many variation of training and testing data sets from the same set of parameter values by scaling with different thetas.
     Input: a list of parameters from which to generate fs; a list specifying theta values.
     NOTES: theta =! 1 && <=150 can sometimes lead to NaN errors so recommend increasing theta=100 to 150+ (>=200 works so far)
     Require library: dadi
     '''
-    # use the 1D-2epoch model function from dadi
-    func = dadi.Demographics1D.two_epoch
-    # make the extrapolated version of our demographic model function.
+    # use the 2D-split-migration model function from dadi
+    func = dadi.Demographics2D.split_mig
     func_ex = dadi.Numerics.make_extrap_func(func)
     # specify sample size and extrapolation grid
-    ns = [20]
+    ns = [20,20]
     pts_l = [40, 50, 60]
     # specify list of theta values and initialize output list of dictionaries
     list_theta = theta_list
@@ -79,7 +65,8 @@ def rfr_train(train_dict, list_test_dict):
     X, y = [], []
     for params in train_dict:
         y.append(params)
-        X.append(train_dict[params].data)
+        temp = train_dict[params].data 
+        X.append(temp.flatten())
     # Fit regression model
     rfr = RandomForestRegressor()
     rfr = rfr.fit(X, y)
@@ -92,10 +79,11 @@ def rfr_train(train_dict, list_test_dict):
         X_test, y_test = [], []
         for params in test_dict:
             input = test_dict[params].data
+            flat_input = input.flatten()
             print('Expected params: ', str(params), 
-                ' vs. Predict params: ', str(rfr.predict([input])))
+                ' vs. Predict params: ', str(rfr.predict([flat_input])))
             y_test.append(params)
-            X_test.append(test_dict[params].data)
+            X_test.append(flat_input)
         print('R2 score with test data: ', rfr.score(X_test, y_test), '\n')
         score_list.append(rfr.score(X_test, y_test))
         count += 1
@@ -103,51 +91,54 @@ def rfr_train(train_dict, list_test_dict):
 
 # generate parameter list for training
 train_params = []
-# step arg (3rd) in np.arrange determine how dense or sparse the training data
-# change nu from 10e-2 to 10e2, increment e by 0.2
-for nu in [10**i for i in np.arange(-2, 2.1, 0.2)]:
+# TO DO: think of some better way to vary nu1 and nu2
+# Currently limited to small range of parameters so that the training set
+# doesn't get too large.
+for nu in [10**i for i in np.arange(-1, 0, 0.2)]:
     # change T from 0.1 to 2, increment by 0.1
-    for T in np.arange(0.1, 2.1, 0.1):
+    for T in np.arange(0.1, 2.1, 0.2):
+        for m in range(0, 10, 1):
         # params tuple for this spectrum
-        params = (round(nu, 2), round(T, 1))
-        train_params.append(params)
-# print('n_samples training: ', len(train_params))
+            params = (round(nu, 2), round(1-nu, 2), round(T, 1), round(m, 1))
+            train_params.append(params)
 
 # generate parameter list for testing
 test_params = []
-# range(#) dictate how many random values are in each test set
-for i in range(100):
+# range(#) dictate how many values are in each test set
+for i in range(50):
 # generate random nu and T within the same range as training data range
-    nu = 10 ** (random.random() * 4 - 2)
+    nu = 10 ** (random.random() - 1)
     T = random.random() * 1.9 + 0.1
-    params = (round(nu, ndigits=2), round(T, ndigits=1))
+    m = random.random() * 9.9 + 0.1
+    params = (round(nu, 2), round(1-nu,2), round(T, 1), round(m, 1))
     test_params.append(params)
-# print('n_samples testing: ', len(test_params))
 
 # choose list of theta values to run scaling and add variance
-theta_list = [1, 200, 1000, 10000]
+theta_list = [1]
 
 # Use function to make lists of dictionaries storing different training and testing data sets from lists of parameters
 list_train_dict = make_list_dicts(train_params, theta_list)
 list_test_dict = make_list_dicts(test_params, theta_list)
 
 # open a text file to record experiment results
-sys.stdout = open('ml-dadi/results/1d-2epoch.txt', 'a')
+sys.stdout = open('results/2d-split-mig.txt', 'a')
 # print header to visually seperate each run
 print('*'*70, '\n')
 # print the date and time of run
 print('EXPERIMENT DATE: ', time.asctime(time.localtime(time.time())))
-# print guide key to intepret the numbers for training and testing cases
-print(
-'''
-Keys for Training/Testing #:
-# 1 : no noise
-# 2 : theta = 100+
-# 3 : theta = 1,000 
-# 4 : theta = 10,000
-'''
-    )
-print('Theta = 100 in this run is replaced by theta =', str(theta_list[1]))
+# # print guide key to intepret the numbers for training and testing cases
+# print(
+# '''
+# Keys for Training/Testing #:
+# # 1 : no noise
+# # 2 : theta = 100+
+# # 3 : theta = 1,000 
+# # 4 : theta = 10,000
+# '''
+#     )
+# print('Theta = 100 in this run is replaced by theta =', str(theta_list[1]))
+print('n_samples training: ', len(train_params))
+print('n_samples testing: ', len(test_params))
 
 # Assign number of replicates to be run
 num_rep = 3

@@ -1,0 +1,250 @@
+********************************************************************** 
+
+EXPERIMENT DATE:  Sat Sep 12 16:44:23 2020
+Number of replicates in this run: 3 
+
+-------------------- REPLICATE # 1 --------------------
+TRAINING SET # 1
+R2 score with train data:  0.9759017675226922 
+
+TEST CASE #  1
+Expected params:  (0.32, 0.68, 0.6, 1.3)  vs. Predict params:  [[0.3001 0.6999 0.394  1.22  ]]
+Expected params:  (0.45, 0.55, 0.8, 2.2)  vs. Predict params:  [[0.4806 0.5194 0.388  1.7   ]]
+Expected params:  (0.59, 0.41, 0.5, 1.2)  vs. Predict params:  [[0.543 0.457 0.446 1.1  ]]
+Expected params:  (0.1, 0.9, 0.3, 4.7)  vs. Predict params:  [[0.1399 0.8601 0.598  3.97  ]]
+Expected params:  (0.3, 0.7, 0.1, 1.0)  vs. Predict params:  [[0.3139 0.6861 0.154  1.23  ]]
+Expected params:  (0.16, 0.84, 0.5, 4.1)  vs. Predict params:  [[0.169 0.831 0.618 4.   ]]
+Expected params:  (0.22, 0.78, 0.7, 2.6)  vs. Predict params:  [[0.197 0.803 0.46  2.9  ]]
+Expected params:  (0.3, 0.7, 1.0, 1.2)  vs. Predict params:  [[0.2694 0.7306 0.454  1.16  ]]
+Expected params:  (0.11, 0.89, 0.4, 4.2)  vs. Predict params:  [[0.1239 0.8761 0.608  4.    ]]
+Expected params:  (0.3, 0.7, 0.8, 3.4)  vs. Predict params:  [[0.2588 0.7412 0.37   3.88  ]]
+R2 score with test data:  0.6091745173945389 
+
+-------------------- REPLICATE # 2 --------------------
+TRAINING SET # 1
+R2 score with train data:  0.9771700823334073 
+
+TEST CASE #  1
+Expected params:  (0.32, 0.68, 0.6, 1.3)  vs. Predict params:  [[0.3002 0.6998 0.372  1.13  ]]
+Expected params:  (0.45, 0.55, 0.8, 2.2)  vs. Predict params:  [[0.434 0.566 0.36  1.67 ]]
+Expected params:  (0.59, 0.41, 0.5, 1.2)  vs. Predict params:  [[0.5565 0.4435 0.388  1.09  ]]
+Expected params:  (0.1, 0.9, 0.3, 4.7)  vs. Predict params:  [[0.138 0.862 0.598 3.99 ]]
+Expected params:  (0.3, 0.7, 0.1, 1.0)  vs. Predict params:  [[0.3273 0.6727 0.146  1.15  ]]
+Expected params:  (0.16, 0.84, 0.5, 4.1)  vs. Predict params:  [[0.166 0.834 0.628 4.   ]]
+Expected params:  (0.22, 0.78, 0.7, 2.6)  vs. Predict params:  [[0.1971 0.8029 0.45   2.84  ]]
+Expected params:  (0.3, 0.7, 1.0, 1.2)  vs. Predict params:  [[0.2833 0.7167 0.416  1.08  ]]
+Expected params:  (0.11, 0.89, 0.4, 4.2)  vs. Predict params:  [[0.1243 0.8757 0.63   4.    ]]
+Expected params:  (0.3, 0.7, 0.8, 3.4)  vs. Predict params:  [[0.2427 0.7573 0.4    3.85  ]]
+R2 score with test data:  0.5808953783898091 
+
+-------------------- REPLICATE # 3 --------------------
+TRAINING SET # 1
+R2 score with train data:  0.9739430610803632 
+
+TEST CASE #  1
+Expected params:  (0.32, 0.68, 0.6, 1.3)  vs. Predict params:  [[0.3379 0.6621 0.408  1.12  ]]
+Expected params:  (0.45, 0.55, 0.8, 2.2)  vs. Predict params:  [[0.4542 0.5458 0.394  1.81  ]]
+Expected params:  (0.59, 0.41, 0.5, 1.2)  vs. Predict params:  [[0.5549 0.4451 0.398  0.99  ]]
+Expected params:  (0.1, 0.9, 0.3, 4.7)  vs. Predict params:  [[0.1405 0.8595 0.628  4.    ]]
+Expected params:  (0.3, 0.7, 0.1, 1.0)  vs. Predict params:  [[0.3104 0.6896 0.182  1.4   ]]
+Expected params:  (0.16, 0.84, 0.5, 4.1)  vs. Predict params:  [[0.1708 0.8292 0.582  4.    ]]
+Expected params:  (0.22, 0.78, 0.7, 2.6)  vs. Predict params:  [[0.2017 0.7983 0.434  2.83  ]]
+Expected params:  (0.3, 0.7, 1.0, 1.2)  vs. Predict params:  [[0.2988 0.7012 0.44   1.07  ]]
+Expected params:  (0.11, 0.89, 0.4, 4.2)  vs. Predict params:  [[0.1279 0.8721 0.61   4.    ]]
+Expected params:  (0.3, 0.7, 0.8, 3.4)  vs. Predict params:  [[0.275 0.725 0.404 3.81 ]]
+R2 score with test data:  0.6143718907825992 
+
+Raw test scores list for TRAINING set # 1 : [[0.6091745173945389], [0.5808953783898091], [0.5808953783898091]] 
+
+Average test scores for TRAINING set # 1 :
+	 Average scores for test case # 1 : 0.59
+
+
+END OF RUN 
+
+********************************************************************** 
+
+EXPERIMENT DATE:  Sat Sep 12 17:07:23 2020
+n_samples training:  500
+n_samples testing:  50
+Number of replicates in this run: 3 
+
+-------------------- REPLICATE # 1 --------------------
+TRAINING SET # 1
+R2 score with train data:  0.9897648138272253 
+
+TEST CASE #  1
+Expected params:  (0.26, 0.74, 0.6, 6.7)  vs. Predict params:  [[0.2512 0.7488 0.598  6.99  ]]
+Expected params:  (0.16, 0.84, 0.8, 7.1)  vs. Predict params:  [[0.1624 0.8376 0.77   7.12  ]]
+Expected params:  (0.11, 0.89, 0.1, 2.8)  vs. Predict params:  [[0.2445 0.7555 0.484  1.9   ]]
+Expected params:  (0.12, 0.88, 0.4, 7.7)  vs. Predict params:  [[0.1368 0.8632 0.426  7.67  ]]
+Expected params:  (0.13, 0.87, 1.4, 0.9)  vs. Predict params:  [[0.1425 0.8575 1.478  0.99  ]]
+Expected params:  (0.11, 0.89, 0.5, 1.0)  vs. Predict params:  [[0.1   0.9   0.752 1.   ]]
+Expected params:  (0.35, 0.65, 2.0, 3.4)  vs. Predict params:  [[0.2877 0.7123 0.706  3.94  ]]
+Expected params:  (0.21, 0.79, 0.1, 2.7)  vs. Predict params:  [[0.2831 0.7169 0.952  2.97  ]]
+Expected params:  (0.48, 0.52, 1.8, 1.8)  vs. Predict params:  [[0.4617 0.5383 1.1    1.77  ]]
+Expected params:  (0.11, 0.89, 1.5, 9.3)  vs. Predict params:  [[0.1096 0.8904 1.58   8.96  ]]
+Expected params:  (0.69, 0.31, 0.5, 9.5)  vs. Predict params:  [[0.5847 0.4153 1.272  8.59  ]]
+Expected params:  (0.59, 0.41, 0.9, 9.4)  vs. Predict params:  [[0.5741 0.4259 1.288  8.99  ]]
+Expected params:  (0.35, 0.65, 1.5, 7.4)  vs. Predict params:  [[0.3305 0.6695 0.99   7.56  ]]
+Expected params:  (0.28, 0.72, 1.1, 7.0)  vs. Predict params:  [[0.2634 0.7366 1.288  7.02  ]]
+Expected params:  (0.75, 0.25, 1.2, 9.9)  vs. Predict params:  [[0.5928 0.4072 1.172  8.19  ]]
+Expected params:  (0.26, 0.74, 0.4, 4.5)  vs. Predict params:  [[0.2343 0.7657 0.418  4.95  ]]
+Expected params:  (0.98, 0.02, 1.3, 1.4)  vs. Predict params:  [[0.4559 0.5441 0.502  0.04  ]]
+Expected params:  (0.31, 0.69, 1.1, 4.3)  vs. Predict params:  [[0.2795 0.7205 0.58   4.89  ]]
+Expected params:  (0.38, 0.62, 2.0, 8.9)  vs. Predict params:  [[0.4115 0.5885 1.154  9.    ]]
+Expected params:  (0.13, 0.87, 1.5, 2.5)  vs. Predict params:  [[0.1401 0.8599 0.94   2.6   ]]
+Expected params:  (0.27, 0.73, 0.5, 8.0)  vs. Predict params:  [[0.261 0.739 0.784 8.02 ]]
+Expected params:  (0.13, 0.87, 1.9, 1.7)  vs. Predict params:  [[0.1263 0.8737 0.638  1.79  ]]
+Expected params:  (0.34, 0.66, 0.6, 0.6)  vs. Predict params:  [[0.269 0.731 1.338 0.99 ]]
+Expected params:  (0.14, 0.86, 1.6, 2.0)  vs. Predict params:  [[0.1486 0.8514 0.862  1.99  ]]
+Expected params:  (0.15, 0.85, 0.5, 3.7)  vs. Predict params:  [[0.1584 0.8416 0.648  3.99  ]]
+Expected params:  (0.4, 0.6, 0.8, 6.2)  vs. Predict params:  [[0.3745 0.6255 0.696  6.6   ]]
+Expected params:  (0.44, 0.56, 0.1, 3.8)  vs. Predict params:  [[0.4085 0.5915 0.6    4.73  ]]
+Expected params:  (0.4, 0.6, 1.4, 1.0)  vs. Predict params:  [[0.4008 0.5992 1.388  1.    ]]
+Expected params:  (0.51, 0.49, 0.4, 0.7)  vs. Predict params:  [[0.4555 0.5445 1.446  1.    ]]
+Expected params:  (0.3, 0.7, 0.1, 0.2)  vs. Predict params:  [[0.3491 0.6509 0.288  1.18  ]]
+Expected params:  (0.41, 0.59, 0.2, 0.4)  vs. Predict params:  [[0.3836 0.6164 0.338  0.99  ]]
+Expected params:  (0.68, 0.32, 0.9, 6.7)  vs. Predict params:  [[0.6109 0.3891 1.152  6.11  ]]
+Expected params:  (0.28, 0.72, 1.5, 2.8)  vs. Predict params:  [[0.2603 0.7397 0.91   3.    ]]
+Expected params:  (0.22, 0.78, 1.8, 0.4)  vs. Predict params:  [[0.2398 0.7602 1.302  0.91  ]]
+Expected params:  (0.11, 0.89, 1.8, 2.3)  vs. Predict params:  [[0.1429 0.8571 1.136  1.91  ]]
+Expected params:  (0.4, 0.6, 1.7, 10.0)  vs. Predict params:  [[0.415 0.585 1.338 9.   ]]
+Expected params:  (0.1, 0.9, 1.1, 4.0)  vs. Predict params:  [[0.1006 0.8994 1.142  4.01  ]]
+Expected params:  (0.12, 0.88, 0.4, 9.8)  vs. Predict params:  [[0.1695 0.8305 0.564  8.76  ]]
+Expected params:  (0.2, 0.8, 0.1, 0.9)  vs. Predict params:  [[0.2587 0.7413 0.334  1.33  ]]
+Expected params:  (0.57, 0.43, 1.5, 7.3)  vs. Predict params:  [[0.5241 0.4759 0.81   7.19  ]]
+Expected params:  (0.8, 0.2, 1.8, 4.2)  vs. Predict params:  [[0.5472 0.4528 0.598  2.85  ]]
+Expected params:  (0.45, 0.55, 1.9, 0.3)  vs. Predict params:  [[0.3269 0.6731 1.322  0.91  ]]
+Expected params:  (0.84, 0.16, 0.2, 9.1)  vs. Predict params:  [[0.5556 0.4444 1.01   5.08  ]]
+Expected params:  (0.66, 0.34, 0.7, 2.1)  vs. Predict params:  [[0.623 0.377 0.752 1.84 ]]
+Expected params:  (0.59, 0.41, 0.5, 6.7)  vs. Predict params:  [[0.6093 0.3907 0.62   6.87  ]]
+Expected params:  (0.14, 0.86, 0.3, 5.4)  vs. Predict params:  [[0.1455 0.8545 0.426  5.86  ]]
+Expected params:  (0.56, 0.44, 1.9, 6.1)  vs. Predict params:  [[0.5564 0.4436 0.888  5.92  ]]
+Expected params:  (0.13, 0.87, 1.7, 7.7)  vs. Predict params:  [[0.1323 0.8677 1.516  8.06  ]]
+Expected params:  (0.23, 0.77, 1.4, 7.4)  vs. Predict params:  [[0.2311 0.7689 1.082  7.4   ]]
+Expected params:  (0.71, 0.29, 0.3, 6.8)  vs. Predict params:  [[0.5963 0.4037 0.886  5.78  ]]
+R2 score with test data:  0.6748005180126602 
+
+-------------------- REPLICATE # 2 --------------------
+TRAINING SET # 1
+R2 score with train data:  0.9898691416031022 
+
+TEST CASE #  1
+Expected params:  (0.26, 0.74, 0.6, 6.7)  vs. Predict params:  [[0.2454 0.7546 0.646  7.01  ]]
+Expected params:  (0.16, 0.84, 0.8, 7.1)  vs. Predict params:  [[0.1677 0.8323 0.768  7.06  ]]
+Expected params:  (0.11, 0.89, 0.1, 2.8)  vs. Predict params:  [[0.2515 0.7485 0.532  1.92  ]]
+Expected params:  (0.12, 0.88, 0.4, 7.7)  vs. Predict params:  [[0.1265 0.8735 0.424  7.78  ]]
+Expected params:  (0.13, 0.87, 1.4, 0.9)  vs. Predict params:  [[0.1375 0.8625 1.426  1.    ]]
+Expected params:  (0.11, 0.89, 0.5, 1.0)  vs. Predict params:  [[0.1006 0.8994 0.652  1.    ]]
+Expected params:  (0.35, 0.65, 2.0, 3.4)  vs. Predict params:  [[0.2909 0.7091 0.588  3.86  ]]
+Expected params:  (0.21, 0.79, 0.1, 2.7)  vs. Predict params:  [[0.2673 0.7327 1.05   2.95  ]]
+Expected params:  (0.48, 0.52, 1.8, 1.8)  vs. Predict params:  [[0.4693 0.5307 1.256  1.87  ]]
+Expected params:  (0.11, 0.89, 1.5, 9.3)  vs. Predict params:  [[0.1108 0.8892 1.596  8.97  ]]
+Expected params:  (0.69, 0.31, 0.5, 9.5)  vs. Predict params:  [[0.5912 0.4088 1.192  8.64  ]]
+Expected params:  (0.59, 0.41, 0.9, 9.4)  vs. Predict params:  [[0.542 0.458 1.268 8.99 ]]
+Expected params:  (0.35, 0.65, 1.5, 7.4)  vs. Predict params:  [[0.2994 0.7006 0.808  7.69  ]]
+Expected params:  (0.28, 0.72, 1.1, 7.0)  vs. Predict params:  [[0.2577 0.7423 1.3    7.    ]]
+Expected params:  (0.75, 0.25, 1.2, 9.9)  vs. Predict params:  [[0.5741 0.4259 1.112  8.19  ]]
+Expected params:  (0.26, 0.74, 0.4, 4.5)  vs. Predict params:  [[0.2264 0.7736 0.42   4.99  ]]
+Expected params:  (0.98, 0.02, 1.3, 1.4)  vs. Predict params:  [[0.4122 0.5878 0.46   0.04  ]]
+Expected params:  (0.31, 0.69, 1.1, 4.3)  vs. Predict params:  [[0.2669 0.7331 0.614  4.92  ]]
+Expected params:  (0.38, 0.62, 2.0, 8.9)  vs. Predict params:  [[0.4169 0.5831 1.19   9.    ]]
+Expected params:  (0.13, 0.87, 1.5, 2.5)  vs. Predict params:  [[0.1393 0.8607 1.054  2.66  ]]
+Expected params:  (0.27, 0.73, 0.5, 8.0)  vs. Predict params:  [[0.2566 0.7434 0.764  8.04  ]]
+Expected params:  (0.13, 0.87, 1.9, 1.7)  vs. Predict params:  [[0.1243 0.8757 0.608  1.82  ]]
+Expected params:  (0.34, 0.66, 0.6, 0.6)  vs. Predict params:  [[0.269 0.731 1.248 0.99 ]]
+Expected params:  (0.14, 0.86, 1.6, 2.0)  vs. Predict params:  [[0.1414 0.8586 0.82   1.99  ]]
+Expected params:  (0.15, 0.85, 0.5, 3.7)  vs. Predict params:  [[0.1593 0.8407 0.602  4.    ]]
+Expected params:  (0.4, 0.6, 0.8, 6.2)  vs. Predict params:  [[0.3883 0.6117 0.596  6.59  ]]
+Expected params:  (0.44, 0.56, 0.1, 3.8)  vs. Predict params:  [[0.4229 0.5771 0.614  4.73  ]]
+Expected params:  (0.4, 0.6, 1.4, 1.0)  vs. Predict params:  [[0.3978 0.6022 1.4    1.    ]]
+Expected params:  (0.51, 0.49, 0.4, 0.7)  vs. Predict params:  [[0.4473 0.5527 1.404  1.    ]]
+Expected params:  (0.3, 0.7, 0.1, 0.2)  vs. Predict params:  [[0.3541 0.6459 0.308  1.2   ]]
+Expected params:  (0.41, 0.59, 0.2, 0.4)  vs. Predict params:  [[0.3925 0.6075 0.284  0.91  ]]
+Expected params:  (0.68, 0.32, 0.9, 6.7)  vs. Predict params:  [[0.6071 0.3929 0.85   6.09  ]]
+Expected params:  (0.28, 0.72, 1.5, 2.8)  vs. Predict params:  [[0.2505 0.7495 0.956  2.99  ]]
+Expected params:  (0.22, 0.78, 1.8, 0.4)  vs. Predict params:  [[0.2149 0.7851 1.342  0.93  ]]
+Expected params:  (0.11, 0.89, 1.8, 2.3)  vs. Predict params:  [[0.1504 0.8496 1.148  1.87  ]]
+Expected params:  (0.4, 0.6, 1.7, 10.0)  vs. Predict params:  [[0.3733 0.6267 1.28   9.    ]]
+Expected params:  (0.1, 0.9, 1.1, 4.0)  vs. Predict params:  [[0.1039 0.8961 1.114  4.    ]]
+Expected params:  (0.12, 0.88, 0.4, 9.8)  vs. Predict params:  [[0.1521 0.8479 0.468  8.76  ]]
+Expected params:  (0.2, 0.8, 0.1, 0.9)  vs. Predict params:  [[0.2694 0.7306 0.37   1.42  ]]
+Expected params:  (0.57, 0.43, 1.5, 7.3)  vs. Predict params:  [[0.4849 0.5151 0.88   7.21  ]]
+Expected params:  (0.8, 0.2, 1.8, 4.2)  vs. Predict params:  [[0.5472 0.4528 0.542  2.82  ]]
+Expected params:  (0.45, 0.55, 1.9, 0.3)  vs. Predict params:  [[0.312 0.688 1.354 0.94 ]]
+Expected params:  (0.84, 0.16, 0.2, 9.1)  vs. Predict params:  [[0.5547 0.4453 0.934  5.02  ]]
+Expected params:  (0.66, 0.34, 0.7, 2.1)  vs. Predict params:  [[0.6048 0.3952 0.704  1.86  ]]
+Expected params:  (0.59, 0.41, 0.5, 6.7)  vs. Predict params:  [[0.5856 0.4144 0.79   6.79  ]]
+Expected params:  (0.14, 0.86, 0.3, 5.4)  vs. Predict params:  [[0.1366 0.8634 0.396  5.82  ]]
+Expected params:  (0.56, 0.44, 1.9, 6.1)  vs. Predict params:  [[0.558 0.442 0.97  5.91 ]]
+Expected params:  (0.13, 0.87, 1.7, 7.7)  vs. Predict params:  [[0.1234 0.8766 1.398  8.05  ]]
+Expected params:  (0.23, 0.77, 1.4, 7.4)  vs. Predict params:  [[0.2305 0.7695 1.042  7.54  ]]
+Expected params:  (0.71, 0.29, 0.3, 6.8)  vs. Predict params:  [[0.5786 0.4214 0.846  5.77  ]]
+R2 score with test data:  0.661174884419544 
+
+-------------------- REPLICATE # 3 --------------------
+TRAINING SET # 1
+R2 score with train data:  0.990471894840703 
+
+TEST CASE #  1
+Expected params:  (0.26, 0.74, 0.6, 6.7)  vs. Predict params:  [[0.2485 0.7515 0.638  6.99  ]]
+Expected params:  (0.16, 0.84, 0.8, 7.1)  vs. Predict params:  [[0.1663 0.8337 0.76   7.15  ]]
+Expected params:  (0.11, 0.89, 0.1, 2.8)  vs. Predict params:  [[0.2299 0.7701 0.61   1.96  ]]
+Expected params:  (0.12, 0.88, 0.4, 7.7)  vs. Predict params:  [[0.1294 0.8706 0.428  7.65  ]]
+Expected params:  (0.13, 0.87, 1.4, 0.9)  vs. Predict params:  [[0.1338 0.8662 1.452  1.    ]]
+Expected params:  (0.11, 0.89, 0.5, 1.0)  vs. Predict params:  [[0.1012 0.8988 0.736  1.    ]]
+Expected params:  (0.35, 0.65, 2.0, 3.4)  vs. Predict params:  [[0.284 0.716 0.558 3.95 ]]
+Expected params:  (0.21, 0.79, 0.1, 2.7)  vs. Predict params:  [[0.2578 0.7422 0.944  3.    ]]
+Expected params:  (0.48, 0.52, 1.8, 1.8)  vs. Predict params:  [[0.4868 0.5132 1.2    1.88  ]]
+Expected params:  (0.11, 0.89, 1.5, 9.3)  vs. Predict params:  [[0.1087 0.8913 1.556  8.93  ]]
+Expected params:  (0.69, 0.31, 0.5, 9.5)  vs. Predict params:  [[0.594 0.406 1.122 8.6  ]]
+Expected params:  (0.59, 0.41, 0.9, 9.4)  vs. Predict params:  [[0.5541 0.4459 1.078  8.97  ]]
+Expected params:  (0.35, 0.65, 1.5, 7.4)  vs. Predict params:  [[0.3202 0.6798 0.776  7.68  ]]
+Expected params:  (0.28, 0.72, 1.1, 7.0)  vs. Predict params:  [[0.2575 0.7425 1.19   7.01  ]]
+Expected params:  (0.75, 0.25, 1.2, 9.9)  vs. Predict params:  [[0.5636 0.4364 1.212  8.12  ]]
+Expected params:  (0.26, 0.74, 0.4, 4.5)  vs. Predict params:  [[0.2253 0.7747 0.424  4.97  ]]
+Expected params:  (0.98, 0.02, 1.3, 1.4)  vs. Predict params:  [[0.4523 0.5477 0.432  0.03  ]]
+Expected params:  (0.31, 0.69, 1.1, 4.3)  vs. Predict params:  [[0.2555 0.7445 0.574  4.93  ]]
+Expected params:  (0.38, 0.62, 2.0, 8.9)  vs. Predict params:  [[0.4069 0.5931 1.214  9.    ]]
+Expected params:  (0.13, 0.87, 1.5, 2.5)  vs. Predict params:  [[0.148 0.852 0.994 2.55 ]]
+Expected params:  (0.27, 0.73, 0.5, 8.0)  vs. Predict params:  [[0.2482 0.7518 0.662  8.08  ]]
+Expected params:  (0.13, 0.87, 1.9, 1.7)  vs. Predict params:  [[0.1279 0.8721 0.598  1.82  ]]
+Expected params:  (0.34, 0.66, 0.6, 0.6)  vs. Predict params:  [[0.2658 0.7342 1.312  1.    ]]
+Expected params:  (0.14, 0.86, 1.6, 2.0)  vs. Predict params:  [[0.1501 0.8499 0.866  1.99  ]]
+Expected params:  (0.15, 0.85, 0.5, 3.7)  vs. Predict params:  [[0.1608 0.8392 0.576  3.98  ]]
+Expected params:  (0.4, 0.6, 0.8, 6.2)  vs. Predict params:  [[0.3943 0.6057 0.62   6.67  ]]
+Expected params:  (0.44, 0.56, 0.1, 3.8)  vs. Predict params:  [[0.41  0.59  0.578 4.73 ]]
+Expected params:  (0.4, 0.6, 1.4, 1.0)  vs. Predict params:  [[0.4039 0.5961 1.396  1.    ]]
+Expected params:  (0.51, 0.49, 0.4, 0.7)  vs. Predict params:  [[0.4577 0.5423 1.448  1.    ]]
+Expected params:  (0.3, 0.7, 0.1, 0.2)  vs. Predict params:  [[0.3407 0.6593 0.298  1.09  ]]
+Expected params:  (0.41, 0.59, 0.2, 0.4)  vs. Predict params:  [[0.3764 0.6236 0.336  0.96  ]]
+Expected params:  (0.68, 0.32, 0.9, 6.7)  vs. Predict params:  [[0.5932 0.4068 0.954  6.14  ]]
+Expected params:  (0.28, 0.72, 1.5, 2.8)  vs. Predict params:  [[0.2605 0.7395 1.062  3.    ]]
+Expected params:  (0.22, 0.78, 1.8, 0.4)  vs. Predict params:  [[0.2302 0.7698 1.288  0.93  ]]
+Expected params:  (0.11, 0.89, 1.8, 2.3)  vs. Predict params:  [[0.136 0.864 1.194 1.92 ]]
+Expected params:  (0.4, 0.6, 1.7, 10.0)  vs. Predict params:  [[0.3989 0.6011 1.14   9.    ]]
+Expected params:  (0.1, 0.9, 1.1, 4.0)  vs. Predict params:  [[0.1012 0.8988 1.134  4.    ]]
+Expected params:  (0.12, 0.88, 0.4, 9.8)  vs. Predict params:  [[0.1578 0.8422 0.524  8.7   ]]
+Expected params:  (0.2, 0.8, 0.1, 0.9)  vs. Predict params:  [[0.2791 0.7209 0.378  1.35  ]]
+Expected params:  (0.57, 0.43, 1.5, 7.3)  vs. Predict params:  [[0.5128 0.4872 0.94   7.23  ]]
+Expected params:  (0.8, 0.2, 1.8, 4.2)  vs. Predict params:  [[0.5332 0.4668 0.598  2.77  ]]
+Expected params:  (0.45, 0.55, 1.9, 0.3)  vs. Predict params:  [[0.3202 0.6798 1.284  0.93  ]]
+Expected params:  (0.84, 0.16, 0.2, 9.1)  vs. Predict params:  [[0.5298 0.4702 0.928  4.94  ]]
+Expected params:  (0.66, 0.34, 0.7, 2.1)  vs. Predict params:  [[0.6193 0.3807 0.754  1.87  ]]
+Expected params:  (0.59, 0.41, 0.5, 6.7)  vs. Predict params:  [[0.6008 0.3992 0.622  6.83  ]]
+Expected params:  (0.14, 0.86, 0.3, 5.4)  vs. Predict params:  [[0.1353 0.8647 0.43   5.93  ]]
+Expected params:  (0.56, 0.44, 1.9, 6.1)  vs. Predict params:  [[0.5503 0.4497 0.986  5.91  ]]
+Expected params:  (0.13, 0.87, 1.7, 7.7)  vs. Predict params:  [[0.1322 0.8678 1.442  8.    ]]
+Expected params:  (0.23, 0.77, 1.4, 7.4)  vs. Predict params:  [[0.2257 0.7743 0.928  7.52  ]]
+Expected params:  (0.71, 0.29, 0.3, 6.8)  vs. Predict params:  [[0.5862 0.4138 0.948  5.87  ]]
+R2 score with test data:  0.6667892384440501 
+
+Raw test scores list for TRAINING set # 1 : [[0.6748005180126602], [0.661174884419544], [0.661174884419544]] 
+
+Average test scores for TRAINING set # 1 :
+	 Average scores for test case # 1 : 0.67
+
+
+END OF RUN 
+
