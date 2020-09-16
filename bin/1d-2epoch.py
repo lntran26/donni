@@ -110,39 +110,9 @@ def rfr_train(train_dict, list_test_dict):
         count += 1
     return score_list
 
-# generate parameter list for training
-train_params = []
-# step arg (3rd) in np.arrange determine how dense or sparse the training data
-# change nu from 10e-2 to 10e2, increment e by 0.2
-for nu in [10**i for i in np.arange(-2, 2.1, 0.2)]:
-    # change T from 0.1 to 2, increment by 0.1
-    for T in np.arange(0.1, 2.1, 0.1):
-        # params tuple for this spectrum
-        params = (round(nu, 2), round(T, 1))
-        train_params.append(params)
-# print('n_samples training: ', len(train_params))
-
-# generate parameter list for testing
-test_params = []
-# range(#) dictate how many random values are in each test set
-for i in range(100):
-# generate random nu and T within the same range as training data range
-    nu = 10 ** (random.random() * 4 - 2)
-    T = random.random() * 1.9 + 0.1
-    params = (round(nu, ndigits=2), round(T, ndigits=1))
-    test_params.append(params)
-# print('n_samples testing: ', len(test_params))
-
-# choose list of theta values to run scaling and add variance
-theta_list = [1, 200, 1000, 10000]
-
-# Use function to make lists of dictionaries storing different training 
-# and testing data sets from lists of parameters
-list_train_dict = make_list_dicts(train_params, theta_list)
-list_test_dict = make_list_dicts(test_params, theta_list)
-
 # open a text file to record experiment results
-sys.stdout = open('results/1d-2epoch.txt', 'a')
+timestr = time.strftime("%Y%m%d-%H%M%S")
+sys.stdout = open('results/1d-2epoch/1d-2epoch-'+ timestr +'.txt', 'w')
 # print header to visually seperate each run
 print('*'*70, '\n')
 # print the date and time of run
@@ -157,7 +127,42 @@ Keys for Training/Testing #:
 # 4 : theta = 10,000
 '''
     )
-print('Theta = 100 in this run is replaced by theta =', str(theta_list[1]))
+
+# generate parameter list for training
+train_params = []
+# step arg (3rd) in np.arrange determine how dense or sparse the training data
+# change nu from 10e-2 to 10e2, increment e by 0.2
+for nu in [10**i for i in np.arange(-2, 2.1, 0.2)]:
+    # change T from 0.1 to 2, increment by 0.1
+    for T in np.arange(0.1, 2.1, 0.1):
+        # params tuple for this spectrum
+        params = (round(nu, 2), round(T, 1))
+        train_params.append(params)
+print('n_samples training: ', len(train_params))
+print('Range of training params:', min(train_params), 'to', 
+        max(train_params))
+
+# generate parameter list for testing
+test_params = []
+# range(#) dictate how many random values are in each test set
+for i in range(100):
+# generate random nu and T within the same range as training data range
+    nu = 10 ** (random.random() * 4 - 2)
+    T = random.random() * 1.9 + 0.1
+    params = (round(nu, ndigits=2), round(T, ndigits=1))
+    test_params.append(params)
+print('n_samples testing: ', len(test_params))
+print('Range of testing params:', min(test_params), 'to', 
+        max(test_params))
+
+# choose list of theta values to run scaling and add variance
+theta_list = [1, 200, 1000, 10000]
+print('Theta list:', theta_list)
+
+# Use function to make lists of dictionaries storing different training 
+# and testing data sets from lists of parameters
+list_train_dict = make_list_dicts(train_params, theta_list)
+list_test_dict = make_list_dicts(test_params, theta_list)
 
 # Assign number of replicates to be run
 num_rep = 3

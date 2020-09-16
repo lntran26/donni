@@ -1,5 +1,5 @@
 ### DRAFT scripts for testing RFR on 2D-split-migration model
-### DATE: 09/12/2020
+### DATE: 09/15/2020
 
 import os
 import sys
@@ -96,18 +96,43 @@ def rfr_train(train_dict, list_test_dict):
         count += 1
     return score_list
 
+# open a text file to record experiment results
+timestr = time.strftime("%Y%m%d-%H%M%S")
+sys.stdout = open('results/2d-splitmig/2d-splitmig-'+ timestr +'.txt', 'w')
+
+# print header to visually seperate each run
+print('*'*70, '\n')
+# print the date and time of run
+print('EXPERIMENT DATE: ', time.asctime(time.localtime(time.time())))
+# # print guide key to intepret the numbers for training and testing cases
+print(
+'''
+Keys for Training/Testing #:
+# 1 : no noise
+# 2 : theta = 100+
+# 3 : theta = 1,000 
+# 4 : theta = 10,000
+'''
+    )
+
 # generate parameter list for training
 train_params = []
 # TO DO: think of some better way to vary nu1 and nu2
 # Currently limited to small range of parameters so that the training set
 # doesn't get too large.
+# change nu from 10e-1 to 10e0 or 0.1 to 1, increment e by 0.2
 for nu in [10**i for i in np.arange(-1, 0, 0.2)]:
-    # change T from 0.1 to 2, increment by 0.1
+    # change T from 0.1 to 2, increment by 0.2
     for T in np.arange(0.1, 2.1, 0.2):
+        # change m from 0 to 10, increment by 1
         for m in range(0, 10, 1):
         # params tuple for this spectrum
             params = (round(nu, 2), round(1-nu, 2), round(T, 1), round(m, 1))
             train_params.append(params)
+# print(some info of training data)
+print('n_samples training: ', len(train_params))
+print('Range of training params:', min(train_params), 'to', 
+        max(train_params))
 
 # generate parameter list for testing
 test_params = []
@@ -119,34 +144,19 @@ for i in range(50):
     m = random.random() * 9.9 + 0.1
     params = (round(nu, 2), round(1-nu,2), round(T, 1), round(m, 1))
     test_params.append(params)
+# print(some info of testing data)
+print('n_samples testing: ', len(test_params))
+print('Range of testing params:', min(test_params), 'to', 
+        max(test_params))
 
 # generate a list of theta values to run scaling and add variance
 theta_list = [1]
+print('Theta list:', theta_list)
 
 # Use function to make lists of dictionaries storing different training and 
 # testing data sets from lists of parameters
 list_train_dict = make_list_dicts(train_params, theta_list)
 list_test_dict = make_list_dicts(test_params, theta_list)
-
-# open a text file to record experiment results
-sys.stdout = open('results/2d-split-mig.txt', 'a')
-# print header to visually seperate each run
-print('*'*70, '\n')
-# print the date and time of run
-print('EXPERIMENT DATE: ', time.asctime(time.localtime(time.time())))
-# # print guide key to intepret the numbers for training and testing cases
-# print(
-# '''
-# Keys for Training/Testing #:
-# # 1 : no noise
-# # 2 : theta = 100+
-# # 3 : theta = 1,000 
-# # 4 : theta = 10,000
-# '''
-#     )
-# print('Theta = 100 in this run is replaced by theta =', str(theta_list[1]))
-print('n_samples training: ', len(train_params))
-print('n_samples testing: ', len(test_params))
 
 # Assign number of replicates to be run
 num_rep = 3
