@@ -1,8 +1,0 @@
-********************************************************************** 
-
-EXPERIMENT DATE:  Tue Sep 15 16:19:26 2020
-n_samples training:  500
-Range of training params: (0.1, 0.9, 0.1, 0) to (0.63, 0.37, 1.9, 9)
-n_samples testing:  50
-Range of testing params: (0.1, 0.9, 1.3, 4.0) to (1.0, 0.0, 0.4, 1.8)
-Theta list: [1]
