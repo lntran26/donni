@@ -42,12 +42,11 @@ def make_list_dicts(params_list, theta_list):
     ns = [20]
     pts_l = [40, 50, 60]
     # specify list of theta values and initialize output list of dictionaries
-    list_theta = theta_list
     list_dicts = []
     # populate fs values into each dictionary of the list of dictionaries
-    for i in range(len(list_theta)):
+    
+    for theta in theta_list:
         data_dict = {}
-        theta = list_theta[i]
         # generate data sets by looping through list of
         # parameters and generate corresponding fs
         # then one finish the whole list save as a dictionary
