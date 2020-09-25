@@ -2,3 +2,4 @@ draft-code
 .vscode
 .DS_Store
 __pycache__
+results/.DS_Store
