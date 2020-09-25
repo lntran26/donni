@@ -3,3 +3,4 @@ draft-code
 .DS_Store
 __pycache__
 results/.DS_Store
+bin/test.py
