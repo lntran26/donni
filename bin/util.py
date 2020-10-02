@@ -5,7 +5,8 @@
 from multiprocessing import Pool
 import dadi
 from sklearn.ensemble import RandomForestRegressor
-import random
+from sklearn.metrics import mean_squared_log_error, r2_score
+
 
 def generating_data(params_list, theta_list, func, ns, pts_l):
     '''Returns a list of dictionaries where each dictionary stores
@@ -27,7 +28,7 @@ def generating_data(params_list, theta_list, func, ns, pts_l):
             if theta == 1:
                 fs_tostore = fs
             else:
-                fs_tostore = (theta*fs).sample()
+                fs_tostore = (theta*abs(fs)).sample()
             data_dict[params] = fs_tostore/fs_tostore.sum()
         list_dicts.append(data_dict)
     return list_dicts
@@ -41,8 +42,8 @@ def worker_func(args):
     func_ex = dadi.Numerics.make_extrap_func(func)
     return func_ex(p, ns, pts_l)
 
-def generating_data_parallel(
-    params_list, theta_list, func, ns, pts_l, ncpu=None):
+def generating_data_parallel(params_list, theta_list, 
+                                func, ns, pts_l, ncpu=None):
     '''Parallelized version for generating_data using multiprocessing.
     If npcu=None, it will use all the CPUs on the machine. 
     Otherwise user can specify a limit.
@@ -61,7 +62,7 @@ def generating_data_parallel(
             if theta == 1:
                 fs_tostore = fs
             else:
-                fs_tostore = (theta*fs).sample()
+                fs_tostore = (theta*abs(fs)).sample()
             data_dict[params] = fs_tostore/fs_tostore.sum()
         list_dicts.append(data_dict)
     return list_dicts
@@ -83,22 +84,25 @@ def rfr_learn(train_dict, list_test_dict, ncpu=None):
     rfr = RandomForestRegressor(n_jobs=ncpu)
     # Train RFR
     rfr = rfr.fit(X, y)
-    print('R2 score with train data: ', rfr.score(X, y), '\n')
+    print('R2 score with train data:', rfr.score(X, y), '\n')
 
     # Test RFR
     score_list = []
     count = 1 # Use count to print key# for each run
     for test_dict in list_test_dict:
         print('TEST CASE # ', str(count))
-        X_test, y_test = [], []
+        y_true, y_pred = [], []
         for params in test_dict:
+            y_true.append(params)
             test_fs = test_dict[params].data.flatten()
+            y_pred.append(rfr.predict([test_fs]).flatten())
             print('Expected params: ', str(params), 
                 ' vs. Predict params: ', str(rfr.predict([test_fs])))
-            y_test.append(params)
-            X_test.append(test_fs)
-        print('R2 score with test data: ', rfr.score(X_test, y_test), '\n')
-        score_list.append(rfr.score(X_test, y_test))
+        score = mean_squared_log_error(y_true, y_pred)
+        score_list.append(score)
+        print('\n')
+        print('Mean squared log error:', score)
+        print('R2 score with test data:', r2_score(y_true, y_pred),'\n')
         count += 1
     return score_list
 
@@ -114,6 +118,7 @@ def rfr_learn(train_dict, list_test_dict, ncpu=None):
 if __name__ == "__main__":
     import time
     import numpy as np
+    import random
     # Generate test arguments. Note fancy list comprehension usage here.
     # Also, np.linspace is often easier to use than arange.
     train_params = [(nu,T) for nu in 10**np.linspace(-2, 2, 10)
@@ -131,22 +136,22 @@ if __name__ == "__main__":
     ns = [20]
     pts_l = [40, 50, 60]
 
-    # testing running time for the generating_data function
-    start = time.time()
-    generating_data(train_params, theta_list, func, ns, pts_l)
-    print('Serial execution time to generate data 1D: {0:.2f}s'
-    .format(time.time()-start))
+#     # testing running time for the generating_data function
+#     start = time.time()
+#     generating_data(train_params, theta_list, func, ns, pts_l)
+#     print('Serial execution time to generate data 1D: {0:.2f}s'
+#     .format(time.time()-start))
 
-    start = time.time()
-    generating_data_parallel(train_params, theta_list, func, ns, pts_l)
-    print('Parallel execution time to generate data 1D: {0:.2f}s'
-    .format(time.time()-start))
+#     start = time.time()
+#     generating_data_parallel(train_params, theta_list, func, ns, pts_l)
+#     print('Parallel execution time to generate data 1D: {0:.2f}s'
+#     .format(time.time()-start))
 
-    # # Generating data for RFR learning
-    # list_train_dict = generating_data_parallel(train_params, 
-    #                         theta_list, func, ns, pts_l)
-    # list_test_dict = generating_data_parallel(test_params, 
-    #                         theta_list, func, ns, pts_l)
+    # Generating data for RFR learning
+    list_train_dict = generating_data_parallel(train_params, 
+                            theta_list, func, ns, pts_l)
+    list_test_dict = generating_data_parallel(test_params, 
+                            theta_list, func, ns, pts_l)
 
     # # testing running time for the rfr_learn function
     # start = time.time()
@@ -155,38 +160,39 @@ if __name__ == "__main__":
     # print('Serial execution time to learn 1D: {0:.2f}s'
     # .format(time.time()-start))
 
-    # start = time.time()
-    # for train_dict in list_train_dict:
-    #     rfr_learn(train_dict, list_test_dict, -1)
-    # print('Parallel execution time to learn 1D: {0:.2f}s'
-    # .format(time.time()-start))
+    start = time.time()
+    for train_dict in list_train_dict:
+        rfr_learn(train_dict, list_test_dict, -1)
+    print('Parallel execution time to learn 1D: {0:.2f}s'
+    .format(time.time()-start))
 
 # Test code: running time for the 2D version (split_mig)
-if __name__ == "__main__":
-    import time
-    import numpy as np
+# if __name__ == "__main__":
+#     import time
+#     import numpy as np
+#     import random
 
-    # generate training params list
-    train_params = [(nu1, nu2, T, m) for nu1 in 10**np.linspace(-2, 2, 3)
-                                for nu2 in 10**np.linspace(-2, 2, 3)
-                                for T in np.linspace(0.1, 2, 3)
-                                for m in np.linspace(1, 10, 3)]
+#     # generate training params list
+#     train_params = [(nu1, nu2, T, m) for nu1 in 10**np.linspace(-2, 2, 3)
+#                                 for nu2 in 10**np.linspace(-2, 2, 3)
+#                                 for T in np.linspace(0.1, 2, 3)
+#                                 for m in np.linspace(1, 10, 3)]
 
-    # generate testing params list
-    test_params = []
-    for i in range(50):
-    # generate random nu and T within the same range as training data range
-        nu1 = 10 ** (random.random() * 4 - 2)
-        nu2 = 10 ** (random.random() * 4 - 2)
-        T = random.random() * 1.9 + 0.1
-        m = random.random() * 9.9 + 0.1
-        params = (round(nu1, 2), round(nu2,2), round(T, 1), round(m, 1))
-        test_params.append(params)
+#     # generate testing params list
+#     test_params = []
+#     for i in range(50):
+#     # generate random nu and T within the same range as training data range
+#         nu1 = 10 ** (random.random() * 4 - 2)
+#         nu2 = 10 ** (random.random() * 4 - 2)
+#         T = random.random() * 1.9 + 0.1
+#         m = random.random() * 9.9 + 0.1
+#         params = (round(nu1, 2), round(nu2,2), round(T, 1), round(m, 1))
+#         test_params.append(params)
     
-    theta_list = [1] # theta_list[1,1000] currently gives error
-    func = dadi.Demographics2D.split_mig
-    ns = [20,20]
-    pts_l = [40, 50, 60]
+#     theta_list = [1,100] # theta_list[1,1000] currently gives error
+#     func = dadi.Demographics2D.split_mig
+#     ns = [20,20]
+#     pts_l = [40, 50, 60]
 
     # testing running time for the generating_data function
     # start = time.time()
@@ -200,20 +206,20 @@ if __name__ == "__main__":
     # .format(time.time()-start))
 
     # Generating data for RFR learning
-    list_train_dict = generating_data_parallel(train_params, theta_list, 
-                                func, ns, pts_l)
-    list_test_dict = generating_data_parallel(test_params, theta_list, 
-                                func, ns, pts_l)
+    # list_train_dict = generating_data_parallel(train_params, theta_list, 
+    #                             func, ns, pts_l)
+    # list_test_dict = generating_data_parallel(test_params, theta_list, 
+    #                             func, ns, pts_l)
 
     # testing running time for the rfr_learn function
-    start = time.time()
-    for train_dict in list_train_dict:
-        rfr_learn(train_dict, list_test_dict)
-    print('Serial execution time to learn 2D: {0:.2f}s'
-    .format(time.time()-start))
+    # start = time.time()
+    # for train_dict in list_train_dict:
+    #     rfr_learn(train_dict, list_test_dict)
+    # print('Serial execution time to learn 2D: {0:.2f}s'
+    # .format(time.time()-start))
 
-    start = time.time()
-    for train_dict in list_train_dict:
-        rfr_learn(train_dict, list_test_dict, -1)
-    print('Parallel execution time to learn 2D: {0:.2f}s'
-    .format(time.time()-start))
+    # start = time.time()
+    # for train_dict in list_train_dict:
+    #     rfr_learn(train_dict, list_test_dict, -1)
+    # print('Parallel execution time to learn 2D: {0:.2f}s'
+    # .format(time.time()-start))
