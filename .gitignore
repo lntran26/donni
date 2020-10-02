@@ -4,3 +4,5 @@ draft-code
 __pycache__
 results/.DS_Store
 bin/test.py
+troubleshoot
+src/Anaconda3-2020.07-MacOSX-x86_64.sh
