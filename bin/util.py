@@ -101,8 +101,14 @@ def rfr_learn(train_dict, list_test_dict, ncpu=None):
         score = mean_squared_log_error(y_true, y_pred)
         score_list.append(score)
         print('\n')
-        print('Mean squared log error:', score)
-        print('R2 score with test data:', r2_score(y_true, y_pred),'\n')
+        print('MSLE for each predicted param:', 
+                mean_squared_log_error(y_true, y_pred, 
+                    multioutput='raw_values'))
+        print('Aggr. MSLE for all predicted params:', score)
+        print('R2 score for each predicted param:', 
+                    r2_score(y_true, y_pred, multioutput='raw_values'))
+        print('Aggr. R2 score for all predicted params:', 
+                    r2_score(y_true, y_pred),'\n')
         count += 1
     return score_list
 
