@@ -34,7 +34,7 @@ if __name__ == '__main__':
 
     # generate a list of theta values to run scaling and add variance
     ### TO DO: CAN SEPARATE TRAIN AND TEST THETA LISTS
-    theta_list = [1,1000]
+    theta_list = [1,100,1000,10000]
     #print('Theta list:', theta_list)
     # designate demographic model, sample size, and extrapolation grid 
     func = dadi.Demographics1D.two_epoch
@@ -47,27 +47,51 @@ if __name__ == '__main__':
                         theta_list, func, ns, pts_l)
     list_test_dict = util.generating_data_parallel(test_params, 
                         theta_list, func, ns, pts_l)
+
+    # log transform training data for nu
+    transformed_list_train_dict = util.log_transform_data(list_train_dict, [0])
+    #transformed_list_test_dict = util.log_transform_data(list_test_dict, [0])
     
     # training, testing, and plotting
     count_train = 1
-    for train_dict in list_train_dict:
-        rfr = util.rfr_train(train_dict, -1)
+    for train_dict in transformed_list_train_dict:
+        print(count_train)
+        rfr = util.rfr_train(train_dict)
         count_test = 1
+        #for test_dict in transformed_list_test_dict:
         for test_dict in list_test_dict:
             y_true, y_predict = util.rfr_test(rfr, test_dict)
+            # reconvert log for y_predict nu
+            util.un_log_transform_predict(y_predict, [0])
             param_true, param_pred = util.sort_by_param(y_true, y_predict)
             r2_by_param = util.rfr_r2_score(y_true, y_predict)[1]
-            # r2_by_param = r2_score(y_true, y_predict, multioutput='raw_values')
-            msle_by_param = util.rfr_msle(y_true, y_predict)[1]
-            # msle_by_param = mean_squared_log_error(y_true, y_predict, 
-            # multioutput='raw_values')
             count_param = 1
-            for true, pred, r2, msle in zip(param_true, param_pred, 
-            r2_by_param, msle_by_param):
-                util.plot_by_param(true, pred, r2, msle)
+            for true, pred, r2 in zip(param_true, param_pred, 
+            r2_by_param):
+                util.plot_by_param(true, pred, r2)
                 plt.savefig('train'+str(count_train)+'test'+str(count_test)+
                 'param'+str(count_param)+'.pdf')
                 plt.clf()
                 count_param+=1
             count_test+=1
         count_train+=1
+
+# working on making subplots in a figure
+# num_params = len(y_true[0])
+# num_tests = len(list_test_dict)
+# fig, axs = plt.subplots(num_params, num_tests)
+# axs[0, 0].plot(x, y)
+# axs[0, 0].set_title('Axis [0,0]')
+# axs[0, 1].plot(x, y, 'tab:orange')
+# axs[0, 1].set_title('Axis [0,1]')
+# axs[1, 0].plot(x, -y, 'tab:green')
+# axs[1, 0].set_title('Axis [1,0]')
+# axs[1, 1].plot(x, -y, 'tab:red')
+# axs[1, 1].set_title('Axis [1,1]')
+
+# for ax in axs.flat:
+#     ax.set(xlabel='true', ylabel='estimate')
+
+# # Hide x labels and tick labels for top plots and y ticks for right plots.
+# for ax in axs.flat:
+#     ax.label_outer()

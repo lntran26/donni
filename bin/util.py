@@ -8,6 +8,8 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_log_error, r2_score
 import matplotlib.pyplot as plt
 import numpy as np
+import math
+from copy import deepcopy
 
 # Technical details for working with multiprocessing Pools:
 # First, they only work with single-argument functions.
@@ -45,6 +47,52 @@ def generating_data_parallel(params_list, theta_list,
                 data_dict[params] = fs_tostore/fs_tostore.sum()                
         list_dicts.append(data_dict)
     return list_dicts
+
+def log_transform_data(list_data_dict, num_list):
+    """
+    log transform specified params in input datasets
+    input data_dict has structure params:fs 
+    num_list is a number list e.g. [0,1] specifying 
+    the ith parameter to be log transformed
+    """
+    transformed_list_data_dict = []
+    for data_dict in list_data_dict:
+        transformed_data_dict = {}
+        params=data_dict.keys()
+        fs = [data_dict[params] for params in data_dict]
+        transformed_params = []
+        # loop through p in params, which is a list of param tuples
+        # for each tuple p, copy value if [i] is not in num_list
+        # log transform value if [i] is in num_list
+        # store into tuple, then into transformed_param list
+        # need to convert tuple to a list
+        for p in params:
+            p = list(p)
+            n=0
+            while n < len(p):
+                if n in num_list:
+                    p[n]=math.log10(p[n])
+                    #p[n]=1/p[n] 
+                else:
+                    pass
+                n+=1
+            transformed_params.append(tuple(p))
+        transformed_data_dict=dict(zip(transformed_params, fs))
+        transformed_list_data_dict.append(transformed_data_dict)
+    return transformed_list_data_dict
+
+def un_log_transform_predict(y_predict, num_list):
+    transformed_predict = y_predict.copy()
+    # transformed_predict = copy.deepcopy(y_predict)
+    for p in transformed_predict:
+        n=0
+        while n < len(p):
+            if n in num_list:
+                p[n]=10**p[n] 
+            else:
+                pass
+            n+=1
+    return transformed_predict
 
 def rfr_learn(train_dict, list_test_dict, ncpu=None):
     '''
@@ -131,7 +179,7 @@ def sort_by_param(y_true, y_pred):
     '''
     param_true, param_pred = [], []
     n=0
-    while n < len(y_true[n]):
+    while n < len(y_true[0]):
         param_list_true, param_list_pred = [], []
         for true, pred in zip(y_true, y_pred):
             param_list_true.append(true[n])
@@ -141,30 +189,49 @@ def sort_by_param(y_true, y_pred):
         n+=1
     return param_true, param_pred
 
-def plot_by_param(true, pred, r2, msle, ax=None):
+def plot_by_param(true, pred, r2=None, msle=None, ax=None):
     '''
     true, pred = list of true and predicted values for one param,
     which can be obtained from sort_by_param;
     r2: one r2 score for one param of one train:test pair
     msle: one msle score for one param of one train:test pair
+    TO DO: ADD ARGUMENTS FOR AXIS LABEL, axis scale, title, etc CUSTOMIZATION
     '''
+    # assign ax variable to customize axes
     if ax is None:
         ax = plt.gca()
+    # make square plots with two axes the same size
+    ax.set_aspect('equal', adjustable='box')
+    plot = plt.scatter(true, pred)
+    # axis labels to be customized
+    plt.xlabel("true")
+    plt.ylabel("predicted")
     # only plot in log scale if the difference between max and min is large
     if max(true+pred)/min(true+pred) > 100:
         plt.xscale("log")
         plt.yscale("log")
+        # axis scales to be customized
+        plt.xlim([10**-2.1, 10**2.1])
+        plt.ylim([10**-2.1, 10**2.1])
+        # convert to log to plot best fit line
+        log_true = list(np.log(true))
+        log_pred = list(np.log(pred))
+        m,b = np.polyfit(log_true, log_pred, 1)
+        y_fit = np.exp(m*np.unique(log_true) + b)
+        plt.plot(np.unique(true), y_fit, color='salmon')
     else:
-        pass
-    plot = plt.scatter(true, pred)
-    plt.xlabel("true")
-    plt.ylabel("predicted")
-    (m,b) = np.polyfit(true, pred, 1)
-    plt.plot(np.unique(true), np.poly1d((m,b))(np.unique(true)), color='red')
+        # axis scales to be customized
+        plt.xlim([0, 2.1])
+        plt.ylim([0, 2.1])
+        # plot best fit line
+        m,b = np.polyfit(true, pred, 1)
+        plt.plot(np.unique(true), np.poly1d((m,b))(np.unique(true)), color='salmon')
+    # display equation /of best fit line & scores on plot
     equation = 'y = ' + str(round(m,4)) + 'x' ' + ' + str(round(b,4))
-    plt.text(0.2, 0.9, equation + "\nR^2: " + str(round(r2,4))+ "\nMSLE: "
-    + str(round(msle,4)), horizontalalignment='center',
-    verticalalignment='center', transform = ax.transAxes)
+    if r2 != None:
+        plt.text(0.3, 0.9, equation + "\nR^2: " + str(round(r2,4)),
+        horizontalalignment='center', verticalalignment='center', 
+        transform = ax.transAxes)
     return plot
 
 # Test code: running time for the 1D version (2 epoch)
@@ -284,10 +351,10 @@ def plot_by_param(true, pred, r2, msle, ax=None):
 if __name__ == "__main__":
     import random
     # generate training and testing params values
-    train_params = [(nu,T) for nu in 10**np.linspace(-2, 2, 21)
-                          for T in np.linspace(0.1,2,20)]
+    train_params = [(nu,T) for nu in 10**np.linspace(-2, 2, 10)
+                          for T in np.linspace(0.1, 2, 10)]
     test_params = []
-    for i in range(50):
+    for i in range(10):
         nu = 10 ** (random.random() * 4 - 2)
         T = random.random() * 1.9 + 0.1
         params = (round(nu, 2), round(T, 1))
@@ -302,59 +369,83 @@ if __name__ == "__main__":
                         theta_list, func, ns, pts_l)
     list_test_dict = generating_data_parallel(test_params,
                         theta_list, func, ns, pts_l)
+    # log transform data
+    transformed_list_train_dict = log_transform_data(list_train_dict, [0])
+    # test log transform data
+    #print('Before:', list_train_dict, '\n')
+    #print('After transform:', transformed_list_train_dict)
+    # print('Range of training params:', min(train_params), 'to', 
+    #     max(train_params))
+    # transformed = transformed_list_train_dict[0].keys()
+    # print('Range of transformed training params:', min(transformed), 'to', 
+    #     max(transformed))
+    # transformed_list_test_dict = log_transform_data(list_test_dict, [0])
+
     # train rfr
-    rfr = rfr_train(list_train_dict[0], -1)
+    rfr = rfr_train(transformed_list_train_dict[0], -1)
     # test rfr
     y_true, y_predict = rfr_test(rfr, list_test_dict[0])
-    # plot results for 1 parameter nu
-    nu_true = sort_by_param(y_true, y_predict)[0][0]
-    nu_pred = sort_by_param(y_true, y_predict)[1][0]
-    nu_r2 = rfr_r2_score(y_true, y_predict)[1][0]
-    nu_msle = rfr_msle(y_true, y_predict)[1][0]
-    plot_by_param(nu_true, nu_pred, nu_r2, nu_msle)
-    a = str(1)
-    # output figure will be saved to current working directory
-    plt.savefig('fig'+a+'.pdf')
-    plt.clf()
+    # reconvert log for y_predict
+    # new_y_predict = y_predict.deepcopy()
+    # new_y_predict = un_log_transform_predict(new_y_predict, [0])
+    new_y_predict = un_log_transform_predict(y_predict, [0])
+    print(new_y_predict)
+    print(y_predict)
+    # print(type(y_predict)) # list
+    # print(y_predict[0]) # [-0.596  1.363]
+    # print(type(y_predict[0])) # numpy.ndarray
+    # print(type(y_predict[0][0])) # numpy.float64
+    # print(y_predict[0][0]) # 0.761999999999999
+    
+    # # plot results for 1 parameter nu
+    # nu_true = sort_by_param(y_true, y_predict)[0][0]
+    # nu_pred = sort_by_param(y_true, y_predict)[1][0]
+    # nu_r2 = rfr_r2_score(y_true, y_predict)[1][0]
+    # #nu_msle = rfr_msle(y_true, y_predict)[1][0]
+    # plot_by_param(nu_true, nu_pred, nu_r2)
+    # a = str(1)
+    # # output figure will be saved to current working directory
+    # plt.savefig('fig'+a+'.pdf')
+    # plt.clf()
 
 # Test code: plotting 2D example with m
-if __name__ == "__main__":
-    import random
-    # generate training and testing params values
-    train_params = [(nu1, nu2, T, m) for nu1 in 10**np.linspace(-2, 2, 3)
-                                    for nu2 in 10**np.linspace(-2, 2, 3)
-                                    for T in np.linspace(0.1, 2, 3)
-                                    for m in np.linspace(1, 10, 3)]
-    test_params = []
-    for i in range(50):
-    # generate random nu and T within the same range as training data range
-        nu1 = 10 ** (random.random() * 4 - 2)
-        nu2 = 10 ** (random.random() * 4 - 2)
-        T = random.random() * 1.9 + 0.1
-        m = random.random() * 9.9 + 0.1
-        params = (round(nu1, 2), round(nu2, 2), round(T, 1), round(m, 1))
-        test_params.append(params)
-    # designate theta, demographic model, sample size, and extrapolation grid
-    theta_list = [1]
-    func = dadi.Demographics2D.split_mig
-    ns = [20,20]
-    pts_l = [40, 50, 60]
-    # make training and testing datasets
-    list_train_dict = generating_data_parallel(train_params,
-                        theta_list, func, ns, pts_l)
-    list_test_dict = generating_data_parallel(test_params,
-                        theta_list, func, ns, pts_l)
-    # train rfr
-    rfr = rfr_train(list_train_dict[0], -1)
-    # test rfr
-    y_true, y_predict = rfr_test(rfr, list_test_dict[0])
-    # plot results for 1 parameter m
-    m_true = sort_by_param(y_true, y_predict)[0][3]
-    m_pred = sort_by_param(y_true, y_predict)[1][3]
-    m_r2 = rfr_r2_score(y_true, y_predict)[1][3]
-    m_msle = rfr_msle(y_true, y_predict)[1][3]
-    plot_by_param(m_true, m_pred, m_r2, m_msle)
-    a = str(2)
-    # output figure will be saved to current working directory
-    plt.savefig('fig'+a+'.pdf')
-    plt.clf()
+# if __name__ == "__main__":
+#     import random
+#     # generate training and testing params values
+#     train_params = [(nu1, nu2, T, m) for nu1 in 10**np.linspace(-2, 2, 3)
+#                                     for nu2 in 10**np.linspace(-2, 2, 3)
+#                                     for T in np.linspace(0.1, 2, 3)
+#                                     for m in np.linspace(1, 10, 3)]
+#     test_params = []
+#     for i in range(50):
+#     # generate random nu and T within the same range as training data range
+#         nu1 = 10 ** (random.random() * 4 - 2)
+#         nu2 = 10 ** (random.random() * 4 - 2)
+#         T = random.random() * 1.9 + 0.1
+#         m = random.random() * 9.9 + 0.1
+#         params = (round(nu1, 2), round(nu2, 2), round(T, 1), round(m, 1))
+#         test_params.append(params)
+#     # designate theta, demographic model, sample size, and extrapolation grid
+#     theta_list = [1]
+#     func = dadi.Demographics2D.split_mig
+#     ns = [20,20]
+#     pts_l = [40, 50, 60]
+#     # make training and testing datasets
+#     list_train_dict = generating_data_parallel(train_params,
+#                         theta_list, func, ns, pts_l)
+#     list_test_dict = generating_data_parallel(test_params,
+#                         theta_list, func, ns, pts_l)
+#     # train rfr
+#     rfr = rfr_train(list_train_dict[0], -1)
+#     # test rfr
+#     y_true, y_predict = rfr_test(rfr, list_test_dict[0])
+#     # plot results for 1 parameter m
+#     m_true = sort_by_param(y_true, y_predict)[0][3]
+#     m_pred = sort_by_param(y_true, y_predict)[1][3]
+#     m_r2 = rfr_r2_score(y_true, y_predict)[1][3]
+#     m_msle = rfr_msle(y_true, y_predict)[1][3]
+#     plot_by_param(m_true, m_pred, m_r2, m_msle)
+#     a = str(2)
+#     # output figure will be saved to current working directory
+#     plt.savefig('fig'+a+'.pdf')
+#     plt.clf()
