@@ -9,7 +9,9 @@ from sklearn.metrics import mean_squared_log_error, r2_score
 import matplotlib.pyplot as plt
 import numpy as np
 import math
-from copy import deepcopy
+import copy
+import dadi.NLopt_mod
+import nlopt
 
 # Technical details for working with multiprocessing Pools:
 # First, they only work with single-argument functions.
@@ -19,6 +21,7 @@ def worker_func(args):
     (p, func, ns, pts_l) = args
     func_ex = dadi.Numerics.make_extrap_func(func)
     return func_ex(p, ns, pts_l)
+    # return func_ex([10**p[0], p[1]], ns, pts_l)
 
 def generating_data_parallel(params_list, theta_list, 
                                 func, ns, pts_l, ncpu=None):
@@ -37,16 +40,62 @@ def generating_data_parallel(params_list, theta_list,
     for theta in theta_list:
         data_dict = {}
         for params, fs in zip(params_list, fs_list):
+            fs.flat[0] = 0
+            fs.flat[-1] = 0
             if theta == 1:
+                # fs.flat[0] = 0
+                # fs.flat[-1] = 0
                 fs_tostore = fs
             else:
                 fs_tostore = (theta*abs(fs)).sample()
             if fs_tostore.sum()==0:
                 pass
             else:    
-                data_dict[params] = fs_tostore/fs_tostore.sum()                
+                data_dict[params] = fs_tostore/fs_tostore.sum()
+                #data_dict[params] = fs_tostore             
         list_dicts.append(data_dict)
     return list_dicts
+
+def infer_demography(fs, func, grids, p0, output,upper_bound, lower_bound):
+    ns = fs.sample_sizes
+    if grids == None:
+        grids = [int(ns[0]+10), int(ns[0]+20), int(ns[0]+30)]
+
+    func_ex = dadi.Numerics.make_extrap_func(func)
+
+    p0 = dadi.Misc.perturb_params(p0, fold=1, upper_bound=upper_bound,
+                                  lower_bound=lower_bound)
+
+    # Optimization
+    # popt = dadi.NLopt_mod.opt(p0, fs, func_ex, grids, 
+    #                                 lower_bound=lower_bound,
+    #                                 upper_bound=upper_bound,
+    #                                 verbose=0, algorithm=nlopt.LN_BOBYQA)
+    # popt = dadi.Inference.optimize_log(p0, fs, func_ex, grids, 
+    #                                 lower_bound=lower_bound,
+    #                                 upper_bound=upper_bound,
+    #                                 verbose=0)
+    popt, llnlopt = dadi.Inference.opt(p0, fs, func_ex, grids, 
+                                    lower_bound=lower_bound,
+                                    upper_bound=upper_bound,
+                                    verbose=0)#, multinom=False
+    # print('Optimized parameters: {0}'.format(popt))
+    # # Calculate the best-fit model AFS.
+    # model = func_ex(popt, ns, grids)
+    # # Likelihood of the data given the model AFS.
+    # ll_model = dadi.Inference.ll_multinom(model, fs)
+    # print('Maximum log composite likelihood: {0}'.format(ll_model))
+    # # The optimal value of theta given the model.
+    # theta = dadi.Inference.optimal_sfs_scaling(model, fs)
+    # print('Optimal value of theta: {0}\n'.format(theta))
+
+    # with open(output, 'w') as f:
+    #     f.write(str(ll_model))
+    #     for p in popt:
+    #         f.write("\t")
+    #         f.write(str(p))
+    #     f.write("\t" + str(theta) + "\n")
+    return popt
 
 def log_transform_data(list_data_dict, num_list):
     """
@@ -62,36 +111,28 @@ def log_transform_data(list_data_dict, num_list):
         fs = [data_dict[params] for params in data_dict]
         transformed_params = []
         # loop through p in params, which is a list of param tuples
-        # for each tuple p, copy value if [i] is not in num_list
+        # for each tuple p, copy value if [i] is not in num_list,
         # log transform value if [i] is in num_list
         # store into tuple, then into transformed_param list
-        # need to convert tuple to a list
+        # need to convert tuple to a list because tuples
+        # are immutable
         for p in params:
             p = list(p)
-            n=0
-            while n < len(p):
-                if n in num_list:
-                    p[n]=math.log10(p[n])
-                    #p[n]=1/p[n] 
-                else:
-                    pass
-                n+=1
+            for n in num_list:
+                p[n]=math.log10(p[n])
+                # p[n]=1/p[n] 
+            # convert list back to tuple for making dictionary keys
             transformed_params.append(tuple(p))
         transformed_data_dict=dict(zip(transformed_params, fs))
         transformed_list_data_dict.append(transformed_data_dict)
     return transformed_list_data_dict
 
 def un_log_transform_predict(y_predict, num_list):
-    transformed_predict = y_predict.copy()
-    # transformed_predict = copy.deepcopy(y_predict)
+    # transformed_predict = y_predict.copy()
+    transformed_predict = copy.deepcopy(y_predict)
     for p in transformed_predict:
-        n=0
-        while n < len(p):
-            if n in num_list:
-                p[n]=10**p[n] 
-            else:
-                pass
-            n+=1
+        for n in num_list:
+            p[n] = 10**p[n]
     return transformed_predict
 
 def rfr_learn(train_dict, list_test_dict, ncpu=None):
@@ -175,7 +216,7 @@ def sort_by_param(y_true, y_pred):
     Sort the output of rfr_test into lists of true vs predict values by each 
     param used in the model
     Returns: param_true and param_pred are each a list of lists, each sublist
-    contains values for one param
+    contains true or pred values for one param
     '''
     param_true, param_pred = [], []
     n=0
@@ -189,7 +230,7 @@ def sort_by_param(y_true, y_pred):
         n+=1
     return param_true, param_pred
 
-def plot_by_param(true, pred, r2=None, msle=None, ax=None):
+def plot_by_param(true, pred, r2=None, msle=None, c=None, ax=None):
     '''
     true, pred = list of true and predicted values for one param,
     which can be obtained from sort_by_param;
@@ -201,8 +242,14 @@ def plot_by_param(true, pred, r2=None, msle=None, ax=None):
     if ax is None:
         ax = plt.gca()
     # make square plots with two axes the same size
-    ax.set_aspect('equal', adjustable='box')
-    plot = plt.scatter(true, pred)
+    # ax.set_aspect('equal', adjustable='box')
+    # ax.set_aspect(1.0/ax.get_data_ratio(), adjustable='box')
+    if c is None:
+        plt.scatter(true, pred)
+    else:
+        plt.scatter(true, pred, c=c, vmax=5)
+        cbar = plt.colorbar()
+        cbar.set_label("T/nu", labelpad=+1)
     # axis labels to be customized
     plt.xlabel("true")
     plt.ylabel("predicted")
@@ -213,7 +260,18 @@ def plot_by_param(true, pred, r2=None, msle=None, ax=None):
         # axis scales to be customized
         plt.xlim([10**-2.1, 10**2.1])
         plt.ylim([10**-2.1, 10**2.1])
-        # convert to log to plot best fit line
+        # scale used for smaller nu range log -2 to 0
+        # plt.xlim([10**-2.1, 10**0.1])
+        # plt.ylim([10**-2.1, 10**0.1])
+        # scale used for larger nu range log 0 to 2
+        # plt.xlim([10**-0.1, 10**2.1])
+        # plt.ylim([10**-0.1, 10**2.1])
+        # scale used for 1/nu
+        # plt.xlim([10**-0.1, 10**2.1])
+        # plt.ylim([10**-0.1, 10**2.1])
+        # plot a slope 1 line
+        plt.plot([10**-3, 10**3], [10**-3, 10**3])
+        # convert to log to plot best fit line in log-log scale
         log_true = list(np.log(true))
         log_pred = list(np.log(pred))
         m,b = np.polyfit(log_true, log_pred, 1)
@@ -223,16 +281,17 @@ def plot_by_param(true, pred, r2=None, msle=None, ax=None):
         # axis scales to be customized
         plt.xlim([0, 2.1])
         plt.ylim([0, 2.1])
+        # plot a slope 1 line
+        plt.plot([0, 10], [0, 10])
         # plot best fit line
         m,b = np.polyfit(true, pred, 1)
         plt.plot(np.unique(true), np.poly1d((m,b))(np.unique(true)), color='salmon')
     # display equation /of best fit line & scores on plot
-    equation = 'y = ' + str(round(m,4)) + 'x' ' + ' + str(round(b,4))
+    # equation = 'y = ' + str(round(m,4)) + 'x' ' + ' + str(round(b,4))
     if r2 != None:
-        plt.text(0.3, 0.9, equation + "\nR^2: " + str(round(r2,4)),
-        horizontalalignment='center', verticalalignment='center', 
-        transform = ax.transAxes)
-    return plot
+        plt.text(0.3, 0.9, "\nR^2: " + str(round(r2,4)) + "\nMSLE: " + str(round(msle,4)),
+        horizontalalignment='center', verticalalignment='center', fontsize=16,
+        transform = ax.transAxes) # equation +
 
 # Test code: running time for the 1D version (2 epoch)
 # We protect this test code with this Python idiom. This means the test
@@ -385,9 +444,8 @@ if __name__ == "__main__":
     rfr = rfr_train(transformed_list_train_dict[0], -1)
     # test rfr
     y_true, y_predict = rfr_test(rfr, list_test_dict[0])
+    print(y_predict)
     # reconvert log for y_predict
-    # new_y_predict = y_predict.deepcopy()
-    # new_y_predict = un_log_transform_predict(new_y_predict, [0])
     new_y_predict = un_log_transform_predict(y_predict, [0])
     print(new_y_predict)
     print(y_predict)
