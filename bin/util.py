@@ -41,6 +41,8 @@ def generating_data_parallel(params_list, theta_list,
     for theta in theta_list:
         data_dict = {}
         for params, fs in zip(params_list, fs_list):
+            fs.flat[0] = 0
+            fs.flat[-1] = 0
             if theta == 1:
                 fs_tostore = fs
             else:

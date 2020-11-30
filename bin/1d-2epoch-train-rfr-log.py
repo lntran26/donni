@@ -8,8 +8,9 @@ from sklearn.ensemble import RandomForestRegressor
 
 if __name__ == '__main__': 
     # load training data set from pickle file
-    # list_train_dict = pickle.load(open('data/1d-2epoch/train-data-full','rb'))
-    list_train_dict = pickle.load(open('data/1d-2epoch/train-data-exclude','rb'))
+    list_train_dict = pickle.load(open('data/1d-2epoch/train-data-full','rb'))
+    # list_train_dict = pickle.load(open('data/1d-2epoch/train-data-exclude','rb'))
+    
     # log transform the training data
     transformed_list_train_dict = util.log_transform_data(list_train_dict, [0])
 
@@ -19,7 +20,5 @@ if __name__ == '__main__':
                     for train_dict in transformed_list_train_dict]
 
     # save the list of trained rfr into pickle file
-    # pickle.dump(list_rfr, open('data/1d-2epoch/list-rfr', 'wb'), 2)
-    # pickle.dump(list_rfr, open('data/1d-2epoch/list-rfr-exclude', 'wb'), 2)
-    # pickle.dump(list_rfr, open('data/1d-2epoch/list-rfr-log', 'wb'), 2)
-    pickle.dump(list_rfr, open('data/1d-2epoch/list-rfr-exclude-log', 'wb'), 2)
+    pickle.dump(list_rfr, open('data/1d-2epoch/list-rfr-full-log', 'wb'), 2)
+    # pickle.dump(list_rfr, open('data/1d-2epoch/list-rfr-exclude-log', 'wb'), 2)

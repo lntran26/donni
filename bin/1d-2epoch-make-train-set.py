@@ -9,13 +9,13 @@ import util
 
 if __name__ == '__main__': 
     # generate parameter list for training (nu full range)
-    # exclude params where T/nu > 5
-    # train_params = [(nu,T) for nu in 10**np.linspace(-2, 2, 21)
-    #                       for T in np.linspace(0.1, 2, 20) if T/nu <= 5]
-
-    # do not exclude param
+    # exclude params where T/nu > 5 version
     train_params = [(nu,T) for nu in 10**np.linspace(-2, 2, 21)
-                          for T in np.linspace(0.1, 2, 20)]
+                          for T in np.linspace(0.1, 2, 20) if T/nu <= 5]
+
+#     # do not exclude param version
+#     train_params = [(nu,T) for nu in 10**np.linspace(-2, 2, 21)
+#                           for T in np.linspace(0.1, 2, 20)]
 
     # print training set info 
     print('n_samples training: ', len(train_params))
@@ -36,7 +36,7 @@ if __name__ == '__main__':
                         theta_list, func, ns, pts_l)
 
     # Save training set as a pickle file
-    # pickle.dump(list_train_dict, open('data/1d-2epoch/train-data-exclude', 'wb'), 2)
-    pickle.dump(list_train_dict, open('data/1d-2epoch/train-data-full', 'wb'), 2)
+    pickle.dump(list_train_dict, open('data/1d-2epoch/train-data-exclude', 'wb'), 2)
+#     pickle.dump(list_train_dict, open('data/1d-2epoch/train-data-full', 'wb'), 2)
 
 

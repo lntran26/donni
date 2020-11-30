@@ -12,11 +12,11 @@ import util
 if __name__ == '__main__': 
     # generate parameter list for training (nu full range)
     # exclude params where T/nu > 5
-    # train_params = [(nu,T) for nu in 10**np.linspace(-2, 2, 21)
-    #                       for T in np.linspace(0.1, 2, 20) if T/nu <= 5]
-
     train_params = [(nu,T) for nu in 10**np.linspace(-2, 2, 21)
-                          for T in np.linspace(0.1, 2, 20)]
+                          for T in np.linspace(0.1, 2, 20) if T/nu <= 5]
+
+    # train_params = [(nu,T) for nu in 10**np.linspace(-2, 2, 21)
+    #                       for T in np.linspace(0.1, 2, 20)]
 
     # train_params = [(nu,T) for nu in 10**np.linspace(-2, 2, 21)
     #                       for T in np.linspace(0.05, 2, 20) if T/nu <= 5]
@@ -42,7 +42,7 @@ if __name__ == '__main__':
     # generate parameter list for testing
     test_params = []
     # range(#) dictate how many values are in each test set
-    for i in range(100):
+    for i in range(150):
     # generate random nu and T within the same range as training data range
         nu = 10 ** (random.random() * 4 - 2)
         # nu = 10 ** (random.random() * -2)
@@ -50,11 +50,11 @@ if __name__ == '__main__':
         T = random.random() * 1.9 + 0.1
         # T = random.random() * 1.95 + 0.05
         # T = random.random() * 1.99 + 0.01
-        # if T/nu <= 5:
-        #     params = (nu, T)
-        #     test_params.append(params)
-        params = (nu, T)
-        test_params.append(params)
+        if T/nu <= 5:
+            params = (nu, T)
+            test_params.append(params)
+        # params = (nu, T)
+        # test_params.append(params)
 
     # print testing set info 
     print('n_samples testing: ', len(test_params))
@@ -184,8 +184,11 @@ if __name__ == '__main__':
     #     ax.set_ylabel(row, rotation='vertical')
     #     ax.yaxis.label.set_size(14)
 
-    fig1.savefig('nu3.png', bbox_inches='tight')
-    fig2.savefig('T3.png', bbox_inches='tight')
+    # fig1.savefig('nu.png', bbox_inches='tight')
+    # fig2.savefig('T.png', bbox_inches='tight')
+
+    fig1.savefig('nu_exclude.png', bbox_inches='tight')
+    fig2.savefig('T_exclude.png', bbox_inches='tight')
 
     # # VERSION 2 - DO NOT USE UNLOG TRANSFORM
     # # log transform test dict version

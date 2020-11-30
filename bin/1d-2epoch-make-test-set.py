@@ -12,7 +12,7 @@ if __name__ == '__main__':
     # generate parameter list for testing
     test_params = []
     # range(#) dictate how many values are in each test set
-    for i in range(93):
+    for i in range(150):
     # generate random nu and T within the same range as training data range
         nu = 10 ** (random.random() * 4 - 2)
         T = random.random() * 1.9 + 0.1
