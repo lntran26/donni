@@ -23,6 +23,7 @@ def worker_func(args):
     return func_ex(p, ns, pts_l)
     # return func_ex([10**p[0], p[1]], ns, pts_l)
 
+
 def generating_data_parallel(params_list, theta_list, 
                                 func, ns, pts_l, ncpu=None):
     '''Parallelized version for generating_data using multiprocessing.
@@ -34,7 +35,48 @@ def generating_data_parallel(params_list, theta_list,
     '''
     arg_list = [(p, func, ns, pts_l) for p in params_list]
     with Pool(processes=ncpu) as pool:
-        fs_list = pool.map(worker_func, arg_list)
+            fs_list = pool.map(worker_func, arg_list)
+            
+    list_dicts = []
+    for theta in theta_list:
+        data_dict = {}
+        for params, fs in zip(params_list, fs_list):
+            if theta == 1:
+                fs_tostore = fs
+            else:
+                fs_tostore = (theta*abs(fs)).sample()
+            if fs_tostore.sum()==0:
+                pass
+            else:    
+                data_dict[params] = fs_tostore/fs_tostore.sum()                
+        list_dicts.append(data_dict)
+    return list_dicts
+
+# ! log-scale params, define logs
+# repeat of above functions, except some params have been log-transformed
+# logs is a list where len(logs) = len(p) and logs[i] = True if p[i] is 
+# in log scale 
+def worker_func_log(args):
+    (p, func, ns, pts_l, logs) = args
+    func_ex = dadi.Numerics.make_extrap_func(func)
+    return func_ex([10**p[i] if logs[i] else p[i] for i in range(len(logs))],
+                   ns, pts_l)
+
+# ! log-scale params, define logs
+# takes extra argument logs, as defined above
+def generating_data_parallel_log(params_list, theta_list, 
+                                func, ns, pts_l, logs, ncpu=None):
+    '''Parallelized version for generating_data using multiprocessing.
+    If npcu=None, it will use all the CPUs on the machine. 
+    Otherwise user can specify a limit.
+    logs is a list specifying the indices of params that are in log scale
+    Returns a list of dictionaries where each dictionary stores
+    a data set for training or testing RFR algorithm. Dictionaries
+    have structure params:fs.
+    '''
+    arg_list = [(p, func, ns, pts_l, logs) for p in params_list]
+    with Pool(processes=ncpu) as pool:
+            fs_list = pool.map(worker_func_log, arg_list)
 
     list_dicts = []
     for theta in theta_list:
@@ -292,6 +334,30 @@ def plot_by_param(true, pred, r2=None, msle=None, c=None, ax=None):
         plt.text(0.3, 0.9, "\nR^2: " + str(round(r2,4)) + "\nMSLE: " + str(round(msle,4)),
         horizontalalignment='center', verticalalignment='center', fontsize=16,
         transform = ax.transAxes) # equation +
+
+# ! log-scale param, define log
+def plot_by_param_log(true, pred, log, ax, r2=None, case=None, vals=None):
+    # case is of the form (name,  test_theta_val)
+    ax_min = min(min(true), min(pred)) - 0.1
+    ax_max = max(max(true), max(pred)) + 0.1
+    if log:
+        ax_min = 10**ax_min
+        ax_max = 10**ax_max
+        true = [10**num for num in true]
+        pred = [10**num for num in pred]
+        ax.set_xscale("log")
+        ax.set_yscale("log")
+    ax.plot([ax_min, ax_max], [ax_min, ax_max])
+    if r2:
+        x, y = ax_min + 0.1, ax_max - 0.1
+        if log:
+            x = 10**(math.log(ax_min, 10) + 0.1)
+            y = 10**(math.log(ax_max, 10) - 0.1)
+        ax.text(x, y, "R^2: " + str(round(r2, 3)))
+    ax.set_title(f"{case[0]}: test theta {case[1]}")
+    ax.set_xlabel("true")
+    ax.set_ylabel("predicted")
+    ax.scatter(true, pred, c=vals)
 
 # Test code: running time for the 1D version (2 epoch)
 # We protect this test code with this Python idiom. This means the test
