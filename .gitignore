@@ -9,3 +9,5 @@ src/dadi/
 results/archive
 .Rhistory
 bin/.ipynb_checkpoints/Figures-checkpoint.ipynb
+results/.DS_Store
+results/.DS_Store
