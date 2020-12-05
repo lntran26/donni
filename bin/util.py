@@ -341,17 +341,6 @@ def plot_by_param(true, pred, r2=None, msle=None, c=None, ax=None):
         # axis scales to be customized
         plt.xlim([10**-2.1, 10**2.1])
         plt.ylim([10**-2.1, 10**2.1])
-        # scale used for smaller nu range log -2 to 0
-        # plt.xlim([10**-2.1, 10**0.1])
-        # plt.ylim([10**-2.1, 10**0.1])
-        # scale used for larger nu range log 0 to 2
-        # plt.xlim([10**-0.1, 10**2.1])
-        # plt.ylim([10**-0.1, 10**2.1])
-        # scale used for 1/nu
-        # plt.xlim([10**-0.1, 10**2.1])
-        # plt.ylim([10**-0.1, 10**2.1])
-        # plot a slope 1 line
-        plt.plot([10**-3, 10**3], [10**-3, 10**3])
         # convert to log to plot best fit line in log-log scale
         log_true = list(np.log(true))
         log_pred = list(np.log(pred))
@@ -360,19 +349,29 @@ def plot_by_param(true, pred, r2=None, msle=None, c=None, ax=None):
         plt.plot(np.unique(true), y_fit, color='salmon')
     else:
         # axis scales to be customized
-        plt.xlim([0, 2.1])
-        plt.ylim([0, 2.1])
+        # plt.xlim([0, 2.1])
+        # plt.ylim([0, 2.1])
+        plt.xlim([min(true)-0.5, max(true)+0.5])
+        plt.ylim([min(pred)-0.5, max(pred)+0.5])
+        # ax_min = min(min(true), min(pred)) - 0.1
+        # ax_max = max(max(true), max(pred)) + 0.1
+        # ax.plot([ax_min, ax_max], [ax_min, ax_max])
         # plot a slope 1 line
         plt.plot([0, 10], [0, 10])
         # plot best fit line
         m,b = np.polyfit(true, pred, 1)
         plt.plot(np.unique(true), np.poly1d((m,b))(np.unique(true)), color='salmon')
+    
     # display equation /of best fit line & scores on plot
     # equation = 'y = ' + str(round(m,4)) + 'x' ' + ' + str(round(b,4))
-    if r2 != None:
+    if r2 != None and msle != None:
         plt.text(0.3, 0.9, "\nR^2: " + str(round(r2,4)) + "\nMSLE: " + str(round(msle,4)),
         horizontalalignment='center', verticalalignment='center', fontsize=16,
         transform = ax.transAxes) # equation +
+    if r2 != None and msle == None:
+        plt.text(0.3, 0.9, "\nR^2: " + str(round(r2,4)),
+        horizontalalignment='center', verticalalignment='center', fontsize=16,
+        transform = ax.transAxes)
 
 # ! log-scale param, define log
 def plot_by_param_log(true, pred, log, ax, r2=None, case=None, vals=None):

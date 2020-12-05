@@ -5,72 +5,84 @@ import dadi
 import numpy as np
 import random
 import matplotlib.pyplot as plt
+import pickle
 # specify the path to util.py file
 sys.path.insert(1, os.path.join(os.getcwd(), 'bin'))
 import util
 
 if __name__ == '__main__': 
-    # generate parameter list for training
-    train_params = [(nu1, nu2, T, m) for nu1 in 10**np.linspace(-2, 2, 3)
-                                    for nu2 in 10**np.linspace(-2, 2, 3)
-                                    for T in np.linspace(0.1, 2, 3)
-                                    for m in np.linspace(1, 10, 3)]
-    print('n_samples training: ', len(train_params))
-    print('Range of training params:', min(train_params), 'to', 
-            max(train_params))
+    # load testing data set
+    list_test_dict = pickle.load(open('data/2d-splitmig/test-data','rb'))
+    # load list of trained rfr
+    # list_rfr = pickle.load(open('data/2d-splitmig/list-rfr','rb'))
+    list_rfr = pickle.load(open('data/2d-splitmig/list-rfr-sampling','rb'))
 
-    # generate parameter list for testing
-    test_params = []
-    # range(#) dictate how many values are in each test set
-    for i in range(50):
-    # generate random nu and T within the same range as training data range
-        nu1 = 10 ** (random.random() * 4 - 2)
-        nu2 = 10 ** (random.random() * 4 - 2)
-        T = random.random() * 1.9 + 0.1
-        m = random.random() * 9.9 + 0.1
-        params = (round(nu1, 2), round(nu2, 2), round(T, 1), round(m, 1))
-        test_params.append(params)
-    # print(some info of testing data)
-    print('n_samples testing: ', len(test_params))
-    print('Range of testing params:', min(test_params), 'to', 
-            max(test_params))
-
-    # generate a list of theta values to run scaling and add variance
-    ### TO DO: CAN SEPARATE TRAIN AND TEST THETA LISTS
-    theta_list = [1,100,1000,10000]
-    #print('Theta list:', theta_list)
-    # designate demographic model, sample size, and extrapolation grid 
-    func = dadi.Demographics2D.split_mig
-    ns = [20,20]
-    pts_l = [40, 50, 60]
-
-    # Use function to make lists of dictionaries storing different training and 
-    # testing data sets from lists of parameters
-    list_train_dict = util.generating_data_parallel(train_params, 
-                        theta_list, func, ns, pts_l)
-    list_test_dict = util.generating_data_parallel(test_params, 
-                        theta_list, func, ns, pts_l)
+    # Create four figures for each of the four param
+    fig1=plt.figure(1, figsize=(22,16), dpi=300)
+    # plt.title("nu1")
+    plt.title("nu1-sampling")
+    plt.axis("off")
     
-    # training, testing, and plotting
-    count_train = 1
-    for train_dict in list_train_dict:
-        rfr = util.rfr_train(train_dict, -1)
-        count_test = 1
+    fig2=plt.figure(2, figsize=(22,16), dpi=300)
+    # plt.title("nu2")
+    plt.title("nu2-sampling")
+    plt.axis("off")
+
+    fig3=plt.figure(3, figsize=(22,16), dpi=300)
+    # plt.title("T")
+    plt.title("T-sampling")
+    plt.axis("off")
+
+    fig4=plt.figure(4, figsize=(22,16), dpi=300)
+    # plt.title("m")
+    plt.title("m-sampling")
+    plt.axis("off")
+
+    # logs = [True, True, False, False]
+
+    # testing, and plotting
+    count_pos = 1
+    for rfr in list_rfr:
         for test_dict in list_test_dict:
-            y_true, y_predict = util.rfr_test(rfr, test_dict)
-            param_true, param_pred = util.sort_by_param(y_true, y_predict)
-            r2_by_param = util.rfr_r2_score(y_true, y_predict)[1]
-            # r2_by_param = r2_score(y_true, y_predict, multioutput='raw_values')
-            msle_by_param = util.rfr_msle(y_true, y_predict)[1]
-            # msle_by_param = mean_squared_log_error(y_true, y_predict, 
-            # multioutput='raw_values')
-            count_param = 1
-            for true, pred, r2, msle in zip(param_true, param_pred, 
-            r2_by_param, msle_by_param):
-                util.plot_by_param(true, pred, r2, msle)
-                plt.savefig('train'+str(count_train)+'test'+str(count_test)+
-                'param'+str(count_param)+'.pdf')
-                plt.clf()
-                count_param+=1
-            count_test+=1
-        count_train+=1
+            y_true, y_pred = util.rfr_test(rfr, test_dict)
+            # sort test results by param for plotting
+            param_true, param_pred = util.sort_by_param(y_true, y_pred)
+            # calculate r2 and msle scores by param
+            r2_by_param = util.rfr_r2_score(y_true, y_pred)[1]
+            # msle_by_param = util.rfr_msle(y_true, y_pred)[1]
+            
+            # PLOT MULTIPLE SUBPLOT VERSION
+            plt.figure(1)
+            fig1.add_subplot(4, 4, count_pos)
+            # util.plot_by_param(param_true[0], param_pred[0], 
+            #                 r2_by_param[0], msle_by_param[0])
+            log_nu1_true = [10**param_true for param_true in param_true[0]]
+            log_nu1_pred =  [10**param_pred for param_pred in param_pred[0]]
+            util.plot_by_param(log_nu1_true, log_nu1_pred, r2_by_param[0])
+
+            plt.figure(2)
+            fig2.add_subplot(4, 4, count_pos)
+            log_nu2_true = [10**param_true for param_true in param_true[1]]
+            log_nu2_pred =  [10**param_pred for param_pred in param_pred[1]]
+            util.plot_by_param(log_nu2_true, log_nu2_pred, r2_by_param[1])
+
+            plt.figure(3)
+            fig3.add_subplot(4, 4, count_pos)
+            util.plot_by_param(param_true[2], param_pred[2], 
+                            r2_by_param[2])
+            
+            plt.figure(4)
+            fig4.add_subplot(4, 4, count_pos)
+            util.plot_by_param(param_true[3], param_pred[3], 
+                            r2_by_param[3])
+            count_pos += 1
+
+    # fig1.savefig('results/2d-splitmig/nu1.png', bbox_inches='tight')
+    # fig2.savefig('results/2d-splitmig/nu2.png', bbox_inches='tight')
+    # fig3.savefig('results/2d-splitmig/T.png', bbox_inches='tight')
+    # fig4.savefig('results/2d-splitmig/m.png', bbox_inches='tight')
+    
+    fig1.savefig('results/2d-splitmig/nu1-sampling.png', bbox_inches='tight')
+    fig2.savefig('results/2d-splitmig/nu2-sampling.png', bbox_inches='tight')
+    fig3.savefig('results/2d-splitmig/T-sampling.png', bbox_inches='tight')
+    fig4.savefig('results/2d-splitmig/m-sampling.png', bbox_inches='tight')

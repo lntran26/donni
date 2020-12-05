@@ -48,74 +48,39 @@ if __name__ == '__main__':
     theta_list = [1, 100, 1000, 10000]
     print('Theta list:', theta_list)
 
-    # load list of trained rfr
-    list_rfr = pickle.load(open('data/2d-splitmig/list-rfr','rb'))
+    # # load list of trained rfr
+    # list_rfr = pickle.load(open('data/2d-splitmig/list-rfr','rb'))
 
-    # Assign number of replicates to be run
-    num_rep = 3
-    print('Number of replicates in this run:', num_rep, '\n')
+    # load list of trained rfr with sampling
+    list_rfr = pickle.load(open('data/2d-splitmig/list-rfr-sampling','rb'))
+    # print relevant info for this 
+    print('This run uses train set with fs sampling.')
 
     # Initialize an empty list to store multiple score lists from each training set and replicate
     score_list = []
-
-    # Use for loop to run several replicates designated by num_rep,
-    # for each rep, use for loop to train with different training dicts 
-    # in list of training dicts and test each case against all test dicts.     
-    # Print out the inferred parameters and R2 scores for all replicates and
-    # store all the test R2 scores in a list of lists, where each small list
-    # represents all R2 test scores for one training set in one replicate.
-    for i in range(num_rep):
-        print('-'*20, 'REPLICATE #', i+1, '-'*20)
-        # Use count to store key# for each run
-        count_train = 1
-        for rfr in list_rfr:
-            print('TRAINING SET #', str(count_train),'\n')
-            count_test = 1
-            for test_dict in list_test_dict:
-                print('TEST CASE # ', str(count_test))
-                y_true, y_pred = util.rfr_test(rfr, test_dict)
-                score = r2_score(y_true, y_pred)
-                score_list.append(score)
-                print('\n')
-                # print('MSLE for each predicted param:', 
-                #         mean_squared_log_error(y_true, y_pred, 
-                #             multioutput='raw_values'))
-                # print('Aggr. MSLE for all predicted params:', score)
-                print('R2 score for each predicted param:', 
-                            r2_score(y_true, y_pred, multioutput='raw_values'))
-                print('Aggr. R2 score for all predicted params:', 
-                            r2_score(y_true, y_pred),'\n')
-                count_test += 1
-            count_train += 1
-    # Calculate and print the average scores of all replicate runs
-    # by looping over the R2 score list of lists, grouping all the small lists
-    # that correspond to different replicates of the same training set,
-    # then avarage to get the mean R2 test scores for that training set 
-    # across all replicate runs.
-    for i in range(len(list_train_dict)):
-        # len(list_train_dict) specifies the number of training sets used
-        # in each replicate, which dictates the distance between replicates
-        # of the same training set in the score list
-        rep_score_list = [score_list[i]]
-        while len(rep_score_list) < num_rep:
-            # len(rep_score_list) should equals num_rep before stopping
-            rep_score_list.append(score_list[i+len(list_train_dict)])
-        print('Raw test scores list for TRAINING set #', i+1,':', 
-            rep_score_list, '\n')
-        # calculate the mean score of all test cases for that training set
-        # by converting each rep_score_list, which is a list of list
-        # into a np array so we can easily calculate the means of the same test
-        # for each training set by columns
-        mean_scores = np.mean(np.array(rep_score_list), axis=0)
-        # mean_scores is a list of test scores for 1 training set against many test sets, 
-        # averaged over all replicates for that training set
-        # print out results
-        print ('Average test scores for TRAINING set #', i+1,':')
-        # for j in range(len(mean_scores)):
-        for j in range(4):
-            print('\t','Average scores for test case #', j+1,':', 
-                round(mean_scores[j], 2))
-        print('\n')
+    
+    # Print the R2 scores for all parameters and test case
+    # Use count to store key# for each run
+    count_train = 1
+    for rfr in list_rfr:
+        print('\n', 'TRAINING SET #', str(count_train),'\n')
+        count_test = 1
+        for test_dict in list_test_dict:
+            print('TEST CASE # ', str(count_test))
+            y_true, y_pred = util.rfr_test(rfr, test_dict)
+            score = r2_score(y_true, y_pred)
+            score_list.append(score)
+            # print('MSLE for each predicted param:', 
+            #         mean_squared_log_error(y_true, y_pred, 
+            #             multioutput='raw_values'))
+            # print('Aggr. MSLE for all predicted params:', mean_squared_log_error(y_true, y_pred),'\n')
+            print('R2 score for each predicted param:', 
+                        r2_score(y_true, y_pred, multioutput='raw_values'))
+            print('Aggr. R2 score for all predicted params:', 
+                        r2_score(y_true, y_pred),'\n')
+            count_test += 1
+        count_train += 1
+    
     print('END OF RUN', '\n')
     # close the text file
     sys.stdout.close()
