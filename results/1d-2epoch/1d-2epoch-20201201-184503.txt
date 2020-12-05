@@ -1,0 +1,454 @@
+********************************************************************** 
+
+EXPERIMENT DATE:  Tue Dec  1 18:45:03 2020
+
+    Keys for Training/Testing #:
+    # 1 : no noise
+    # 2 : theta = 100
+    # 3 : theta = 1,000 
+    # 4 : theta = 10,000
+    
+n_samples training:  288
+Range of training params: (0.025118864315095794, 0.1) to (100.0, 2.0)
+n_samples testing:  105
+Range of testing params: (0.06767497770997581, 0.25819963885583397) to (92.8708873111955, 0.12123896139074652)
+Theta list: [1, 100, 1000, 10000]
+Number of replicates in this run: 3 
+
+-------------------- REPLICATE # 1 --------------------
+TRAINING SET # 1
+TEST CASE #  1
+
+
+MSLE for each predicted param: [0.01608193 0.00822983]
+Aggr. MSLE for all predicted params: 0.9228494520102914
+R2 score for each predicted param: [0.94863591 0.89706299]
+Aggr. R2 score for all predicted params: 0.9228494520102914 
+
+TEST CASE #  2
+
+
+MSLE for each predicted param: [0.0811795  0.04675563]
+Aggr. MSLE for all predicted params: 0.6241746378297839
+R2 score for each predicted param: [0.78433065 0.46401862]
+Aggr. R2 score for all predicted params: 0.6241746378297839 
+
+TEST CASE #  3
+
+
+MSLE for each predicted param: [0.02585643 0.02199009]
+Aggr. MSLE for all predicted params: 0.8264164847538025
+R2 score for each predicted param: [0.93320245 0.71963052]
+Aggr. R2 score for all predicted params: 0.8264164847538025 
+
+TEST CASE #  4
+
+
+MSLE for each predicted param: [0.02073234 0.00990688]
+Aggr. MSLE for all predicted params: 0.9049579818737754
+R2 score for each predicted param: [0.94776899 0.86214697]
+Aggr. R2 score for all predicted params: 0.9049579818737754 
+
+TRAINING SET # 2
+TEST CASE #  1
+
+
+MSLE for each predicted param: [0.04163007 0.01968722]
+Aggr. MSLE for all predicted params: 0.8347977987537643
+R2 score for each predicted param: [0.88303763 0.78655797]
+Aggr. R2 score for all predicted params: 0.8347977987537643 
+
+TEST CASE #  2
+
+
+MSLE for each predicted param: [0.07881605 0.02840129]
+Aggr. MSLE for all predicted params: 0.7310590798028347
+R2 score for each predicted param: [0.81631574 0.64580242]
+Aggr. R2 score for all predicted params: 0.7310590798028347 
+
+TEST CASE #  3
+
+
+MSLE for each predicted param: [0.03553747 0.02083384]
+Aggr. MSLE for all predicted params: 0.827217552642811
+R2 score for each predicted param: [0.89633868 0.75809642]
+Aggr. R2 score for all predicted params: 0.827217552642811 
+
+TEST CASE #  4
+
+
+MSLE for each predicted param: [0.03983311 0.01918314]
+Aggr. MSLE for all predicted params: 0.8412899531001621
+R2 score for each predicted param: [0.89124703 0.79133287]
+Aggr. R2 score for all predicted params: 0.8412899531001621 
+
+TRAINING SET # 3
+TEST CASE #  1
+
+
+MSLE for each predicted param: [0.02455315 0.01133078]
+Aggr. MSLE for all predicted params: 0.8863101779309525
+R2 score for each predicted param: [0.90929389 0.86332647]
+Aggr. R2 score for all predicted params: 0.8863101779309525 
+
+TEST CASE #  2
+
+
+MSLE for each predicted param: [0.07943776 0.03198736]
+Aggr. MSLE for all predicted params: 0.7203815917913639
+R2 score for each predicted param: [0.81942559 0.62133759]
+Aggr. R2 score for all predicted params: 0.7203815917913639 
+
+TEST CASE #  3
+
+
+MSLE for each predicted param: [0.02464814 0.01414039]
+Aggr. MSLE for all predicted params: 0.8589291556965751
+R2 score for each predicted param: [0.90318532 0.81467299]
+Aggr. R2 score for all predicted params: 0.8589291556965751 
+
+TEST CASE #  4
+
+
+MSLE for each predicted param: [0.02642526 0.01169397]
+Aggr. MSLE for all predicted params: 0.8775702877387352
+R2 score for each predicted param: [0.90246898 0.8526716 ]
+Aggr. R2 score for all predicted params: 0.8775702877387352 
+
+TRAINING SET # 4
+TEST CASE #  1
+
+
+MSLE for each predicted param: [0.02043923 0.00703743]
+Aggr. MSLE for all predicted params: 0.9143773022204984
+R2 score for each predicted param: [0.91477073 0.91398387]
+Aggr. R2 score for all predicted params: 0.9143773022204984 
+
+TEST CASE #  2
+
+
+MSLE for each predicted param: [0.08678455 0.04295679]
+Aggr. MSLE for all predicted params: 0.6355804904190676
+R2 score for each predicted param: [0.79012861 0.48103237]
+Aggr. R2 score for all predicted params: 0.6355804904190676 
+
+TEST CASE #  3
+
+
+MSLE for each predicted param: [0.02869464 0.02106599]
+Aggr. MSLE for all predicted params: 0.8264442279323867
+R2 score for each predicted param: [0.9178059  0.73508255]
+Aggr. R2 score for all predicted params: 0.8264442279323867 
+
+TEST CASE #  4
+
+
+MSLE for each predicted param: [0.02014634 0.00830948]
+Aggr. MSLE for all predicted params: 0.9040997951152545
+R2 score for each predicted param: [0.91681064 0.89138895]
+Aggr. R2 score for all predicted params: 0.9040997951152545 
+
+-------------------- REPLICATE # 2 --------------------
+TRAINING SET # 1
+TEST CASE #  1
+
+
+MSLE for each predicted param: [0.01594287 0.00797473]
+Aggr. MSLE for all predicted params: 0.9238057092907123
+R2 score for each predicted param: [0.94722156 0.90038986]
+Aggr. R2 score for all predicted params: 0.9238057092907123 
+
+TEST CASE #  2
+
+
+MSLE for each predicted param: [0.082915   0.04519747]
+Aggr. MSLE for all predicted params: 0.6156210636224588
+R2 score for each predicted param: [0.74872238 0.48251974]
+Aggr. R2 score for all predicted params: 0.6156210636224588 
+
+TEST CASE #  3
+
+
+MSLE for each predicted param: [0.0276116  0.02129616]
+Aggr. MSLE for all predicted params: 0.8216507947596652
+R2 score for each predicted param: [0.91632704 0.72697455]
+Aggr. R2 score for all predicted params: 0.8216507947596652 
+
+TEST CASE #  4
+
+
+MSLE for each predicted param: [0.0194173  0.00918057]
+Aggr. MSLE for all predicted params: 0.9098253858809633
+R2 score for each predicted param: [0.94557073 0.87408004]
+Aggr. R2 score for all predicted params: 0.9098253858809633 
+
+TRAINING SET # 2
+TEST CASE #  1
+
+
+MSLE for each predicted param: [0.03780036 0.01587978]
+Aggr. MSLE for all predicted params: 0.855311799829577
+R2 score for each predicted param: [0.89283329 0.81779031]
+Aggr. R2 score for all predicted params: 0.855311799829577 
+
+TEST CASE #  2
+
+
+MSLE for each predicted param: [0.07479026 0.02772265]
+Aggr. MSLE for all predicted params: 0.742581272941282
+R2 score for each predicted param: [0.83051766 0.65464488]
+Aggr. R2 score for all predicted params: 0.742581272941282 
+
+TEST CASE #  3
+
+
+MSLE for each predicted param: [0.03329098 0.01917927]
+Aggr. MSLE for all predicted params: 0.8349006689955398
+R2 score for each predicted param: [0.90185745 0.76794389]
+Aggr. R2 score for all predicted params: 0.8349006689955398 
+
+TEST CASE #  4
+
+
+MSLE for each predicted param: [0.03583304 0.0165346 ]
+Aggr. MSLE for all predicted params: 0.8566242331702185
+R2 score for each predicted param: [0.90251574 0.81073273]
+Aggr. R2 score for all predicted params: 0.8566242331702185 
+
+TRAINING SET # 3
+TEST CASE #  1
+
+
+MSLE for each predicted param: [0.02278141 0.01137178]
+Aggr. MSLE for all predicted params: 0.8862729061753399
+R2 score for each predicted param: [0.91265662 0.85988919]
+Aggr. R2 score for all predicted params: 0.8862729061753399 
+
+TEST CASE #  2
+
+
+MSLE for each predicted param: [0.07525932 0.02912493]
+Aggr. MSLE for all predicted params: 0.7379964914515291
+R2 score for each predicted param: [0.82557078 0.6504222 ]
+Aggr. R2 score for all predicted params: 0.7379964914515291 
+
+TEST CASE #  3
+
+
+MSLE for each predicted param: [0.02336178 0.01433185]
+Aggr. MSLE for all predicted params: 0.8551684373000452
+R2 score for each predicted param: [0.89994128 0.8103956 ]
+Aggr. R2 score for all predicted params: 0.8551684373000452 
+
+TEST CASE #  4
+
+
+MSLE for each predicted param: [0.02409694 0.01140946]
+Aggr. MSLE for all predicted params: 0.8827393257810563
+R2 score for each predicted param: [0.91146737 0.85401128]
+Aggr. R2 score for all predicted params: 0.8827393257810563 
+
+TRAINING SET # 4
+TEST CASE #  1
+
+
+MSLE for each predicted param: [0.0189652  0.00753115]
+Aggr. MSLE for all predicted params: 0.9173268626947053
+R2 score for each predicted param: [0.92456536 0.91008836]
+Aggr. R2 score for all predicted params: 0.9173268626947053 
+
+TEST CASE #  2
+
+
+MSLE for each predicted param: [0.08135863 0.04304407]
+Aggr. MSLE for all predicted params: 0.6531434224333474
+R2 score for each predicted param: [0.81931664 0.4869702 ]
+Aggr. R2 score for all predicted params: 0.6531434224333474 
+
+TEST CASE #  3
+
+
+MSLE for each predicted param: [0.02569569 0.02067217]
+Aggr. MSLE for all predicted params: 0.8327029605847562
+R2 score for each predicted param: [0.92632237 0.73908355]
+Aggr. R2 score for all predicted params: 0.8327029605847562 
+
+TEST CASE #  4
+
+
+MSLE for each predicted param: [0.02093704 0.007623  ]
+Aggr. MSLE for all predicted params: 0.908392350647466
+R2 score for each predicted param: [0.91593972 0.90084498]
+Aggr. R2 score for all predicted params: 0.908392350647466 
+
+-------------------- REPLICATE # 3 --------------------
+TRAINING SET # 1
+TEST CASE #  1
+
+
+MSLE for each predicted param: [0.01595818 0.00798187]
+Aggr. MSLE for all predicted params: 0.9225697443724483
+R2 score for each predicted param: [0.94504675 0.90009273]
+Aggr. R2 score for all predicted params: 0.9225697443724483 
+
+TEST CASE #  2
+
+
+MSLE for each predicted param: [0.08416645 0.04612838]
+Aggr. MSLE for all predicted params: 0.6239134782101571
+R2 score for each predicted param: [0.7764968  0.47133016]
+Aggr. R2 score for all predicted params: 0.6239134782101571 
+
+TEST CASE #  3
+
+
+MSLE for each predicted param: [0.02797787 0.0219904 ]
+Aggr. MSLE for all predicted params: 0.8210028944329546
+R2 score for each predicted param: [0.9204474  0.72155839]
+Aggr. R2 score for all predicted params: 0.8210028944329546 
+
+TEST CASE #  4
+
+
+MSLE for each predicted param: [0.0217297  0.01109105]
+Aggr. MSLE for all predicted params: 0.8965713991998104
+R2 score for each predicted param: [0.94281765 0.85032515]
+Aggr. R2 score for all predicted params: 0.8965713991998104 
+
+TRAINING SET # 2
+TEST CASE #  1
+
+
+MSLE for each predicted param: [0.04060804 0.01621014]
+Aggr. MSLE for all predicted params: 0.8540595875489838
+R2 score for each predicted param: [0.88695409 0.82116508]
+Aggr. R2 score for all predicted params: 0.8540595875489838 
+
+TEST CASE #  2
+
+
+MSLE for each predicted param: [0.07738934 0.02715298]
+Aggr. MSLE for all predicted params: 0.748935650455403
+R2 score for each predicted param: [0.83115024 0.66672106]
+Aggr. R2 score for all predicted params: 0.748935650455403 
+
+TEST CASE #  3
+
+
+MSLE for each predicted param: [0.03508866 0.01867714]
+Aggr. MSLE for all predicted params: 0.8351974763953527
+R2 score for each predicted param: [0.89415562 0.77623933]
+Aggr. R2 score for all predicted params: 0.8351974763953527 
+
+TEST CASE #  4
+
+
+MSLE for each predicted param: [0.03781645 0.01529606]
+Aggr. MSLE for all predicted params: 0.8642457490881228
+R2 score for each predicted param: [0.89906376 0.82942774]
+Aggr. R2 score for all predicted params: 0.8642457490881228 
+
+TRAINING SET # 3
+TEST CASE #  1
+
+
+MSLE for each predicted param: [0.02273425 0.0109017 ]
+Aggr. MSLE for all predicted params: 0.8866460776011054
+R2 score for each predicted param: [0.90955297 0.86373918]
+Aggr. R2 score for all predicted params: 0.8866460776011054 
+
+TEST CASE #  2
+
+
+MSLE for each predicted param: [0.07791683 0.03274054]
+Aggr. MSLE for all predicted params: 0.7140958500362948
+R2 score for each predicted param: [0.8202205 0.6079712]
+Aggr. R2 score for all predicted params: 0.7140958500362948 
+
+TEST CASE #  3
+
+
+MSLE for each predicted param: [0.02488558 0.01593039]
+Aggr. MSLE for all predicted params: 0.8438082985689935
+R2 score for each predicted param: [0.89821968 0.78939692]
+Aggr. R2 score for all predicted params: 0.8438082985689935 
+
+TEST CASE #  4
+
+
+MSLE for each predicted param: [0.02402406 0.01159304]
+Aggr. MSLE for all predicted params: 0.880414645769366
+R2 score for each predicted param: [0.90909659 0.8517327 ]
+Aggr. R2 score for all predicted params: 0.880414645769366 
+
+TRAINING SET # 4
+TEST CASE #  1
+
+
+MSLE for each predicted param: [0.02021424 0.00719618]
+Aggr. MSLE for all predicted params: 0.9149259552530489
+R2 score for each predicted param: [0.91703281 0.9128191 ]
+Aggr. R2 score for all predicted params: 0.9149259552530489 
+
+TEST CASE #  2
+
+
+MSLE for each predicted param: [0.08737613 0.04299214]
+Aggr. MSLE for all predicted params: 0.64531600868077
+R2 score for each predicted param: [0.80141199 0.48922003]
+Aggr. R2 score for all predicted params: 0.64531600868077 
+
+TEST CASE #  3
+
+
+MSLE for each predicted param: [0.02520707 0.02097276]
+Aggr. MSLE for all predicted params: 0.8317111202607399
+R2 score for each predicted param: [0.92597745 0.73744479]
+Aggr. R2 score for all predicted params: 0.8317111202607399 
+
+TEST CASE #  4
+
+
+MSLE for each predicted param: [0.0201404 0.0081259]
+Aggr. MSLE for all predicted params: 0.9064032115864334
+R2 score for each predicted param: [0.917537   0.89526942]
+Aggr. R2 score for all predicted params: 0.9064032115864334 
+
+Raw test scores list for TRAINING set # 1 : [[0.9228494520102914, 0.6241746378297839, 0.8264164847538025, 0.9049579818737754], [0.9238057092907123, 0.6156210636224588, 0.8216507947596652, 0.9098253858809633], [0.9238057092907123, 0.6156210636224588, 0.8216507947596652, 0.9098253858809633]] 
+
+Average test scores for TRAINING set # 1 :
+	 Average scores for test case # 1 : 0.92
+	 Average scores for test case # 2 : 0.62
+	 Average scores for test case # 3 : 0.82
+	 Average scores for test case # 4 : 0.91
+
+
+Raw test scores list for TRAINING set # 2 : [[0.8347977987537643, 0.7310590798028347, 0.827217552642811, 0.8412899531001621], [0.855311799829577, 0.742581272941282, 0.8349006689955398, 0.8566242331702185], [0.855311799829577, 0.742581272941282, 0.8349006689955398, 0.8566242331702185]] 
+
+Average test scores for TRAINING set # 2 :
+	 Average scores for test case # 1 : 0.85
+	 Average scores for test case # 2 : 0.74
+	 Average scores for test case # 3 : 0.83
+	 Average scores for test case # 4 : 0.85
+
+
+Raw test scores list for TRAINING set # 3 : [[0.8863101779309525, 0.7203815917913639, 0.8589291556965751, 0.8775702877387352], [0.8862729061753399, 0.7379964914515291, 0.8551684373000452, 0.8827393257810563], [0.8862729061753399, 0.7379964914515291, 0.8551684373000452, 0.8827393257810563]] 
+
+Average test scores for TRAINING set # 3 :
+	 Average scores for test case # 1 : 0.89
+	 Average scores for test case # 2 : 0.73
+	 Average scores for test case # 3 : 0.86
+	 Average scores for test case # 4 : 0.88
+
+
+Raw test scores list for TRAINING set # 4 : [[0.9143773022204984, 0.6355804904190676, 0.8264442279323867, 0.9040997951152545], [0.9173268626947053, 0.6531434224333474, 0.8327029605847562, 0.908392350647466], [0.9173268626947053, 0.6531434224333474, 0.8327029605847562, 0.908392350647466]] 
+
+Average test scores for TRAINING set # 4 :
+	 Average scores for test case # 1 : 0.92
+	 Average scores for test case # 2 : 0.65
+	 Average scores for test case # 3 : 0.83
+	 Average scores for test case # 4 : 0.91
+
+
+END OF RUN 
+
