@@ -31,7 +31,7 @@ if __name__ == '__main__':
 
     # load files for with log transform & T/nu > 5 exclusion
     # load testing data set
-    list_test_dict = pickle.load(open('data/1d-2epoch/test-data-exclude','rb'))
+    list_test_dict = pickle.load(open('data/1d-2epoch/test-data-exclude-2','rb'))
     # load list of trained rfr
     list_rfr = pickle.load(open('data/1d-2epoch/list-rfr-exclude-log','rb'))
 
@@ -77,5 +77,5 @@ if __name__ == '__main__':
                             r2_by_param[1], msle_by_param[1], T_over_nu)
             count_pos += 1
 
-    fig1.savefig('results/nu_exclude_log.png', bbox_inches='tight')
-    fig2.savefig('results/T_exclude_log.png', bbox_inches='tight')
+    fig1.savefig('results/1d-2epoch/nu_exclude_log_2.png', bbox_inches='tight')
+    fig2.savefig('results/1d-2epoch/T_exclude_log_2.png', bbox_inches='tight')

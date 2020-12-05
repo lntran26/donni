@@ -244,6 +244,43 @@ def rfr_test(rfr, test_dict):
         y_pred.append(rfr.predict([test_fs]).flatten())
     return y_true, y_pred
 
+def rfr_learn_log(train_dict, list_test_dict, ncpu=None):
+    '''
+    Trains a RandomForestRegressor algorithm and tests its performance.
+    Included argument ncpu for parallelism: default is None with ncpu=1; 
+    ncpu=-1 means using all available cpus. 
+    Returns a list of R2 scores measuring performance, 
+    which can be used to calculate average scores when running multiple
+    replicate experiments on the same training and testing conditions.
+    This version include dealing with log transformed param
+    '''
+    # Training RFR
+    rfr = rfr_train(train_dict)
+
+    # Testing RFR
+    score_list = []
+    count = 1 # Use count to print key# for each run
+    for test_dict in list_test_dict:
+        print('TEST CASE # ', str(count))
+        y_true, y_pred = rfr_test(rfr, test_dict)
+        new_y_pred = un_log_transform_predict(y_pred, [0])
+        # if want the average MSLE
+        # score = mean_squared_log_error(y_true, new_y_pred)
+        # if want the average R^2
+        score = r2_score(y_true, new_y_pred)
+        score_list.append(score)
+        print('\n')
+        print('MSLE for each predicted param:', 
+                mean_squared_log_error(y_true, new_y_pred, 
+                    multioutput='raw_values'))
+        print('Aggr. MSLE for all predicted params:', score)
+        print('R2 score for each predicted param:', 
+                    r2_score(y_true, new_y_pred, multioutput='raw_values'))
+        print('Aggr. R2 score for all predicted params:', 
+                    r2_score(y_true, new_y_pred),'\n')
+        count += 1
+    return score_list
+
 def rfr_r2_score(y_true, y_pred):
     score = r2_score(y_true, y_pred)
     score_by_param = r2_score(y_true, y_pred, multioutput='raw_values')
