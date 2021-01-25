@@ -328,12 +328,13 @@ def plot_by_param(true, pred, r2=None, msle=None, c=None, ax=None):
     if c is None:
         plt.scatter(true, pred)
     else:
-        plt.scatter(true, pred, c=c, vmax=5)
+        # plt.scatter(true, pred, c=c, vmax=5)
+        plt.scatter(true, pred, c=c)
         cbar = plt.colorbar()
-        cbar.set_label("T/nu", labelpad=+1)
+        cbar.set_label("m_true", labelpad=+1)
     # axis labels to be customized
     plt.xlabel("true")
-    plt.ylabel("predicted")
+    plt.ylabel("predict")
     # only plot in log scale if the difference between max and min is large
     if max(true+pred)/min(true+pred) > 100:
         plt.xscale("log")
@@ -341,6 +342,8 @@ def plot_by_param(true, pred, r2=None, msle=None, c=None, ax=None):
         # axis scales to be customized
         plt.xlim([10**-2.1, 10**2.1])
         plt.ylim([10**-2.1, 10**2.1])
+        # plot a slope 1 line
+        plt.plot([10**-3, 10**3], [10**-3, 10**3])
         # convert to log to plot best fit line in log-log scale
         log_true = list(np.log(true))
         log_pred = list(np.log(pred))
@@ -351,13 +354,12 @@ def plot_by_param(true, pred, r2=None, msle=None, c=None, ax=None):
         # axis scales to be customized
         # plt.xlim([0, 2.1])
         # plt.ylim([0, 2.1])
+        # plt.xlim([0, 12.1])
+        # plt.ylim([0, 12.1])
         plt.xlim([min(true)-0.5, max(true)+0.5])
         plt.ylim([min(pred)-0.5, max(pred)+0.5])
-        # ax_min = min(min(true), min(pred)) - 0.1
-        # ax_max = max(max(true), max(pred)) + 0.1
-        # ax.plot([ax_min, ax_max], [ax_min, ax_max])
         # plot a slope 1 line
-        plt.plot([0, 10], [0, 10])
+        plt.plot([-1, 13], [-1, 13])
         # plot best fit line
         m,b = np.polyfit(true, pred, 1)
         plt.plot(np.unique(true), np.poly1d((m,b))(np.unique(true)), color='salmon')

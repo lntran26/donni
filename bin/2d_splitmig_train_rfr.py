@@ -9,7 +9,12 @@ from sklearn.ensemble import RandomForestRegressor
 
 if __name__ == '__main__': 
     # load training set from pickle file
-    list_train_dict = pickle.load(open('data/2d-splitmig/train-data','rb'))
+    # list_train_dict = pickle.load(open('data/2d-splitmig/train-data','rb'))
+    # list_train_dict = pickle.load(open('data/2d-splitmig/train-data-fixed-m','rb'))
+    # list_train_dict = pickle.load(open('data/2d-splitmig/train-data-vary-T','rb'))
+    # list_train_dict = pickle.load(open('data/2d-splitmig/train-data-vary-T-10','rb'))
+    list_train_dict = pickle.load(open('data/2d-splitmig/train-data-finer-Tm','rb'))
+    # list_train_dict = pickle.load(open('data/2d-splitmig/train-data-vary-T-100','rb'))
     
     # sample to make 10,000 n_samples total for each theta cases, 
     # train the random forest regressor with list of training sets,
@@ -24,8 +29,9 @@ if __name__ == '__main__':
             fs = train_dict[params]
             y_train_label.append(params)
             X_train_input.append(fs)
-            for i in range(3):
-                # sample 3x for each params:fs pair and append to data lists
+            for i in range(9):
+            # for i in range(3):
+                # sample x times for each params:fs pair and append to data lists
                 fs_tostore = abs(fs).sample()
                 y_train_label.append(params)
                 X_train_input.append(fs_tostore)
@@ -45,5 +51,13 @@ if __name__ == '__main__':
     # list_rfr = [util.rfr_train(train_dict) for train_dict in list_train_dict]
 
     # save the list of trained rfr into pickle file
-    pickle.dump(list_rfr, open('data/2d-splitmig/list-rfr-sampling', 'wb'), 2)
+    # pickle.dump(list_rfr, open('data/2d-splitmig/list-rfr-sampling', 'wb'), 2)
     # pickle.dump(list_rfr, open('data/2d-splitmig/list-rfr', 'wb'), 2)
+    # pickle.dump(list_rfr, open('data/2d-splitmig/list-rfr-fixed-m', 'wb'), 2)
+    # pickle.dump(list_rfr, open('data/2d-splitmig/list-rfr-vary-T', 'wb'), 2)
+    # pickle.dump(list_rfr, open('data/2d-splitmig/list-rfr-vary-T-10', 'wb'), 2)
+    # pickle.dump(list_rfr, open('data/2d-splitmig/list-rfr-vary-T-10-sampling', 'wb'), 2)
+    # pickle.dump(list_rfr, open('data/2d-splitmig/list-rfr-finer-Tm', 'wb'), 2)
+    # pickle.dump(list_rfr, open('data/2d-splitmig/list-rfr-vary-T-100', 'wb'), 2)
+    # pickle.dump(list_rfr, open('data/2d-splitmig/list-rfr-vary-T-100-sampling', 'wb'), 2)
+    pickle.dump(list_rfr, open('data/2d-splitmig/list-rfr-finer-Tm-sampling-10x', 'wb'), 2)
