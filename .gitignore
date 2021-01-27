@@ -255,3 +255,6 @@ data/1d-2epoch/list-rfr-full-log
 data/1d-2epoch/list-rfr-full
 data/1d-2epoch/list-rfr-exclude-log
 data/1d-2epoch/list-rfr-exclude
+data/2d-splitmig/test-data
+data/2d-splitmig/train-data
+data/2d-splitmig/test-data
