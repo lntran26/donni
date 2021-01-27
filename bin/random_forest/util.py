@@ -323,15 +323,15 @@ def plot_by_param(true, pred, r2=None, msle=None, c=None, ax=None):
     if ax is None:
         ax = plt.gca()
     # make square plots with two axes the same size
-    # ax.set_aspect('equal', adjustable='box')
+    ax.set_aspect('equal','box')
     # ax.set_aspect(1.0/ax.get_data_ratio(), adjustable='box')
     if c is None:
         plt.scatter(true, pred)
     else:
         # plt.scatter(true, pred, c=c, vmax=5)
         plt.scatter(true, pred, c=c)
-        cbar = plt.colorbar()
-        cbar.set_label("m_true", labelpad=+1)
+        # cbar = plt.colorbar()
+        # cbar.set_label("m_true", labelpad=+1)
     # axis labels to be customized
     plt.xlabel("true")
     plt.ylabel("predict")
@@ -344,12 +344,12 @@ def plot_by_param(true, pred, r2=None, msle=None, c=None, ax=None):
         plt.ylim([10**-2.1, 10**2.1])
         # plot a slope 1 line
         plt.plot([10**-3, 10**3], [10**-3, 10**3])
-        # convert to log to plot best fit line in log-log scale
-        log_true = list(np.log(true))
-        log_pred = list(np.log(pred))
-        m,b = np.polyfit(log_true, log_pred, 1)
-        y_fit = np.exp(m*np.unique(log_true) + b)
-        plt.plot(np.unique(true), y_fit, color='salmon')
+        # # convert to log to plot best fit line in log-log scale
+        # log_true = list(np.log(true))
+        # log_pred = list(np.log(pred))
+        # m,b = np.polyfit(log_true, log_pred, 1)
+        # y_fit = np.exp(m*np.unique(log_true) + b)
+        # plt.plot(np.unique(true), y_fit, color='salmon')
     else:
         # axis scales to be customized
         # plt.xlim([0, 2.1])
@@ -360,9 +360,9 @@ def plot_by_param(true, pred, r2=None, msle=None, c=None, ax=None):
         plt.ylim([min(pred)-0.5, max(pred)+0.5])
         # plot a slope 1 line
         plt.plot([-1, 13], [-1, 13])
-        # plot best fit line
-        m,b = np.polyfit(true, pred, 1)
-        plt.plot(np.unique(true), np.poly1d((m,b))(np.unique(true)), color='salmon')
+        # # plot best fit line
+        # m,b = np.polyfit(true, pred, 1)
+        # plt.plot(np.unique(true), np.poly1d((m,b))(np.unique(true)), color='salmon')
     
     # display equation /of best fit line & scores on plot
     # equation = 'y = ' + str(round(m,4)) + 'x' ' + ' + str(round(b,4))
