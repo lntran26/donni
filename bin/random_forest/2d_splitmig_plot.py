@@ -15,9 +15,10 @@ if __name__ == '__main__':
     # list_test_dict = pickle.load(open('data/2d-splitmig/test-data','rb'))
     # list_test_dict = pickle.load(open('data/2d-splitmig/test-data-fixed-m','rb'))
     # list_test_dict = pickle.load(open('data/2d-splitmig/test-data-vary-T','rb'))
-    list_test_dict = pickle.load(open('data/2d-splitmig/test-data-vary-T-100','rb'))
+    # list_test_dict = pickle.load(open('data/2d-splitmig/test-data-vary-T-100','rb'))
+    list_test_dict = pickle.load(open('data/2d-splitmig/test-data-corrected','rb'))
     # load list of trained rfr
-    # list_rfr = pickle.load(open('data/2d-splitmig/list-rfr','rb'))
+    list_rfr = pickle.load(open('data/2d-splitmig/list-rfr','rb'))
     # list_rfr = pickle.load(open('data/2d-splitmig/list-rfr-sampling','rb'))
     # list_rfr = pickle.load(open('data/2d-splitmig/list-rfr-fixed-m','rb'))
     # list_rfr = pickle.load(open('data/2d-splitmig/list-rfr-vary-T','rb'))
@@ -25,7 +26,7 @@ if __name__ == '__main__':
     # list_rfr = pickle.load(open('data/2d-splitmig/list-rfr-vary-T-10-sampling','rb'))
     # list_rfr = pickle.load(open('data/2d-splitmig/list-rfr-finer-Tm','rb'))
     # list_rfr = pickle.load(open('data/2d-splitmig/list-rfr-vary-T-100','rb'))
-    list_rfr = pickle.load(open('data/2d-splitmig/list-rfr-vary-T-100-sampling','rb'))
+    # list_rfr = pickle.load(open('data/2d-splitmig/list-rfr-vary-T-100-sampling','rb'))
 
     # Create four figures for each of the four param
     fig1=plt.figure(1, figsize=(22,16), dpi=300)
@@ -37,7 +38,8 @@ if __name__ == '__main__':
     # plt.title("nu1-vary-T-10-sampling")
     # plt.title("nu1-finer-Tm")
     # plt.title("nu1-vary-T-100")
-    plt.title("nu1-vary-T-100-sampling")
+    # plt.title("nu1-vary-T-100-sampling")
+    plt.title("nu1-corrected_m")
     plt.axis("off")
     
     fig2=plt.figure(2, figsize=(22,16), dpi=300)
@@ -49,7 +51,8 @@ if __name__ == '__main__':
     # plt.title("nu2-vary-T-10-sampling")
     # plt.title("nu2-finer-Tm")
     # plt.title("nu2-vary-T-100")
-    plt.title("nu2-vary-T-100-sampling")
+    # plt.title("nu2-vary-T-100-sampling")
+    plt.title("nu2-corrected_m")
     plt.axis("off")
 
     fig3=plt.figure(3, figsize=(22,16), dpi=300)
@@ -61,7 +64,8 @@ if __name__ == '__main__':
     # plt.title("T-vary-T-10-sampling")
     # plt.title("T-finer-Tm")
     # plt.title("T-vary-T-100")
-    plt.title("T-vary-T-100-sampling")
+    # plt.title("T-vary-T-100-sampling")
+    plt.title("T-corrected_m")
     plt.axis("off")
 
     fig4=plt.figure(4, figsize=(22,16), dpi=300)
@@ -73,7 +77,8 @@ if __name__ == '__main__':
     # plt.title("m-vary-T-10-sampling")
     # plt.title("m-finer-Tm")
     # plt.title("m-vary-T-100")
-    plt.title("m-vary-T-100-sampling")
+    # plt.title("m-vary-T-100-sampling")
+    plt.title("m-corrected_m")
     plt.axis("off")
 
     # logs = [True, True, False, False]
@@ -184,7 +189,12 @@ if __name__ == '__main__':
     # fig3.savefig('results/2d-splitmig/test/T-vary-T-100-sampling.png', bbox_inches='tight')
     # fig4.savefig('results/2d-splitmig/test/m-vary-T-100-sampling.png', bbox_inches='tight')
 
-    fig1.savefig('results/2d-splitmig/test/nu1-vary-T-100-sampling-test-100.png', bbox_inches='tight')
-    fig2.savefig('results/2d-splitmig/test/nu2-vary-T-100-sampling-test-100.png', bbox_inches='tight')
-    fig3.savefig('results/2d-splitmig/test/T-vary-T-100-sampling-test-100.png', bbox_inches='tight')
-    fig4.savefig('results/2d-splitmig/test/m-vary-T-100-sampling-test-100.png', bbox_inches='tight')
+    # fig1.savefig('results/2d-splitmig/test/nu1-vary-T-100-sampling-test-100.png', bbox_inches='tight')
+    # fig2.savefig('results/2d-splitmig/test/nu2-vary-T-100-sampling-test-100.png', bbox_inches='tight')
+    # fig3.savefig('results/2d-splitmig/test/T-vary-T-100-sampling-test-100.png', bbox_inches='tight')
+    # fig4.savefig('results/2d-splitmig/test/m-vary-T-100-sampling-test-100.png', bbox_inches='tight')
+
+    fig1.savefig('results/2d-splitmig/test/corrected_m/nu1-corrected_m.png', bbox_inches='tight')
+    fig2.savefig('results/2d-splitmig/test/corrected_m/nu2-corrected_m.png', bbox_inches='tight')
+    fig3.savefig('results/2d-splitmig/test/corrected_m/T-corrected_m.png', bbox_inches='tight')
+    fig4.savefig('results/2d-splitmig/test/corrected_m/m-corrected_m.png', bbox_inches='tight')

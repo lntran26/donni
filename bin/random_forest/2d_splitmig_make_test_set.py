@@ -16,15 +16,20 @@ if __name__ == '__main__':
     # for i in range(10):
     for i in range(100):
     # generate random nu and T within the same range as training data range
+        # nu values not in log scale
         # nu1 = 10 ** (random.random() * 4 - 2)
         # nu2 = 10 ** (random.random() * 4 - 2)
-        # nu1 = random.random() * 4 - 2
-        nu1 = 1
-        # nu2 = random.random() * 4 - 2
-        nu2 = 1
+        
+        nu1 = random.random() * 4 - 2
+        # nu1 = 1
+        nu2 = random.random() * 4 - 2
+        # nu2 = 1
+
         T = random.random() * 1.9 + 0.1
-        # m = random.random() * 9.9 + 0.1
-        m = 1
+        
+        # m = random.random() * 9.9 + 0.1 # this is wrong
+        m = random.random() * 9 + 1
+        # m = 1
         params = (nu1, nu2, T, m)
         test_params.append(params)
     
@@ -53,4 +58,5 @@ if __name__ == '__main__':
     # pickle.dump(list_test_dict, open('data/2d-splitmig/test-data', 'wb'), 2)
     # pickle.dump(list_test_dict, open('data/2d-splitmig/test-data-fixed-m', 'wb'), 2)
     # pickle.dump(list_test_dict, open('data/2d-splitmig/test-data-vary-T', 'wb'), 2)
-    pickle.dump(list_test_dict, open('data/2d-splitmig/test-data-vary-T-100', 'wb'), 2)
+    # pickle.dump(list_test_dict, open('data/2d-splitmig/test-data-vary-T-100', 'wb'), 2)
+    pickle.dump(list_test_dict, open('data/2d-splitmig/test-data-corrected', 'wb'), 2)
