@@ -357,7 +357,8 @@ def plot_by_param(true, pred, r2=None, msle=None, c=None, ax=None):
         # plt.xlim([0, 12.1])
         # plt.ylim([0, 12.1])
         plt.xlim([min(true)-0.5, max(true)+0.5])
-        plt.ylim([min(pred)-0.5, max(pred)+0.5])
+        # plt.ylim([min(pred)-0.5, max(pred)+0.5])
+        plt.ylim([min(true)-0.5, max(true)+0.5])
         # plot a slope 1 line
         plt.plot([-1, 13], [-1, 13])
         # # plot best fit line
