@@ -71,7 +71,7 @@ if __name__ == '__main__':
             max(test_params))
 
     # generate a list of theta values to run scaling and add variance
-    theta_list = [1, 100, 1000, 10000]
+    theta_list = [1, 1000]
     print('Theta list:', theta_list)
 
     func = dadi.Demographics2D.split_mig

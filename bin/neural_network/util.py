@@ -302,19 +302,15 @@ def plot_by_param_log(true, pred, log, ax, r2=None, case=None, vals=None):
     ax.set_xlabel("true")
     ax.set_ylabel("predicted")
     ax.scatter(true, pred, c=vals)
-
-
-'''
-added nn methods
-'''
-def nn_train(train_dict, nn=None):
+    
+def nn_train(train_dict, nn=None, solver='adam'):
     # Load training data set from dictionary into arrays of input and
     # corresponding labels
     X_train_input = [train_dict[params].data.flatten() for params in train_dict]
     y_train_label = [params for params in train_dict]
     if nn is None:
         # Load NN, specifying ncpu for parallel processing
-        nn = MLPRegressor()
+        nn = MLPRegressor(solver=solver)
     nn = nn.fit(X_train_input, y_train_label)
     return nn
 
@@ -325,6 +321,8 @@ def nn_test(nn, test_dict):
         y_true.append(params)
         test_fs = test_dict[params].data.flatten()
         y_pred.append(nn.predict([test_fs]).flatten())
+    for pred_param_set in y_pred:
+        print(pred_param_set)
     return y_true, y_pred
 
 def nn_r2_score(y_true, y_pred):

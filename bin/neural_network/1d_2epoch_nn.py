@@ -10,6 +10,7 @@ import random
 import util
 import matplotlib.pyplot as plt
 
+
 if __name__ == '__main__': 
     # open a text file to record experiment results
     timestr = time.strftime("%Y%m%d-%H%M%S")
@@ -79,7 +80,7 @@ if __name__ == '__main__':
     train_i = 0
     for train_dict in list_train_dict:
         print("Training with theta = ", theta_list[train_i])
-        nn = util.nn_train(train_dict)
+        nn = util.nn_train(train_dict, solver='lbfgs')
 
         test_i = 0
         for test_dict in list_test_dict:
@@ -101,9 +102,13 @@ if __name__ == '__main__':
             util.plot_by_param_log(param_true[1], param_pred[1], False, axs2[train_i, test_i],
                          r2=r2_by_param[1], case=["T", theta_list[test_i]], vals=vals)
             
-
+        
+            
             test_i += 1
         train_i += 1
+    #fig, ax = plt.subplots()
+    #ax.plot(nn.loss_curve_)
+
     fig1.tight_layout(rect=[0,0,1,0.95])
     fig2.tight_layout(rect=[0,0,1,0.95])    
     #fig1.savefig(f'nn_nu_{timestr}.png')
