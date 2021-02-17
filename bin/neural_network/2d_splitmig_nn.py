@@ -17,6 +17,7 @@ import numpy as np
 import random
 import util
 import matplotlib.pyplot as plt
+import pickle
 
 if __name__ == '__main__': 
     # open a text file to record experiment results
@@ -36,33 +37,16 @@ if __name__ == '__main__':
     # 4 : theta = 10,000
     '''
         )
-    NUM_TRAIN = 300
-    m = 1
-    
-    # generate parameter list for training
-    train_params = []
-    while len(train_params) < NUM_TRAIN:
-        nu1 = random.random() * 4 - 2
-        nu2 = random.random() * 4 - 2
-        T = random.random() * 1.9 + 0.1
-        #m = random.random() * 9.9 + 0.1
-        if T/nu1 <= 5 and T/nu2 <= 5:
-	        train_params.append((round(nu1, 2), round(nu2, 2), round(T, 2), round(m, 2)))
-
-    # print training set info 
-    print('n_samples training: ', NUM_TRAIN)
-    print('Range of training params:', min(train_params), 'to', 
-            max(train_params))
     
     # generate parameter list for testing
     test_params = []
     # range(#) dictate how many values are in each test sets
-    while (len(test_params) < 80):
+    while (len(test_params) < 100):
     # generate random nu and T within the same range as training data range
         nu1 = random.random() * 4 - 2 # log
         nu2 = random.random() * 4 - 2 #log
         T = random.random() * 1.9 + 0.1
-     #   m = random.random() * 9.9 + 0.1
+        m = random.random() * 9 + 1
         params = (round(nu1, 2), round(nu2, 2), round(T, 2), round(m, 2))
         test_params.append(params)
     # print testing set info 
@@ -71,7 +55,7 @@ if __name__ == '__main__':
             max(test_params))
 
     # generate a list of theta values to run scaling and add variance
-    theta_list = [1, 1000]
+    theta_list = [1, 1000] # 1000, 10000]
     print('Theta list:', theta_list)
 
     func = dadi.Demographics2D.split_mig
@@ -80,8 +64,7 @@ if __name__ == '__main__':
     logs = [True, True, False, False] # nu1 and nu2 are in log-scale
     pnames = ["nu1", "nu2", "T", "m"] # names for plots
 
-    list_train_dict = util.generating_data_parallel_log(train_params, 
-                        theta_list, func, ns, pts_l, logs)
+    list_train_dict = pickle.load(open('train_set','rb'))
     list_test_dict = util.generating_data_parallel_log(test_params, 
                         theta_list, func, ns, pts_l, logs)
 
@@ -92,13 +75,15 @@ if __name__ == '__main__':
     fig2, axs2 = plt.subplots(size, size, figsize=(4*size, 4*size))
     fig3, axs3 = plt.subplots(size, size, figsize=(4*size, 4*size))
     fig4, axs4 = plt.subplots(size, size, figsize=(4*size, 4*size))
-
     train_i = 0
 
     for train_dict in list_train_dict:
         print("Training with theta = ", theta_list[train_i])
         nn = util.nn_train(train_dict)
-        
+        # plot the loss curve after training
+        fig, ax = plt.subplots()
+        ax.plot(nn.loss_curve_)
+        fig.savefig(f'../../results/{timestr}_splitmig_nn_{theta_list[train_i]}_loss.png')
         test_i = 0
     
         for test_dict in list_test_dict:
@@ -130,16 +115,16 @@ if __name__ == '__main__':
             test_i += 1
             
         train_i += 1
-        print(nn.n_layers_())
-    fig1.tight_layout(rect=[0, 0.03, 1, 0.95])
-    fig2.tight_layout(rect=[0, 0.03, 1, 0.95]) 
-    fig3.tight_layout(rect=[0, 0.03, 1, 0.95]) 
-    fig4.tight_layout(rect=[0, 0.03, 1, 0.95]) 
-    fig1.savefig('nu1.png')
-    fig2.savefig('nu2.png')
-    fig3.savefig('T.png')
-    fig4.savefig('m.png')
+    fig1.tight_layout(rect=[0, 0, 1, 0.95])    
+    fig2.tight_layout(rect=[0, 0, 1, 0.95])
+    fig3.tight_layout(rect=[0, 0, 1, 0.95]) 
+    fig4.tight_layout(rect=[0, 0, 1, 0.95]) 
+    fig1.savefig(f'../../results/{timestr}_splitmig_nn_nu1.png')
+    fig2.savefig(f'../../results/{timestr}_splitmig_nn_nu2.png')
+    fig3.savefig(f'../../results/{timestr}_splitmig_nn_T.png')
+    fig4.savefig(f'../../results/{timestr}_splitmig_nn_m.png')
 
     print("END")
+
 
 
