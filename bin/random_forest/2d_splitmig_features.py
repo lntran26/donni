@@ -14,9 +14,12 @@ import graphviz
 
 if __name__ == '__main__': 
     # load list of trained rfr
-    list_rfr = pickle.load(open('data/2d-splitmig/list-rfr','rb'))
+    # list_rfr = pickle.load(open('data/2d-splitmig/list-rfr','rb'))
+    # list_rfr = pickle.load(open('data/2d-splitmig/list-rfr-vary-T-m','rb'))
+    list_rfr = pickle.load(open('data/2d-splitmig/list-rfr-v0.24-poisson','rb'))
     # load training data set
     list_train_dict = pickle.load(open('data/2d-splitmig/train-data','rb'))
+    # list_train_dict = pickle.load(open('data/2d-splitmig/train-data-vary-T-m','rb'))
     # set number of top features to plot
     num_features = 25
     for n in range(4):

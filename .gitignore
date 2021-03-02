@@ -258,3 +258,7 @@ data/1d-2epoch/list-rfr-exclude
 data/2d-splitmig/test-data
 data/2d-splitmig/train-data
 data/2d-splitmig/test-data
+data/2d-splitmig/list-rfr-v0.24-poisson
+data/2d-splitmig/list-rfr-v0.24-poisson
+data/2d-splitmig/list-rfr-vary-T-m
+data/2d-splitmig/list-vrfr

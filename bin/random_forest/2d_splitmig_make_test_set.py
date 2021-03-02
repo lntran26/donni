@@ -20,10 +20,10 @@ if __name__ == '__main__':
         # nu1 = 10 ** (random.random() * 4 - 2)
         # nu2 = 10 ** (random.random() * 4 - 2)
         
-        nu1 = random.random() * 4 - 2
-        # nu1 = 1
-        nu2 = random.random() * 4 - 2
-        # nu2 = 1
+        # nu1 = random.random() * 4 - 2
+        nu1 = 1
+        # nu2 = random.random() * 4 - 2
+        nu2 = 1
 
         T = random.random() * 1.9 + 0.1
         
@@ -59,4 +59,5 @@ if __name__ == '__main__':
     # pickle.dump(list_test_dict, open('data/2d-splitmig/test-data-fixed-m', 'wb'), 2)
     # pickle.dump(list_test_dict, open('data/2d-splitmig/test-data-vary-T', 'wb'), 2)
     # pickle.dump(list_test_dict, open('data/2d-splitmig/test-data-vary-T-100', 'wb'), 2)
-    pickle.dump(list_test_dict, open('data/2d-splitmig/test-data-corrected', 'wb'), 2)
+    # pickle.dump(list_test_dict, open('data/2d-splitmig/test-data-corrected', 'wb'), 2)
+    pickle.dump(list_test_dict, open('data/2d-splitmig/test-data-vary-T-m', 'wb'), 2)

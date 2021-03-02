@@ -20,17 +20,19 @@ import util
 if __name__ == '__main__': 
     # load testing data set
     # list_test_dict = pickle.load(open('data/2d-splitmig/test-data','rb'))
-    list_test_dict = pickle.load(open('../../data/2d-splitmig/test-data-corrected','rb'))
+    list_test_dict = pickle.load(open('data/2d-splitmig/test-data-corrected','rb'))
+    # list_test_dict = pickle.load(open('data/2d-splitmig/test-data-vary-T-m','rb'))
 
     # load list of trained rfr
-    list_rfr = pickle.load(open('../../data/2d-splitmig/list-rfr','rb'))
+    list_rfr = pickle.load(open('data/2d-splitmig/list-rfr','rb'))
+    # list_rfr = pickle.load(open('data/2d-splitmig/list-rfr-vary-T-m','rb'))
 
     # # load training data set to inspect
     # list_train_dict = pickle.load(open('data/2d-splitmig/train-data','rb'))
 
     # choose [0] for theta=1 and [2] for theta=1000
-    # test_dict = list_test_dict[0]
-    test_dict = list_test_dict[2]
+    test_dict = list_test_dict[0]
+    # test_dict = list_test_dict[2]
     
     rfr = list_rfr[0]
 
@@ -57,7 +59,7 @@ if __name__ == '__main__':
     y_pred_split_10 = [y_pred[i:i + n] for i in range(0, len(y_pred), n)]  
 
     # # Plot 10 small sets
-    # fig=plt.figure(figsize=(15,35), dpi=300)
+    # fig=plt.figure(figsize=(18,35), dpi=300)
     # colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 
     #     'tab:brown', 'tab:pink', 'tab:gray', 'tab:olive', 'tab:cyan']
     # count_pos = 1
@@ -93,14 +95,15 @@ if __name__ == '__main__':
     # #                     bbox_inches='tight')
     # # fig.savefig('results/2d-splitmig/colors/train1_test1000.png', 
     # #                     bbox_inches='tight')
-    # fig.savefig('results/2d-splitmig/colors/train1_test1_corrected_m.png', 
-    #                     bbox_inches='tight')
-    # # fig.savefig('results/2d-splitmig/colors/train1_test1000_corrected_m.png', 
+    # # fig.savefig('results/2d-splitmig/colors/train1_test1_corrected_m.png', 
     # #                     bbox_inches='tight')
+    # fig.savefig('results/2d-splitmig/colors/train1_test1000_corrected_m.png', 
+    #                     bbox_inches='tight')
 
     # print(y_true_split_10[7][9], y_pred_split_10[7][9])
     # print(y_true_split_10[8][1], y_pred_split_10[8][1])
     # print(y_true_split_10[3][1], y_pred_split_10[3][1])
     # print(y_true_split_10[6][0], y_pred_split_10[6][0])
     # print(y_true_split_10[1][9], y_pred_split_10[1][9])
-    print(y_true_split_10[5][6], y_pred_split_10[5][6])
+    # print(y_true_split_10[5][6], y_pred_split_10[5][6])
+    print(y_true_split_10[0][2], y_pred_split_10[0][2])

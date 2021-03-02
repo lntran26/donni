@@ -15,13 +15,17 @@ def split_mig_fixed_theta(params, ns, pts):
     fs = dadi.Spectrum.from_phi(phi, ns, (xx, xx))
     return fs
 
-# problem param
+# problem params
 # p = [10,10,0.5,1] 
 # p = [0.24082, 0.14498, 1.35188, 9.29242]
-p = [0.03507, 0.20497, 1.73732, 6.40696]
+# p = [0.03507, 0.20497, 1.73732, 6.40696]
 # can do process_ii% for this as well
 
+# well-behaved params
+p = [4.86386, 35.6438, 1.24686, 5.12176]
+
 # designate demographic model, sample size, and extrapolation grid 
+# func = dadi.Demographics2D.split_mig
 func = split_mig_fixed_theta
 ns = [20,20]
 pts_l = [40, 50, 60]
@@ -29,8 +33,6 @@ func_ex = dadi.Numerics.make_extrap_func(func)
 
 # generate the fs
 fs = func_ex(p, ns, pts_l) 
-
-# fs = fs/fs.sum() # norm
 
 # 400 jobs --> rocess_ii%4 command run 100 times for each of the 4 sel_params
 # sel_params = [[1,2,3,4],[],[],[]][process_ii%4]
@@ -59,10 +61,10 @@ popt, llnlopt = dadi.Inference.opt(p0, fs, func_ex, pts_l,
                                     multinom=True,
                                     verbose=5)
 
-# make model from popt
-model = func_ex(popt, ns, pts_l) 
+# make inferred fs from popt
+fs_inferred = func_ex(popt, ns, pts_l) 
 # # likelihood calculation when using old optimizer
-# ll = dadi.Inference.ll_multinom(model, fs) 
+# ll = dadi.Inference.ll_multinom(fs_inferred fs) 
 # # multinom rescale things but here it doesn't seem to affect anything
 
 # this calculate the "true" likelihood value
@@ -80,5 +82,16 @@ print(*popt, sep=', ')
 print("Max Log Likelihood:", round(llnlopt,5))
 print("True Log Likelihood:", ll_true)
     
-dadi.Plotting.plot_2d_comp_multinom(fs, model)
+dadi.Plotting.plot_2d_comp_multinom(fs, fs_inferred)
 pylab.show()
+
+# # Note: Had data and model swapped in these plots
+# # dadi.Plotting.plot_2d_comp_multinom(fs, fs_inferred)
+# snm_func_ex = dadi.Numerics.make_extrap_func(dadi.Demographics2D.snm)
+# fs_snm = snm_func_ex([], ns, pts_l)
+
+# print('LL of data with inferred: {0}'.format(dadi.Inference.ll_multinom(fs_inferred, fs)))
+# print('LL of data with snm: {0}'.format(dadi.Inference.ll_multinom(fs_snm, fs)))
+
+# dadi.Plotting.plot_2d_comp_multinom(fs_snm, fs, resid_range = 10,fig_num=2)
+# pylab.show()

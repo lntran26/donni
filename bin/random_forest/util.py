@@ -87,8 +87,6 @@ def generating_data_parallel_log(params_list, theta_list,
             fs.flat[0] = 0
             fs.flat[-1] = 0
             if theta == 1:
-                # fs.flat[0] = 0
-                # fs.flat[-1] = 0
                 fs_tostore = fs
             else:
                 fs_tostore = (theta*abs(fs)).sample()
@@ -194,6 +192,7 @@ def rfr_learn(train_dict, list_test_dict, ncpu=None):
     
     # Load RFR, specifying ncpu for parallel processing
     rfr = RandomForestRegressor(n_jobs=ncpu)
+    # rfr = RandomForestRegressor(criterion="poisson", n_jobs=ncpu)
     # Train RFR
     rfr = rfr.fit(X, y)
     print('R2 score with train data:', rfr.score(X, y), '\n')
@@ -329,8 +328,10 @@ def plot_by_param(true, pred, r2=None, msle=None, c=None, ax=None):
         plt.scatter(true, pred)
     else:
         # plt.scatter(true, pred, c=c, vmax=5)
-        plt.scatter(true, pred, c=c)
-        # cbar = plt.colorbar()
+        # plt.scatter(true, pred, c=c)
+        plt.scatter(true, pred, c=c, vmax=0.5)
+        cbar = plt.colorbar()
+        cbar.set_label("T/m", labelpad=+1)
         # cbar.set_label("m_true", labelpad=+1)
     # axis labels to be customized
     plt.xlabel("true")
@@ -356,9 +357,8 @@ def plot_by_param(true, pred, r2=None, msle=None, c=None, ax=None):
         # plt.ylim([0, 2.1])
         # plt.xlim([0, 12.1])
         # plt.ylim([0, 12.1])
-        plt.xlim([min(true)-0.5, max(true)+0.5])
-        # plt.ylim([min(pred)-0.5, max(pred)+0.5])
-        plt.ylim([min(true)-0.5, max(true)+0.5])
+        plt.xlim([min(true+pred)-0.5, max(true+pred)+0.5])
+        plt.ylim([min(true+pred)-0.5, max(true+pred)+0.5])
         # plot a slope 1 line
         plt.plot([-1, 13], [-1, 13])
         # # plot best fit line
