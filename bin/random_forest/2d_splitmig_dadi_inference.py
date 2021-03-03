@@ -34,7 +34,7 @@ func_ex = dadi.Numerics.make_extrap_func(func)
 # generate the fs
 fs = func_ex(p, ns, pts_l) 
 
-# 400 jobs --> rocess_ii%4 command run 100 times for each of the 4 sel_params
+# 400 jobs --> process_ii%4 command run 100 times for each of the 4 sel_params
 # sel_params = [[1,2,3,4],[],[],[]][process_ii%4]
 
 # sel_params = [0.1, 1, 1.6, 8]
