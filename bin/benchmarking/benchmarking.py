@@ -22,7 +22,9 @@ if __name__ == '__main__':
                 params, fs = random.choice(list(test_dict.items()))
             # once find a unique params, escape while loop and add that set 
             # to test_data dict
-            test_data[params] = fs
+            # test_data[params] = fs
+            # more realistic fs
+            test_data[params] = fs*1000
 
     # import trained RFR
     list_rfr = pickle.load(open('../../data/2d-splitmig/list-rfr','rb'))
@@ -41,7 +43,6 @@ if __name__ == '__main__':
         list_key.append(deepcopy(y_true))
     # format:list_pred=[[20 np.arrays of 20 pred_param;theta1],[],[],[theta10k]]
 
-
     # benchmarking
     # an idea: test if use suggestion from just the theta=1 rfr
     # vs using suggestion from an average of all 4 rfr guess
@@ -55,11 +56,6 @@ if __name__ == '__main__':
     func_ex = dadi.Numerics.make_extrap_func(func)
     lower_bound, upper_bound = [1e-2,1e-2,0.1,1], [1e2,1e2,2,10]
     
-    # THREE DIFFERENT STARTING POINTS
-    # # for each set of test data set: load fs
-    # for p in test_data:
-    #     fs = test_data[p]
-
     for i in range(2):
         print("DATA SET #", i+1)
         # input each fs from test_data to infer from
@@ -67,8 +63,10 @@ if __name__ == '__main__':
         fs = test_data[p]
         p_transform = [10**p[0], 10**p[1], p[2], p[3]]
         print("True params:", [round(val, 5) for val in p_transform])
-        print("True Max Log Likelihood:", round(dadi.Inference.ll(fs, fs),5))
+        print("True Max Log Likelihood:", 
+                    round(dadi.Inference.ll_multinom(fs, fs),5))
 
+        # THREE DIFFERENT STARTING POINTS
         # 1. Generic starting point for regular dadi procedure
         sel_params_generic = [1, 1, 0.95, 4.5] # mid point of range
         print("Selected generic params:", sel_params_generic)
