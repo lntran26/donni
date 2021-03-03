@@ -113,14 +113,14 @@ def infer_demography(fs, func, grids, p0, output,upper_bound, lower_bound):
     #                                 lower_bound=lower_bound,
     #                                 upper_bound=upper_bound,
     #                                 verbose=0, algorithm=nlopt.LN_BOBYQA)
-    # popt = dadi.Inference.optimize_log(p0, fs, func_ex, grids, 
-    #                                 lower_bound=lower_bound,
-    #                                 upper_bound=upper_bound,
-    #                                 verbose=0)
-    popt, llnlopt = dadi.Inference.opt(p0, fs, func_ex, grids, 
+    popt = dadi.Inference.optimize_log(p0, fs, func_ex, grids, 
                                     lower_bound=lower_bound,
                                     upper_bound=upper_bound,
-                                    verbose=0)#, multinom=False
+                                    verbose=0)
+    # popt, llnlopt = dadi.Inference.opt(p0, fs, func_ex, grids, 
+    #                                 lower_bound=lower_bound,
+    #                                 upper_bound=upper_bound,
+    #                                 verbose=0)#, multinom=False
     # print('Optimized parameters: {0}'.format(popt))
     # # Calculate the best-fit model AFS.
     # model = func_ex(popt, ns, grids)
