@@ -137,7 +137,7 @@ def infer_demography(fs, func, grids, p0, output,upper_bound, lower_bound):
     #         f.write("\t")
     #         f.write(str(p))
     #     f.write("\t" + str(theta) + "\n")
-    return popt
+    return popt, llnlopt
 
 def log_transform_data(list_data_dict, num_list):
     """
