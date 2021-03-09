@@ -8,12 +8,9 @@ import time
 import sys,os
 
 if __name__ == '__main__': 
-    # Python-specific stuff
-    print('Script running', '\n')
-    
     # import test sets previously generated for 2D-split-migration
     list_test_dict = pickle.load(open(
-        '/groups/rgutenk/lnt/projects/ml-dadi/data/test-data','rb'))
+        '/groups/rgutenk/lnt/projects/ml-dadi/data/test-data-corrected','rb'))
     # randomly select 5 datasets from each variance case
     test_data = {}
     for test_dict in list_test_dict:
@@ -84,8 +81,8 @@ if __name__ == '__main__':
     # append all three lists together into one list of all starting points
     p0_list = p1_list + p2_list + p3_list
     # extend fs_list and p_true_list 2 times to match length
-    fs_list_ext = fs_list * 3
-    p_true_list_ext = p_true_list * 3
+    # fs_list_ext = fs_list * 3
+    # p_true_list_ext = p_true_list * 3
 
     if 'SLURM_SUBMIT_DIR' in os.environ:
     # Set module search path so it will search in qsub directory
@@ -98,67 +95,48 @@ if __name__ == '__main__':
     # process_id is the int value specifying the index of one particular job
     # this number is pulled from the slurm job array, which is indexed from 1
     # so we have to do minus 1 at the end to be consistent with python index 0
-
-    # # Create a list of job-specific variables
-    # run_info = []
-    # # Loop through the cases
-    # for fs, p_true, p0 in zip(fs_list, p_true_list, p0_list):
-    #     run_info.append((p0, p_true, fs))
-    # # get a single starting point (case) and p_true+fs dict combination 
-    # # unique to each job in the job array
-    # # this is in the form of a single tuple from the run_info tuple list
-    # p0_job, p_true_job, fs_job = run_info[process_id]
-
+    test_case_id = int(process_id % 20)
     # not perturbing for now because only do it once and 
     # not testing for convergence yet --> to be done
     # p0 = dadi.Misc.perturb_params(p, lower_bound=lb, upper_bound=ub)
     # run optimization for each job and record time
     start = time.time()
     popt, llnlopt = dadi.Inference.opt(p0_list[process_id], 
-        fs_list_ext[process_id], func_ex, pts_l, lower_bound=lb, upper_bound=ub)
+        fs_list[test_case_id], func_ex, pts_l, lower_bound=lb, upper_bound=ub)
     end = time.time()-start
-    # which test case is this?
-    num_test_case = int(process_id % 20) + 1
-    # len(run_info)/3 = 20
-    # so that the test case # is limited to just 1-20 and recycle when
-    # we get to another case in the 3 different cases
 
-    print("Test case #:", num_test_case)
-    print("True params:", [round(val,5) for val in p_true_list_ext[process_id]])
+    print("Test case #:", test_case_id + 1)
+    print("True params:", [round(val,5) for val in p_true_list[test_case_id]])
     print("Data Max Log Likelihood:", 
-        round(dadi.Inference.ll_multinom(fs_list_ext[process_id], 
-                                            fs_list_ext[process_id]),5))
+        round(dadi.Inference.ll(fs_list[test_case_id], fs_list[test_case_id]),5))
     print("Starting params:",[round(p,5) for p in p0_list[process_id]])
     print("Optimized params:",[round(p,5) for p in popt])
     print("Model Max Log Likelihood:", round(llnlopt,5))   
 
     # make lists to save the results
-    results_list = []
-    p1_results_list, p2_results_list, p3_results_list = [], [], []
+    # results_list = []
+    # p1_results_list, p2_results_list, p3_results_list = [], [], []
 
     # THREE DIFFERENT STARTING POINTS: print out results
     # 1. Generic starting point for regular dadi procedure
     if process_id < 20:
         print('Optimization time for dadi only: {0:.2f}s'.format(end),'\n') 
-        p1_results_list.append(popt)
+        # p1_results_list.append(popt)
 
     # 2. Starting with Prediction from rfr trained on theta=1
     if process_id >= 20 and process_id < 40:
         print('Optimization time for dadi + RFR_1: {0:.2f}s'.format(end),'\n')
-        p2_results_list.append(popt)
+        # p2_results_list.append(popt)
 
     # 3. Average prediction from all four RFR trained on different thetas
     if process_id >= 40:    
         print('Optimization time for dadi + 4_RFR_avg: {0:.2f}s'.format(end),
                                                                         '\n')
-        p3_results_list.append(popt)
-    
-    if (process_id + 1) % 20 == 0:
-        print('\n',"####################",'\n')
+        # p3_results_list.append(popt)
 
-    for i in range(20):
-        results_list.append((p_true_list[i], p1_results_list[i],
-                    p2_results_list[i], p3_results_list[i]))
+    # for i in range(20):
+    #   results_list.append((p_true_list[i], p1_results_list[i],
+        #            p2_results_list[i], p3_results_list[i]))
 
-    pickle.dump(results_list, open(
-        '/groups/rgutenk/lnt/projects/ml-dadi/results/benchmark_out', 'wb'), 2)
+    # pickle.dump(results_list, open(
+     #   '/groups/rgutenk/lnt/projects/ml-dadi/results/benchmark_out', 'wb'), 2)
