@@ -4,13 +4,11 @@ import pickle
 import random
 from copy import deepcopy
 import numpy as np
-import time
-import sys,os
 
 if __name__ == '__main__': 
     # import test sets previously generated for 2D-split-migration
     list_test_dict = pickle.load(open(
-        '../../data/2d-splitmig/test-data-corrected','rb'))
+        '../../data/2d-splitmig/test-data-corrected-2','rb'))
     # randomly select 5 datasets from each variance case
     test_data = {}
     for test_dict in list_test_dict:
@@ -78,4 +76,4 @@ if __name__ == '__main__':
     test_set = []
     for i in range(60):
         test_set.append((p_true_list_ext[i], fs_list_ext[i], p0_list[i]))
-    pickle.dump(test_set, open('benchmarking_test_set', 'wb'), 2)
+    pickle.dump(test_set, open('benchmarking_test_set_3', 'wb'), 2)
