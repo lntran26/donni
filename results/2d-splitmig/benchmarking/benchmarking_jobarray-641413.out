@@ -1,0 +1,540 @@
+My SLURM_ARRAY_TASK_ID:  1
+Test case #: 1
+True params: [0.30327, 2.73619, 0.21795, 9.16274]
+Data Max Log Likelihood: -350.57093
+Starting params: [1, 1, 0.95, 4.5]
+Optimized params: [0.30322, 2.73856, 0.21776, 9.16435]
+Model Max Log Likelihood: -350.57093
+Optimization time for dadi only: 143.18s 
+
+My SLURM_ARRAY_TASK_ID:  2
+Test case #: 2
+True params: [0.05749, 14.07649, 1.39266, 1.65698]
+Data Max Log Likelihood: -207.62628
+Starting params: [1, 1, 0.95, 4.5]
+Optimized params: [0.01, 2.38084, 1.84999, 9.64952]
+Model Max Log Likelihood: -208.33382
+Optimization time for dadi only: 1217.66s 
+
+My SLURM_ARRAY_TASK_ID:  3
+Test case #: 3
+True params: [0.01649, 54.69228, 1.25661, 1.79865]
+Data Max Log Likelihood: -133.81555
+Starting params: [1, 1, 0.95, 4.5]
+Optimized params: [0.01, 7.38557, 1.3294, 6.27363]
+Model Max Log Likelihood: -150.29085
+Optimization time for dadi only: 1938.88s 
+
+My SLURM_ARRAY_TASK_ID:  4
+Test case #: 4
+True params: [0.45249, 91.1137, 1.45072, 2.52936]
+Data Max Log Likelihood: -292.94858
+Starting params: [1, 1, 0.95, 4.5]
+Optimized params: [0.09945, 5.82548, 1.879, 8.97712]
+Model Max Log Likelihood: -332.79895
+Optimization time for dadi only: 1509.80s 
+
+My SLURM_ARRAY_TASK_ID:  5
+Test case #: 5
+True params: [13.32052, 46.36474, 0.28462, 6.82626]
+Data Max Log Likelihood: -237.93543
+Starting params: [1, 1, 0.95, 4.5]
+Optimized params: [14.08373, 34.89213, 0.28577, 6.24399]
+Model Max Log Likelihood: -237.97288
+Optimization time for dadi only: 768.93s 
+
+My SLURM_ARRAY_TASK_ID:  6
+Test case #: 6
+True params: [0.67491, 2.75886, 1.71457, 2.53636]
+Data Max Log Likelihood: -241.50347
+Starting params: [1, 1, 0.95, 4.5]
+Optimized params: [0.56005, 2.59696, 0.57414, 2.67543]
+Model Max Log Likelihood: -459.09619
+Optimization time for dadi only: 580.55s 
+
+My SLURM_ARRAY_TASK_ID:  7
+Test case #: 7
+True params: [9.97725, 3.66093, 0.33117, 5.83607]
+Data Max Log Likelihood: -181.62541
+Starting params: [1, 1, 0.95, 4.5]
+Optimized params: [11.54134, 5.21396, 0.3017, 4.20846]
+Model Max Log Likelihood: -310.42338
+Optimization time for dadi only: 315.02s 
+
+My SLURM_ARRAY_TASK_ID:  8
+Test case #: 8
+True params: [0.13084, 1.58839, 0.677, 8.64025]
+Data Max Log Likelihood: -208.1335
+Starting params: [1, 1, 0.95, 4.5]
+Optimized params: [0.12108, 1.34562, 0.6253, 10.0]
+Model Max Log Likelihood: -616.12256
+Optimization time for dadi only: 655.16s 
+
+My SLURM_ARRAY_TASK_ID:  9
+Test case #: 9
+True params: [0.02071, 1.96099, 0.89368, 9.44927]
+Data Max Log Likelihood: -76.74269
+Starting params: [1, 1, 0.95, 4.5]
+Optimized params: [0.01347, 1.72077, 0.81394, 9.9776]
+Model Max Log Likelihood: -502.66145
+Optimization time for dadi only: 421.75s 
+
+My SLURM_ARRAY_TASK_ID:  10
+Test case #: 10
+True params: [2.96216, 5.49089, 0.12851, 7.37568]
+Data Max Log Likelihood: -210.2658
+Starting params: [1, 1, 0.95, 4.5]
+Optimized params: [3.62106, 8.84792, 0.1047, 1.39442]
+Model Max Log Likelihood: -408.72986
+Optimization time for dadi only: 75.55s 
+
+My SLURM_ARRAY_TASK_ID:  11
+Test case #: 11
+True params: [6.06203, 1.91692, 1.41411, 7.36211]
+Data Max Log Likelihood: -243.52073
+Starting params: [1, 1, 0.95, 4.5]
+Optimized params: [5.65314, 1.88845, 1.31139, 7.58309]
+Model Max Log Likelihood: -255.67762
+Optimization time for dadi only: 599.28s 
+
+My SLURM_ARRAY_TASK_ID:  12
+Test case #: 12
+True params: [0.45738, 22.0372, 0.8696, 4.62029]
+Data Max Log Likelihood: -288.71784
+Starting params: [1, 1, 0.95, 4.5]
+Optimized params: [0.49074, 15.20516, 0.69431, 4.18257]
+Model Max Log Likelihood: -313.50624
+Optimization time for dadi only: 538.97s 
+
+My SLURM_ARRAY_TASK_ID:  13
+Test case #: 13
+True params: [0.39018, 1.67845, 0.42349, 5.70586]
+Data Max Log Likelihood: -338.46951
+Starting params: [1, 1, 0.95, 4.5]
+Optimized params: [0.41028, 1.62632, 0.53138, 5.62328]
+Model Max Log Likelihood: -375.0931
+Optimization time for dadi only: 279.72s 
+
+My SLURM_ARRAY_TASK_ID:  14
+Test case #: 14
+True params: [0.03532, 0.13737, 0.89282, 2.57076]
+Data Max Log Likelihood: -263.49031
+Starting params: [1, 1, 0.95, 4.5]
+Optimized params: [0.06884, 0.27716, 0.8801, 1.28612]
+Model Max Log Likelihood: -451.92411
+Optimization time for dadi only: 253.14s 
+
+My SLURM_ARRAY_TASK_ID:  15
+Test case #: 15
+True params: [0.01333, 32.39108, 1.00596, 4.48911]
+Data Max Log Likelihood: -128.09748
+Starting params: [1, 1, 0.95, 4.5]
+Optimized params: [0.01, 8.63847, 0.88852, 6.97721]
+Model Max Log Likelihood: -178.07205
+Optimization time for dadi only: 1972.02s 
+
+My SLURM_ARRAY_TASK_ID:  16
+Test case #: 16
+True params: [0.24403, 0.64443, 0.70636, 5.31776]
+Data Max Log Likelihood: -415.25603
+Starting params: [1, 1, 0.95, 4.5]
+Optimized params: [0.24912, 0.66824, 0.89253, 5.10576]
+Model Max Log Likelihood: -420.88256
+Optimization time for dadi only: 319.36s 
+
+My SLURM_ARRAY_TASK_ID:  17
+Test case #: 17
+True params: [0.112, 0.0376, 0.31302, 5.91701]
+Data Max Log Likelihood: -458.96215
+Starting params: [1, 1, 0.95, 4.5]
+Optimized params: [0.11401, 0.03911, 0.30689, 5.71988]
+Model Max Log Likelihood: -479.24482
+Optimization time for dadi only: 550.73s 
+
+My SLURM_ARRAY_TASK_ID:  18
+Test case #: 18
+True params: [1.28116, 0.47694, 1.48777, 1.9151]
+Data Max Log Likelihood: -399.13014
+Starting params: [1, 1, 0.95, 4.5]
+Optimized params: [1.17128, 0.43488, 1.00665, 2.09791]
+Model Max Log Likelihood: -402.54481
+Optimization time for dadi only: 337.57s 
+
+My SLURM_ARRAY_TASK_ID:  19
+Test case #: 19
+True params: [2.0764, 0.96344, 0.16748, 6.19855]
+Data Max Log Likelihood: -322.12477
+Starting params: [1, 1, 0.95, 4.5]
+Optimized params: [2.16316, 0.95225, 0.16841, 6.04723]
+Model Max Log Likelihood: -325.56439
+Optimization time for dadi only: 78.38s 
+
+My SLURM_ARRAY_TASK_ID:  20
+Test case #: 20
+True params: [0.26725, 11.62408, 1.33624, 4.44926]
+Data Max Log Likelihood: -327.51459
+Starting params: [1, 1, 0.95, 4.5]
+Optimized params: [0.11238, 4.44213, 1.99815, 9.99823]
+Model Max Log Likelihood: -333.99476
+Optimization time for dadi only: 1205.75s 
+
+My SLURM_ARRAY_TASK_ID:  21
+Test case #: 1
+True params: [0.30327, 2.73619, 0.21795, 9.16274]
+Data Max Log Likelihood: -350.57093
+Starting params: [0.39811, 0.41474, 0.70325, 6.76]
+Optimized params: [0.3034, 2.74018, 0.21732, 9.15803]
+Model Max Log Likelihood: -350.57094
+Optimization time for dadi + RFR_1: 175.22s 
+
+My SLURM_ARRAY_TASK_ID:  22
+Test case #: 2
+True params: [0.05749, 14.07649, 1.39266, 1.65698]
+Data Max Log Likelihood: -207.62628
+Starting params: [0.3744, 0.39405, 0.689, 6.625]
+Optimized params: [0.01, 2.32916, 1.28524, 9.93102]
+Model Max Log Likelihood: -208.56501
+Optimization time for dadi + RFR_1: 1527.40s 
+
+My SLURM_ARRAY_TASK_ID:  23
+Test case #: 3
+True params: [0.01649, 54.69228, 1.25661, 1.79865]
+Data Max Log Likelihood: -133.81555
+Starting params: [0.3744, 0.39811, 0.69375, 6.625]
+Optimized params: [0.01, 16.45591, 2.0, 3.71875]
+Model Max Log Likelihood: -136.27396
+Optimization time for dadi + RFR_1: 4319.15s 
+
+My SLURM_ARRAY_TASK_ID:  24
+Test case #: 4
+True params: [0.45249, 91.1137, 1.45072, 2.52936]
+Data Max Log Likelihood: -292.94858
+Starting params: [0.3744, 0.40634, 0.68425, 6.6475]
+Optimized params: [0.09307, 8.5573, 1.9873, 10.0]
+Model Max Log Likelihood: -323.36233
+Optimization time for dadi + RFR_1: 1708.25s 
+
+My SLURM_ARRAY_TASK_ID:  25
+Test case #: 5
+True params: [13.32052, 46.36474, 0.28462, 6.82626]
+Data Max Log Likelihood: -237.93543
+Starting params: [0.46416, 0.50376, 0.8315, 7.2775]
+Optimized params: [17.63302, 25.40373, 0.28439, 5.7699]
+Model Max Log Likelihood: -238.2081
+Optimization time for dadi + RFR_1: 621.75s 
+
+My SLURM_ARRAY_TASK_ID:  26
+Test case #: 6
+True params: [0.67491, 2.75886, 1.71457, 2.53636]
+Data Max Log Likelihood: -241.50347
+Starting params: [1.0, 1.58489, 1.0975, 6.6925]
+Optimized params: [0.56234, 2.57635, 0.56557, 2.65232]
+Model Max Log Likelihood: -459.10337
+Optimization time for dadi + RFR_1: 348.50s 
+
+My SLURM_ARRAY_TASK_ID:  27
+Test case #: 7
+True params: [9.97725, 3.66093, 0.33117, 5.83607]
+Data Max Log Likelihood: -181.62541
+Starting params: [0.40634, 0.75858, 1.45375, 1.675]
+Optimized params: [11.44244, 5.22411, 0.30178, 4.19747]
+Model Max Log Likelihood: -310.42414
+Optimization time for dadi + RFR_1: 422.09s 
+
+My SLURM_ARRAY_TASK_ID:  28
+Test case #: 8
+True params: [0.13084, 1.58839, 0.677, 8.64025]
+Data Max Log Likelihood: -208.1335
+Starting params: [0.61188, 0.35572, 1.32075, 2.575]
+Optimized params: [0.12434, 1.51392, 0.54234, 9.82601]
+Model Max Log Likelihood: -616.41069
+Optimization time for dadi + RFR_1: 1056.96s 
+
+My SLURM_ARRAY_TASK_ID:  29
+Test case #: 9
+True params: [0.02071, 1.96099, 0.89368, 9.44927]
+Data Max Log Likelihood: -76.74269
+Starting params: [0.04689, 10.0, 1.3255, 2.7325]
+Optimized params: [0.05231, 10.22984, 1.78634, 2.93104]
+Model Max Log Likelihood: -492.89482
+Optimization time for dadi + RFR_1: 175.98s 
+
+My SLURM_ARRAY_TASK_ID:  30
+Test case #: 10
+True params: [2.96216, 5.49089, 0.12851, 7.37568]
+Data Max Log Likelihood: -210.2658
+Starting params: [1.61767, 1.94486, 1.107, 6.22]
+Optimized params: [3.66749, 8.9183, 0.10585, 1.59382]
+Model Max Log Likelihood: -408.71723
+Optimization time for dadi + RFR_1: 79.45s 
+
+My SLURM_ARRAY_TASK_ID:  31
+Test case #: 11
+True params: [6.06203, 1.91692, 1.41411, 7.36211]
+Data Max Log Likelihood: -243.52073
+Starting params: [0.76638, 1.21463, 0.97875, 7.66]
+Optimized params: [5.64311, 1.89161, 1.31627, 7.56155]
+Model Max Log Likelihood: -255.67726
+Optimization time for dadi + RFR_1: 738.36s 
+
+My SLURM_ARRAY_TASK_ID:  32
+Test case #: 12
+True params: [0.45738, 22.0372, 0.8696, 4.62029]
+Data Max Log Likelihood: -288.71784
+Starting params: [0.57544, 0.84896, 0.8695, 7.2325]
+Optimized params: [0.47437, 20.3371, 0.79499, 4.38369]
+Model Max Log Likelihood: -312.75553
+Optimization time for dadi + RFR_1: 902.06s 
+
+My SLURM_ARRAY_TASK_ID:  33
+Test case #: 13
+True params: [0.39018, 1.67845, 0.42349, 5.70586]
+Data Max Log Likelihood: -338.46951
+Starting params: [0.60565, 0.97974, 0.90275, 7.4575]
+Optimized params: [0.41062, 1.62871, 0.53114, 5.62027]
+Model Max Log Likelihood: -375.09302
+Optimization time for dadi + RFR_1: 408.42s 
+
+My SLURM_ARRAY_TASK_ID:  34
+Test case #: 14
+True params: [0.03532, 0.13737, 0.89282, 2.57076]
+Data Max Log Likelihood: -263.49031
+Starting params: [0.03706, 0.45476, 1.14104, 3.07]
+Optimized params: [0.03793, 0.15296, 0.87768, 2.33332]
+Model Max Log Likelihood: -451.91891
+Optimization time for dadi + RFR_1: 347.43s 
+
+My SLURM_ARRAY_TASK_ID:  35
+Test case #: 15
+True params: [0.01333, 32.39108, 1.00596, 4.48911]
+Data Max Log Likelihood: -128.09748
+Starting params: [0.84896, 1.19002, 1.07375, 5.8825]
+Optimized params: [0.01, 11.03824, 0.86164, 7.09572]
+Model Max Log Likelihood: -174.90334
+Optimization time for dadi + RFR_1: 1741.27s 
+
+My SLURM_ARRAY_TASK_ID:  36
+Test case #: 16
+True params: [0.24403, 0.64443, 0.70636, 5.31776]
+Data Max Log Likelihood: -415.25603
+Starting params: [0.39004, 0.44101, 0.73175, 6.895]
+Optimized params: [0.25286, 0.6803, 0.74767, 5.03304]
+Model Max Log Likelihood: -420.87333
+Optimization time for dadi + RFR_1: 139.83s 
+
+My SLURM_ARRAY_TASK_ID:  37
+Test case #: 17
+True params: [0.112, 0.0376, 0.31302, 5.91701]
+Data Max Log Likelihood: -458.96215
+Starting params: [0.3744, 0.39405, 0.689, 6.625]
+Optimized params: [0.10925, 0.03748, 0.30429, 5.96973]
+Model Max Log Likelihood: -479.22891
+Optimization time for dadi + RFR_1: 351.16s 
+
+My SLURM_ARRAY_TASK_ID:  38
+Test case #: 18
+True params: [1.28116, 0.47694, 1.48777, 1.9151]
+Data Max Log Likelihood: -399.13014
+Starting params: [0.38214, 0.41052, 0.69375, 6.6925]
+Optimized params: [0.26031, 0.08962, 2.0, 10.0]
+Model Max Log Likelihood: -408.90976
+Optimization time for dadi + RFR_1: 1358.38s 
+
+My SLURM_ARRAY_TASK_ID:  39
+Test case #: 19
+True params: [2.0764, 0.96344, 0.16748, 6.19855]
+Data Max Log Likelihood: -322.12477
+Starting params: [0.50376, 0.61188, 0.84575, 7.3225]
+Optimized params: [2.16522, 0.95287, 0.16828, 6.04055]
+Model Max Log Likelihood: -325.56436
+Optimization time for dadi + RFR_1: 143.72s 
+
+My SLURM_ARRAY_TASK_ID:  40
+Test case #: 20
+True params: [0.26725, 11.62408, 1.33624, 4.44926]
+Data Max Log Likelihood: -327.51459
+Starting params: [0.39811, 0.47376, 0.75075, 7.0075]
+Optimized params: [0.11213, 4.03999, 1.91345, 9.89207]
+Model Max Log Likelihood: -334.84507
+Optimization time for dadi + RFR_1: 1379.87s 
+
+My SLURM_ARRAY_TASK_ID:  41
+Test case #: 1
+True params: [0.30327, 2.73619, 0.21795, 9.16274]
+Data Max Log Likelihood: -350.57093
+Starting params: [0.43545, 1.0735, 0.822, 6.77125]
+Optimized params: [0.29366, 2.74771, 1.12238, 9.63669]
+Model Max Log Likelihood: -351.13442
+Optimization time for dadi + 4_RFR_avg: 629.05s 
+
+My SLURM_ARRAY_TASK_ID:  42
+Test case #: 2
+True params: [0.05749, 14.07649, 1.39266, 1.65698]
+Data Max Log Likelihood: -207.62628
+Starting params: [0.35031, 0.22327, 0.75075, 6.51813]
+Optimized params: [0.01, 2.24254, 1.4718, 9.97853]
+Model Max Log Likelihood: -208.48667
+Optimization time for dadi + 4_RFR_avg: 1457.07s 
+
+My SLURM_ARRAY_TASK_ID:  43
+Test case #: 3
+True params: [0.01649, 54.69228, 1.25661, 1.79865]
+Data Max Log Likelihood: -133.81555
+Starting params: [0.34663, 0.22554, 0.76738, 6.45625]
+Optimized params: [0.01, 24.17924, 2.0, 3.15027]
+Model Max Log Likelihood: -135.1422
+Optimization time for dadi + 4_RFR_avg: 5038.31s 
+
+My SLURM_ARRAY_TASK_ID:  44
+Test case #: 4
+True params: [0.45249, 91.1137, 1.45072, 2.52936]
+Data Max Log Likelihood: -292.94858
+Starting params: [0.45095, 0.78236, 0.79113, 6.74313]
+Optimized params: [0.09671, 16.39851, 2.0, 10.0]
+Model Max Log Likelihood: -317.99872
+Optimization time for dadi + 4_RFR_avg: 3057.18s 
+
+My SLURM_ARRAY_TASK_ID:  45
+Test case #: 5
+True params: [13.32052, 46.36474, 0.28462, 6.82626]
+Data Max Log Likelihood: -237.93543
+Starting params: [0.7417, 1.68702, 0.95738, 7.13687]
+Optimized params: [14.29298, 44.2761, 0.28305, 6.50907]
+Model Max Log Likelihood: -237.94657
+Optimization time for dadi + 4_RFR_avg: 417.90s 
+
+My SLURM_ARRAY_TASK_ID:  46
+Test case #: 6
+True params: [0.67491, 2.75886, 1.71457, 2.53636]
+Data Max Log Likelihood: -241.50347
+Starting params: [1.64394, 2.70807, 1.17706, 6.92875]
+Optimized params: [0.55998, 2.59775, 0.58184, 2.66927]
+Model Max Log Likelihood: -459.0979
+Optimization time for dadi + 4_RFR_avg: 416.67s 
+
+My SLURM_ARRAY_TASK_ID:  47
+Test case #: 7
+True params: [9.97725, 3.66093, 0.33117, 5.83607]
+Data Max Log Likelihood: -181.62541
+Starting params: [1.86623, 2.87257, 1.36825, 5.545]
+Optimized params: [11.61599, 5.20916, 0.30157, 4.20762]
+Model Max Log Likelihood: -310.42333
+Optimization time for dadi + 4_RFR_avg: 161.01s 
+
+My SLURM_ARRAY_TASK_ID:  48
+Test case #: 8
+True params: [0.13084, 1.58839, 0.677, 8.64025]
+Data Max Log Likelihood: -208.1335
+Starting params: [1.06909, 2.47708, 1.33619, 5.78688]
+Optimized params: [0.12192, 1.39358, 0.63939, 10.0]
+Model Max Log Likelihood: -616.13643
+Optimization time for dadi + 4_RFR_avg: 1488.90s 
+
+My SLURM_ARRAY_TASK_ID:  49
+Test case #: 9
+True params: [0.02071, 1.96099, 0.89368, 9.44927]
+Data Max Log Likelihood: -76.74269
+Starting params: [1.12603, 10.57745, 1.34925, 4.42563]
+Optimized params: [0.0516, 11.46765, 1.43416, 3.05889]
+Model Max Log Likelihood: -493.72018
+Optimization time for dadi + 4_RFR_avg: 311.67s 
+
+My SLURM_ARRAY_TASK_ID:  50
+Test case #: 10
+True params: [2.96216, 5.49089, 0.12851, 7.37568]
+Data Max Log Likelihood: -210.2658
+Starting params: [2.37885, 2.98511, 1.21506, 6.81625]
+Optimized params: [3.92486, 11.8035, 0.103, 1.0]
+Model Max Log Likelihood: -408.48598
+Optimization time for dadi + 4_RFR_avg: 60.11s 
+
+My SLURM_ARRAY_TASK_ID:  51
+Test case #: 11
+True params: [6.06203, 1.91692, 1.41411, 7.36211]
+Data Max Log Likelihood: -243.52073
+Starting params: [1.15677, 2.24977, 1.06425, 7.36187]
+Optimized params: [5.62868, 1.89231, 1.3153, 7.55873]
+Model Max Log Likelihood: -255.6772
+Optimization time for dadi + 4_RFR_avg: 672.33s 
+
+My SLURM_ARRAY_TASK_ID:  52
+Test case #: 12
+True params: [0.45738, 22.0372, 0.8696, 4.62029]
+Data Max Log Likelihood: -288.71784
+Starting params: [1.04287, 1.67079, 0.97519, 7.09187]
+Optimized params: [0.16075, 3.79392, 1.59694, 9.88642]
+Model Max Log Likelihood: -354.31353
+Optimization time for dadi + 4_RFR_avg: 726.74s 
+
+My SLURM_ARRAY_TASK_ID:  53
+Test case #: 13
+True params: [0.39018, 1.67845, 0.42349, 5.70586]
+Data Max Log Likelihood: -338.46951
+Starting params: [0.82101, 2.05453, 0.98706, 7.19875]
+Optimized params: [0.4099, 1.6296, 0.53478, 5.62682]
+Model Max Log Likelihood: -375.09301
+Optimization time for dadi + 4_RFR_avg: 450.93s 
+
+My SLURM_ARRAY_TASK_ID:  54
+Test case #: 14
+True params: [0.03532, 0.13737, 0.89282, 2.57076]
+Data Max Log Likelihood: -263.49031
+Starting params: [0.21301, 0.27855, 1.07395, 4.49875]
+Optimized params: [0.0621, 0.2503, 0.94019, 1.42425]
+Model Max Log Likelihood: -451.92088
+Optimization time for dadi + 4_RFR_avg: 331.26s 
+
+My SLURM_ARRAY_TASK_ID:  55
+Test case #: 15
+True params: [0.01333, 32.39108, 1.00596, 4.48911]
+Data Max Log Likelihood: -128.09748
+Starting params: [0.65368, 1.81071, 1.13788, 5.84875]
+Optimized params: [0.01, 20.78689, 0.94368, 6.20995]
+Model Max Log Likelihood: -171.51746
+Optimization time for dadi + 4_RFR_avg: 1076.91s 
+
+My SLURM_ARRAY_TASK_ID:  56
+Test case #: 16
+True params: [0.24403, 0.64443, 0.70636, 5.31776]
+Data Max Log Likelihood: -415.25603
+Starting params: [0.65366, 0.38648, 0.84575, 6.67563]
+Optimized params: [0.21553, 0.5781, 1.25381, 5.91482]
+Model Max Log Likelihood: -420.89982
+Optimization time for dadi + 4_RFR_avg: 649.15s 
+
+My SLURM_ARRAY_TASK_ID:  57
+Test case #: 17
+True params: [0.112, 0.0376, 0.31302, 5.91701]
+Data Max Log Likelihood: -458.96215
+Starting params: [0.34599, 0.21905, 0.765, 6.52375]
+Optimized params: [0.0978, 0.03355, 0.29638, 6.66913]
+Model Max Log Likelihood: -479.20005
+Optimization time for dadi + 4_RFR_avg: 395.57s 
+
+My SLURM_ARRAY_TASK_ID:  58
+Test case #: 18
+True params: [1.28116, 0.47694, 1.48777, 1.9151]
+Data Max Log Likelihood: -399.13014
+Starting params: [0.37586, 0.84199, 0.8125, 6.59687]
+Optimized params: [0.26028, 0.08961, 2.0, 10.0]
+Model Max Log Likelihood: -408.90975
+Optimization time for dadi + 4_RFR_avg: 1355.45s 
+
+My SLURM_ARRAY_TASK_ID:  59
+Test case #: 19
+True params: [2.0764, 0.96344, 0.16748, 6.19855]
+Data Max Log Likelihood: -322.12477
+Starting params: [0.74446, 1.82599, 0.97281, 7.18187]
+Optimized params: [2.16685, 0.95327, 0.16816, 6.03579]
+Model Max Log Likelihood: -325.56435
+Optimization time for dadi + 4_RFR_avg: 159.58s 
+
+My SLURM_ARRAY_TASK_ID:  60
+Test case #: 20
+True params: [0.26725, 11.62408, 1.33624, 4.44926]
+Data Max Log Likelihood: -327.51459
+Starting params: [0.44906, 1.24475, 0.85169, 6.97375]
+Optimized params: [0.11448, 5.0514, 1.96148, 9.9542]
+Model Max Log Likelihood: -333.58604
+Optimization time for dadi + 4_RFR_avg: 879.26s 
+
