@@ -13,8 +13,8 @@ def worker_func_opt(args):
     (p, fs, func, pts_l, lb, ub) = args
     func_ex = dadi.Numerics.make_extrap_func(func)
     # perturb param
-    p0 = dadi.Misc.perturb_params(p, lower_bound=lb, upper_bound=ub)
-    return dadi.Inference.opt(p0, fs, func_ex, pts_l, lower_bound=lb,
+    # p0 = dadi.Misc.perturb_params(p, lower_bound=lb, upper_bound=ub)
+    return dadi.Inference.opt(p, fs, func_ex, pts_l, lower_bound=lb,
                                     upper_bound=ub)
 
 def dadi_opt_parallel(p_true_list, p_list, fs_list, func, pts_l, lb, ub, ncpu=None):
