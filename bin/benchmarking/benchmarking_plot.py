@@ -13,17 +13,27 @@ if __name__ == '__main__':
 
     # result_set = pickle.load(open(
     #   'bin/benchmarking/benchmarking_results_set','rb'))
-    result_set = pickle.load(open(
-        'bin/benchmarking/benchmarking_results_set_rerun','rb'))
+    # result_set = pickle.load(open(
+    #     'bin/benchmarking/benchmarking_results_set_rerun','rb'))
     # result_set = pickle.load(open(
     #     'bin/benchmarking/benchmarking_results_set_2','rb'))
     # result_set = pickle.load(open(
     #   'bin/benchmarking/benchmarking_results_set_3','rb'))
     # result_set = pickle.load(open(
+    #     'bin/benchmarking/benchmarking_results_set_no_perturb','rb'))
+    # result_set = pickle.load(open(
     #     'bin/benchmarking/benchmarking_results_set_no_perturb_2','rb'))
     # result_set = pickle.load(open(
     #     'bin/benchmarking/benchmarking_results_set_no_perturb_3','rb'))
 
+    result_set_1 = pickle.load(open(
+        'bin/benchmarking/benchmarking_results_set_no_perturb','rb'))
+    result_set_2 = pickle.load(open(
+        'bin/benchmarking/benchmarking_results_set_no_perturb_2','rb'))
+    result_set_3 = pickle.load(open(
+        'bin/benchmarking/benchmarking_results_set_no_perturb_3','rb'))
+
+    result_set = result_set_1 + result_set_2 + result_set_3
     y_true = []
     y_pred_1 = []
     y_pred_2 = []
@@ -46,6 +56,8 @@ if __name__ == '__main__':
     for pred in y_pred: # for 3 cases
         param_true, param_pred = util.sort_by_param(y_true, pred)
         r2_by_param = util.rfr_r2_score(y_true, pred)[1]
+        # for nu1 and nu2 might need to convert y_true, pred back into log scale
+        # for more similar r2 than what we have seen before
         # r2_list.append(r2_by_param)
 
         for i in range(4):
@@ -71,6 +83,6 @@ if __name__ == '__main__':
 
     # plt.show()
 
-    fig.savefig('results/2d-splitmig/benchmarking/benchmarking_dup.png', bbox_inches='tight')
+    fig.savefig('results/2d-splitmig/benchmarking/benchmarking_no_perturb_all.png', bbox_inches='tight')
 
     #_no_perturb
