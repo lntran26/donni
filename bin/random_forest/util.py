@@ -327,11 +327,11 @@ def plot_by_param(true, pred, r2=None, msle=None, c=None, ax=None):
     if c is None:
         plt.scatter(true, pred)
     else:
-        # plt.scatter(true, pred, c=c, vmax=5)
+        plt.scatter(true, pred, c=c, vmax=5)
         # plt.scatter(true, pred, c=c)
-        plt.scatter(true, pred, c=c, vmax=0.5)
+        # plt.scatter(true, pred, c=c, vmax=0.5)
         cbar = plt.colorbar()
-        cbar.set_label("T/m", labelpad=+1)
+        cbar.set_label("T/nu", labelpad=+1)
         # cbar.set_label("m_true", labelpad=+1)
     # axis labels to be customized
     plt.xlabel("true")
