@@ -63,19 +63,27 @@ if __name__ == '__main__':
             T_over_nu = [T/nu for T, nu in zip(param_true[1], param_true[0])]
             # calculate r2 and msle scores
             r2_by_param = util.rfr_r2_score(y_true, new_y_predict)[1]
-            msle_by_param = util.rfr_msle(y_true, new_y_predict)[1]
+            # msle_by_param = util.rfr_msle(y_true, new_y_predict)[1]
             
             # PLOT MULTIPLE SUBPLOT VERSION
             plt.figure(1)
             fig1.add_subplot(4, 4, count_pos)
+            # util.plot_by_param(param_true[0], param_pred[0], 
+            #                 r2_by_param[0], msle_by_param[0], T_over_nu)
             util.plot_by_param(param_true[0], param_pred[0], 
-                            r2_by_param[0], msle_by_param[0], T_over_nu)
+                            r2_by_param[0], c=T_over_nu)
+            # util.plot_by_param(param_true[0], param_pred[0], r2_by_param[0])
 
             plt.figure(2)
             fig2.add_subplot(4, 4, count_pos)
+            # util.plot_by_param(param_true[1], param_pred[1], 
+            #                 r2_by_param[1], msle_by_param[1], T_over_nu)
             util.plot_by_param(param_true[1], param_pred[1], 
-                            r2_by_param[1], msle_by_param[1], T_over_nu)
+                            r2_by_param[1], c=T_over_nu)
+            # util.plot_by_param(param_true[1], param_pred[1], r2_by_param[1])
             count_pos += 1
 
-    fig1.savefig('results/1d-2epoch/nu_exclude_log_2.png', bbox_inches='tight')
-    fig2.savefig('results/1d-2epoch/T_exclude_log_2.png', bbox_inches='tight')
+    # fig1.savefig('results/1d-2epoch/nu_exclude_log_2.png', bbox_inches='tight')
+    # fig2.savefig('results/1d-2epoch/T_exclude_log_2.png', bbox_inches='tight')
+    fig1.savefig('results/1d-2epoch/presentation/nu_exclude_log_color.png', bbox_inches='tight')
+    fig2.savefig('results/1d-2epoch/presentation/T_exclude_log_color.png', bbox_inches='tight')
