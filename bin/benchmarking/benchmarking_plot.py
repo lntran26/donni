@@ -3,6 +3,7 @@ import dadi
 import numpy as np
 import util
 import matplotlib.pyplot as plt
+from scipy import stats
 
 if __name__ == '__main__': 
     # import result files from hpc and test files
@@ -27,11 +28,11 @@ if __name__ == '__main__':
     #     'bin/benchmarking/benchmarking_results_set_no_perturb_3','rb'))
 
     result_set_1 = pickle.load(open(
-        'bin/benchmarking/benchmarking_results_set_no_perturb','rb'))
+        'data/2d-splitmig/benchmarking/benchmarking_results_set_no_perturb','rb'))
     result_set_2 = pickle.load(open(
-        'bin/benchmarking/benchmarking_results_set_no_perturb_2','rb'))
+        'data/2d-splitmig/benchmarking/benchmarking_results_set_no_perturb_2','rb'))
     result_set_3 = pickle.load(open(
-        'bin/benchmarking/benchmarking_results_set_no_perturb_3','rb'))
+        'data/2d-splitmig/benchmarking/benchmarking_results_set_no_perturb_3','rb'))
 
     result_set = result_set_1 + result_set_2 + result_set_3
     y_true = []
@@ -55,7 +56,9 @@ if __name__ == '__main__':
     count_pos = 1
     for pred in y_pred: # for 3 cases
         param_true, param_pred = util.sort_by_param(y_true, pred)
-        r2_by_param = util.rfr_r2_score(y_true, pred)[1]
+        # r2_by_param = util.rfr_r2_score(y_true, pred)[1]
+        # using Spearman rho instead of Pearson's coefficient
+        rho_by_param = stats.spearmanr(y_true, pred)
         # for nu1 and nu2 might need to convert y_true, pred back into log scale
         # for more similar r2 than what we have seen before
         # r2_list.append(r2_by_param)
@@ -63,7 +66,8 @@ if __name__ == '__main__':
         for i in range(4):
             plt.figure(1)
             fig.add_subplot(3, 4, count_pos)
-            util.plot_by_param(param_true[i], param_pred[i], r2_by_param[i])
+            # util.plot_by_param(param_true[i], param_pred[i], r2_by_param[i])
+            util.plot_by_param(param_true[i], param_pred[i], rho_by_param[0][i][i+4])
             count_pos += 1
 
     plt.figure(1)
@@ -83,6 +87,6 @@ if __name__ == '__main__':
 
     # plt.show()
 
-    fig.savefig('results/2d-splitmig/benchmarking/benchmarking_no_perturb_all.png', bbox_inches='tight')
+    fig.savefig('results/2d-splitmig/benchmarking/benchmarking_no_perturb_all_Spearman.png', bbox_inches='tight')
 
     #_no_perturb
