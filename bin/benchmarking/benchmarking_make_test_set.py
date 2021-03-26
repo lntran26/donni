@@ -8,7 +8,7 @@ import numpy as np
 if __name__ == '__main__': 
     # import test sets previously generated for 2D-split-migration
     list_test_dict = pickle.load(open(
-        '../../data/2d-splitmig/test-data-corrected-2','rb'))
+        'data/2d-splitmig/test-data-corrected-2','rb'))
     # randomly select 5 datasets from each variance case
     test_data = {}
     for test_dict in list_test_dict:
@@ -19,16 +19,20 @@ if __name__ == '__main__':
                 params, fs = random.choice(list(test_dict.items()))
             # once find a unique params, escape while loop and add that set 
             # scale by theta=1000 for a more realistic fs
-            test_data[params] = fs*1000
+            # test_data[params] = fs*1000
+            test_data[params] = (fs,fs*1000)
 
     # import trained RFR
-    list_rfr = pickle.load(open(
-                '../../data/2d-splitmig/list-rfr','rb'))
+    list_rfr = pickle.load(open('data/2d-splitmig/list-rfr','rb'))
     #  use rfr to give predictions for test_data
     list_pred = []
     list_key = [] # list of key (param) to get fs from test_data dict
+    # extract test data for random forest without scaling fs
+    test_data_rfr = {}
+    for params in test_data:
+        test_data_rfr[params] = test_data[params][0]
     for rfr in list_rfr:
-        y_true, y_pred = util.rfr_test(rfr, test_data)
+        y_true, y_pred = util.rfr_test(rfr, test_data_rfr)
         # perform log transform on predictionr results and 
         # convert p in y_pred from np.array to list format
         y_pred_transform = []
@@ -44,12 +48,12 @@ if __name__ == '__main__':
     p1_list, p2_list, p3_list = [],[],[]
     
     for i in range(20):
-        # input each fs from test_data to infer from
+        # input each scaled fs from test_data to infer from
         p = list_key[0][i] # true params
         p_transform = [10**p[0], 10**p[1], p[2], p[3]]
         p_true_list.append(p_transform)
 
-        fs = test_data[p]
+        fs = test_data[p][1] # used scaled fs in dadi inference
         fs_list.append(fs)
         
         # List of generic starting points
@@ -76,4 +80,6 @@ if __name__ == '__main__':
     test_set = []
     for i in range(60):
         test_set.append((p_true_list_ext[i], fs_list_ext[i], p0_list[i]))
-    pickle.dump(test_set, open('benchmarking_test_set_3', 'wb'), 2)
+    pickle.dump(test_set, open(
+        'data/2d-splitmig/benchmarking_corrected_fs/benchmarking_test_set_3',
+         'wb'), 2)
