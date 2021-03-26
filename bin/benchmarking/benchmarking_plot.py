@@ -67,7 +67,7 @@ if __name__ == '__main__':
             plt.figure(1)
             fig.add_subplot(3, 4, count_pos)
             # util.plot_by_param(param_true[i], param_pred[i], r2_by_param[i])
-            util.plot_by_param(param_true[i], param_pred[i], rho_by_param[0][i][i+4])
+            util.plot_by_param(param_true[i], param_pred[i], rho=rho_by_param[0][i][i+4])
             count_pos += 1
 
     plt.figure(1)
