@@ -310,7 +310,7 @@ def sort_by_param(y_true, y_pred):
         n+=1
     return param_true, param_pred
 
-def plot_by_param(true, pred, r2=None, msle=None, c=None, ax=None):
+def plot_by_param(true, pred, r2=None, msle=None, rho=None, c=None, ax=None):
     '''
     true, pred = list of true and predicted values for one param,
     which can be obtained from sort_by_param;
@@ -365,14 +365,19 @@ def plot_by_param(true, pred, r2=None, msle=None, c=None, ax=None):
         # m,b = np.polyfit(true, pred, 1)
         # plt.plot(np.unique(true), np.poly1d((m,b))(np.unique(true)), color='salmon')
     
-    # display equation /of best fit line & scores on plot
+    # display equation of best fit line on plot
     # equation = 'y = ' + str(round(m,4)) + 'x' ' + ' + str(round(b,4))
+    # display different scores on plots depending on the input
     if r2 != None and msle != None:
         plt.text(0.3, 0.9, "\nR^2: " + str(round(r2,4)) + "\nMSLE: " + str(round(msle,4)),
         horizontalalignment='center', verticalalignment='center', fontsize=16,
         transform = ax.transAxes) # equation +
     if r2 != None and msle == None:
         plt.text(0.3, 0.9, "\nR^2: " + str(round(r2,4)),
+        horizontalalignment='center', verticalalignment='center', fontsize=16,
+        transform = ax.transAxes)
+    if rho != None:
+        plt.text(0.3, 0.9, "\nrho: " + str(round(rho,4)),
         horizontalalignment='center', verticalalignment='center', fontsize=16,
         transform = ax.transAxes)
 
