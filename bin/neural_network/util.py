@@ -234,7 +234,7 @@ def sort_by_param(y_true, y_pred):
         n+=1
     return param_true, param_pred
 
-def plot_by_param(true, pred, r2=None, msle=None, ax=None):
+def plot_by_param(true, pred, r2=None, msle=None, c=None, ax=None):
     '''
     true, pred = list of true and predicted values for one param,
     which can be obtained from sort_by_param;
@@ -246,38 +246,56 @@ def plot_by_param(true, pred, r2=None, msle=None, ax=None):
     if ax is None:
         ax = plt.gca()
     # make square plots with two axes the same size
-    ax.set_aspect('equal', adjustable='box')
-    plot = plt.scatter(true, pred)
+    ax.set_aspect('equal','box')
+    # ax.set_aspect(1.0/ax.get_data_ratio(), adjustable='box')
+    if c is None:
+        plt.scatter(true, pred, s=20*2**3)
+    else:
+        plt.scatter(true, pred, c=c, vmax=5, s=20*2**3)
+        # plt.scatter(true, pred, c=c)
+        # plt.scatter(true, pred, c=c, vmax=0.5)
+        cbar = plt.colorbar(fraction=0.047)
+        cbar.ax.zorder = -1
+        cbar.ax.set_title(r'$\frac{T}{ν}$', fontweight='bold', fontsize=50)
+        # plt.text(1.06, 0.65, r'$\frac{T}{ν}$', fontweight='bold', fontsize=40, transform = ax.transAxes)
+        # cbar.set_label("T/nu", labelpad=+1)
+        # cbar.set_label("m_true", labelpad=+1)
     # axis labels to be customized
-    plt.xlabel("true")
-    plt.ylabel("predicted")
+    plt.xlabel("true", fontweight='bold')
+    plt.ylabel("predicted", fontweight='bold')
+
     # only plot in log scale if the difference between max and min is large
-    if max(true+pred)/min(true+pred) > 100:
+    if max(true+pred)/min(true+pred) > 1000:
         plt.xscale("log")
         plt.yscale("log")
         # axis scales to be customized
         plt.xlim([10**-2.1, 10**2.1])
         plt.ylim([10**-2.1, 10**2.1])
-        # convert to log to plot best fit line
-        log_true = list(np.log(true))
-        log_pred = list(np.log(pred))
-        m,b = np.polyfit(log_true, log_pred, 1)
-        y_fit = np.exp(m*np.unique(log_true) + b)
-        plt.plot(np.unique(true), y_fit, color='salmon')
+        # plot a slope 1 line
+        plt.plot([10**-3, 10**3], [10**-3, 10**3], linewidth=4)
+        # # convert to log to plot best fit line in log-log scale
+        # log_true = list(np.log(true))
+        # log_pred = list(np.log(pred))
+        # m,b = np.polyfit(log_true, log_pred, 1)
+        # y_fit = np.exp(m*np.unique(log_true) + b)
+        # plt.plot(np.unique(true), y_fit, color='salmon')
     else:
         # axis scales to be customized
-        plt.xlim([0, 2.1])
-        plt.ylim([0, 2.1])
-        # plot best fit line
-        m,b = np.polyfit(true, pred, 1)
-        plt.plot(np.unique(true), np.poly1d((m,b))(np.unique(true)), color='salmon')
+        plt.xlim([min(true+pred)-0.5, max(true+pred)+0.5])
+        plt.ylim([min(true+pred)-0.5, max(true+pred)+0.5])
+        # plot a slope 1 line
+        plt.plot([-5, 13], [-5, 13], linewidth=4)
+    
     # display equation /of best fit line & scores on plot
-    equation = 'y = ' + str(round(m,4)) + 'x' ' + ' + str(round(b,4))
-    if r2 != None:
-        plt.text(0.3, 0.9, equation + "\nR^2: " + str(round(r2,4)),
-        horizontalalignment='center', verticalalignment='center', 
+    # equation = 'y = ' + str(round(m,4)) + 'x' ' + ' + str(round(b,4))
+    if r2 != None and msle != None:
+        plt.text(0.3, 0.9, r'$R^{2}$: ' + str(round(r2,4)) + "\nMSLE: " + str(round(msle,4)),
+        horizontalalignment='center', verticalalignment='center', fontsize=40,
         transform = ax.transAxes)
-    return plot
+    if r2 != None and msle == None:
+        plt.text(0.4, 0.9, r'$R^{2}$: ' + str(round(r2,4)),
+        horizontalalignment='center', verticalalignment='center', fontsize=40,
+        transform = ax.transAxes)
 
 # ! log-scale param, define log
 def plot_by_param_log(true, pred, log, ax, r2=None, rho=None, case=None, vals=None):
@@ -312,7 +330,7 @@ def nn_train(train_dict, nn=None, solver='adam'):
     y_train_label = [params for params in train_dict]
     if nn is None:
         # Load NN, specifying ncpu for parallel processing
-        nn = MLPRegressor(solver=solver, max_iter=400, alpha=0.001,
+        nn = MLPRegressor(solver = 'adam', max_iter=400, alpha=0.001,
                         hidden_layer_sizes=(2000,), learning_rate='adaptive')
     nn = nn.fit(X_train_input, y_train_label)
     return nn

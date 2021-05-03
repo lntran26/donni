@@ -20,7 +20,10 @@ if __name__ == '__main__':
             # once find a unique params, escape while loop and add that set 
             # scale by theta=1000 for a more realistic fs
             # test_data[params] = fs*1000
-            test_data[params] = (fs,fs*1000)
+            # test_data[params] = (fs,fs*1000)
+            # test case where fs is normalized instead of just use fs
+            scaled_fs = fs*1000
+            test_data[params] = (scaled_fs/scaled_fs.sum(),scaled_fs)
 
     # import trained RFR
     list_rfr = pickle.load(open('data/2d-splitmig/list-rfr','rb'))
@@ -81,5 +84,5 @@ if __name__ == '__main__':
     for i in range(60):
         test_set.append((p_true_list_ext[i], fs_list_ext[i], p0_list[i]))
     pickle.dump(test_set, open(
-        'data/2d-splitmig/benchmarking_corrected_fs/benchmarking_test_set_3',
+        'data/2d-splitmig/benchmarking_corrected_fs/troubleshoot/benchmarking_test_set_3',
          'wb'), 2)

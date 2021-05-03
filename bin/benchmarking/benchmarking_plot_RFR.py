@@ -7,9 +7,12 @@ from scipy import stats
 
 if __name__ == '__main__': 
     # load test set that contains the random forest prediction
-    test_set_1 = pickle.load(open('data/2d-splitmig/benchmarking_corrected_fs/benchmarking_test_set_1','rb'))
-    test_set_2 = pickle.load(open('data/2d-splitmig/benchmarking_corrected_fs/benchmarking_test_set_2','rb'))
-    test_set_3 = pickle.load(open('data/2d-splitmig/benchmarking_corrected_fs/benchmarking_test_set_3','rb'))
+    # test_set_1 = pickle.load(open('data/2d-splitmig/benchmarking_corrected_fs/benchmarking_test_set_1','rb'))
+    # test_set_2 = pickle.load(open('data/2d-splitmig/benchmarking_corrected_fs/benchmarking_test_set_2','rb'))
+    # test_set_3 = pickle.load(open('data/2d-splitmig/benchmarking_corrected_fs/benchmarking_test_set_3','rb'))
+    test_set_1 = pickle.load(open('data/2d-splitmig/benchmarking_corrected_fs/troubleshoot/benchmarking_test_set_1','rb'))
+    test_set_2 = pickle.load(open('data/2d-splitmig/benchmarking_corrected_fs/troubleshoot/benchmarking_test_set_2','rb'))
+    test_set_3 = pickle.load(open('data/2d-splitmig/benchmarking_corrected_fs/troubleshoot/benchmarking_test_set_3','rb'))
     # each test set is a list of length 60 tuples
     # each tuple is (p_true, fs, p0)
     # where p0 is 20 dadi only, 20 RFR_1, 20 avg_RFR4
@@ -70,4 +73,5 @@ if __name__ == '__main__':
     plt.subplot(3, 4, 9)
     plt.ylabel('RFR_avg')
 
-    fig.savefig('results/2d-splitmig/benchmarking_corrected_fs/benchmarking_dadi_v_RFR_start_p.png', bbox_inches='tight')
+    # fig.savefig('results/2d-splitmig/benchmarking_corrected_fs/benchmarking_dadi_v_RFR_start_p.png', bbox_inches='tight')
+    fig.savefig('data/2d-splitmig/benchmarking_corrected_fs/normalized/benchmarking_dadi_v_RFR_start_p_norm_fs.png', bbox_inches='tight')
