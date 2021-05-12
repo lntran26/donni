@@ -61,8 +61,8 @@ if __name__ == '__main__':
         # List of generic starting points
         p1_list.append([1, 1, 0.95, 4.5])
 
-        # List of starting points from NN theta 1 predictions
-        sel_params_nn_1 = list_pred[0][i]
+        # List of starting points from NN theta 1000 predictions
+        sel_params_nn_1 = list_pred[2][i]
         p2_list.append(sel_params_nn_1)
 
         # List of starting points from average 4 NN prediction
@@ -83,5 +83,5 @@ if __name__ == '__main__':
     for i in range(60):
         test_set.append((p_true_list_ext[i], fs_list_ext[i], p0_list[i]))
     pickle.dump(test_set, open(
-        'data/2d-splitmig/benchmarking_nn/benchmarking_test_set_3',
+        'data/2d-splitmig/benchmarking_nn/benchmarking_test_set_6',
          'wb'), 2)
