@@ -405,6 +405,37 @@ def plot_by_param_log(true, pred, log, ax, r2=None, case=None, vals=None):
     ax.set_ylabel("predicted")
     ax.scatter(true, pred, c=vals)
 
+def nn_train(train_dict, nn=None, solver='adam'):
+    # Load training data set from dictionary into arrays of input and
+    # corresponding labels
+    X_train_input = [train_dict[params].data.flatten() for params in train_dict]
+    y_train_label = [params for params in train_dict]
+    if nn is None:
+        # Load NN, specifying ncpu for parallel processing
+        nn = MLPRegressor(solver = 'adam', max_iter=400, alpha=0.001,
+                        hidden_layer_sizes=(2000,), learning_rate='adaptive')
+    nn = nn.fit(X_train_input, y_train_label)
+    return nn
+
+
+def nn_test(nn, test_dict):
+    y_true, y_pred = [], []
+    for params in test_dict:
+        y_true.append(params)
+        test_fs = test_dict[params].data.flatten()
+        y_pred.append(nn.predict([test_fs]).flatten())
+    return y_true, y_pred
+
+def nn_r2_score(y_true, y_pred, logs=None):
+    # need to fix this
+    if logs is not None:
+        for i in range(len(y_true)):
+            y_true[i] = [10**y_true[i][j] if logs[j] else y_true[i][j] for j in range(len(logs))]
+            y_pred[i] = [10**y_pred[i][j] if logs[j] else y_pred[i][j] for j in range(len(logs))]
+    score = r2_score(y_true, y_pred)
+    score_by_param = r2_score(y_true, y_pred, multioutput='raw_values')
+    return score, score_by_param
+    
 # Test code: running time for the 1D version (2 epoch)
 # We protect this test code with this Python idiom. This means the test
 # code won't run when we "import util", which is useful for defining
