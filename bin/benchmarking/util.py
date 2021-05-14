@@ -417,7 +417,6 @@ def nn_train(train_dict, nn=None, solver='adam'):
     nn = nn.fit(X_train_input, y_train_label)
     return nn
 
-
 def nn_test(nn, test_dict):
     y_true, y_pred = [], []
     for params in test_dict:
