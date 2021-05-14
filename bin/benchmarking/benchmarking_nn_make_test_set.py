@@ -62,14 +62,12 @@ if __name__ == '__main__':
         p1_list.append([1, 1, 0.95, 4.5])
 
         # List of starting points from NN theta 1000 predictions
-        sel_params_nn_1 = list_pred[2][i]
-        p2_list.append(sel_params_nn_1)
+        sel_params_nn_1000 = list_pred[2][i]
+        p2_list.append(sel_params_nn_1000)
 
-        # List of starting points from average 4 NN prediction
-        arr = np.array([list_pred[0][i],list_pred[1][i],
-                        list_pred[2][i],list_pred[3][i]])
-        sel_params_nn_avg = np.mean(arr, axis=0).tolist()
-        p3_list.append(sel_params_nn_avg)
+        # List of starting points from NN theta 10000 prediction
+        sel_params_nn_10000 = list_pred[3][i]
+        p3_list.append(sel_params_nn_10000)
 
     # to make it easier for job array submission
     # append all three lists together into one list of all starting points
