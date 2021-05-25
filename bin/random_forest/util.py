@@ -7,6 +7,7 @@ import dadi
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_log_error, r2_score
 import matplotlib.pyplot as plt
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 import numpy as np
 import math
 import copy
@@ -318,6 +319,7 @@ def plot_by_param(true, pred, r2=None, msle=None, c=None, ax=None):
     msle: one msle score for one param of one train:test pair
     TO DO: ADD ARGUMENTS FOR AXIS LABEL, axis scale, title, etc CUSTOMIZATION
     '''
+    
     # assign ax variable to customize axes
     if ax is None:
         ax = plt.gca()
@@ -325,17 +327,20 @@ def plot_by_param(true, pred, r2=None, msle=None, c=None, ax=None):
     ax.set_aspect('equal','box')
     # ax.set_aspect(1.0/ax.get_data_ratio(), adjustable='box')
     if c is None:
-        plt.scatter(true, pred)
+        plt.scatter(true, pred, s=20*2**3)
     else:
-        plt.scatter(true, pred, c=c, vmax=5)
+        plt.scatter(true, pred, c=c, vmax=5, s=20*2**3)
         # plt.scatter(true, pred, c=c)
         # plt.scatter(true, pred, c=c, vmax=0.5)
-        cbar = plt.colorbar()
-        cbar.set_label("T/nu", labelpad=+1)
-        # cbar.set_label("m_true", labelpad=+1)
+        cbar = plt.colorbar(fraction=0.047)
+        cbar.ax.zorder = -1
+        # plt.text(1.06, 0.65, r'$\frac{T}{ν}$', fontweight='bold', fontsize=40, transform = ax.transAxes)
+        cbar.ax.set_title(r'$\frac{T}{ν}$', fontweight='bold', fontsize=50)
+        # cbar.set_label(r'$\frac{T}{ν}$', fontweight='bold', rotation='horizontal', position=(-0.3,0.5))
     # axis labels to be customized
-    plt.xlabel("true")
-    plt.ylabel("predict")
+    plt.xlabel("true", fontweight='bold')
+    plt.ylabel("predicted", fontweight='bold')
+
     # only plot in log scale if the difference between max and min is large
     if max(true+pred)/min(true+pred) > 100:
         plt.xscale("log")
@@ -344,7 +349,7 @@ def plot_by_param(true, pred, r2=None, msle=None, c=None, ax=None):
         plt.xlim([10**-2.1, 10**2.1])
         plt.ylim([10**-2.1, 10**2.1])
         # plot a slope 1 line
-        plt.plot([10**-3, 10**3], [10**-3, 10**3])
+        plt.plot([10**-3, 10**3], [10**-3, 10**3], linewidth=4)
         # # convert to log to plot best fit line in log-log scale
         # log_true = list(np.log(true))
         # log_pred = list(np.log(pred))
@@ -353,27 +358,20 @@ def plot_by_param(true, pred, r2=None, msle=None, c=None, ax=None):
         # plt.plot(np.unique(true), y_fit, color='salmon')
     else:
         # axis scales to be customized
-        # plt.xlim([0, 2.1])
-        # plt.ylim([0, 2.1])
-        # plt.xlim([0, 12.1])
-        # plt.ylim([0, 12.1])
         plt.xlim([min(true+pred)-0.5, max(true+pred)+0.5])
         plt.ylim([min(true+pred)-0.5, max(true+pred)+0.5])
         # plot a slope 1 line
-        plt.plot([-1, 13], [-1, 13])
-        # # plot best fit line
-        # m,b = np.polyfit(true, pred, 1)
-        # plt.plot(np.unique(true), np.poly1d((m,b))(np.unique(true)), color='salmon')
+        plt.plot([-1, 13], [-1, 13], linewidth=4)
     
     # display equation /of best fit line & scores on plot
     # equation = 'y = ' + str(round(m,4)) + 'x' ' + ' + str(round(b,4))
     if r2 != None and msle != None:
-        plt.text(0.3, 0.9, "\nR^2: " + str(round(r2,4)) + "\nMSLE: " + str(round(msle,4)),
-        horizontalalignment='center', verticalalignment='center', fontsize=16,
-        transform = ax.transAxes) # equation +
+        plt.text(0.3, 0.9, r'$R^{2}$: ' + str(round(r2,4)) + "\nMSLE: " + str(round(msle,4)),
+        horizontalalignment='center', verticalalignment='center', fontsize=40,
+        transform = ax.transAxes)
     if r2 != None and msle == None:
-        plt.text(0.3, 0.9, "\nR^2: " + str(round(r2,4)),
-        horizontalalignment='center', verticalalignment='center', fontsize=16,
+        plt.text(0.4, 0.9, r'$R^{2}$: ' + str(round(r2,4)),
+        horizontalalignment='center', verticalalignment='center', fontsize=40,
         transform = ax.transAxes)
 
 # ! log-scale param, define log

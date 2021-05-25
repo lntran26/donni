@@ -18,25 +18,24 @@ if __name__ == '__main__':
             while params in test_data: 
                 params, fs = random.choice(list(test_dict.items()))
             # once find a unique params, escape while loop and add that set 
-            # scale by theta=1000 for a more realistic fs
-            # test_data[params] = fs*1000
-            # test_data[params] = (fs,fs*1000)
-            # test case where fs is normalized instead of just use fs
+            # scale fs by theta=1000 for a more realistic fs
             scaled_fs = fs*1000
-            test_data[params] = (scaled_fs/scaled_fs.sum(),scaled_fs)
+            # save both scaled and normalized fs, where normalized fs
+            # are used for NN prediction and scaled_fs used for optimization
+            test_data[params] = (scaled_fs/scaled_fs.sum(), scaled_fs)
 
-    # import trained RFR
-    list_rfr = pickle.load(open('data/2d-splitmig/list-rfr','rb'))
-    #  use rfr to give predictions for test_data
+    # import trained NN
+    list_nn = pickle.load(open('data/2d-splitmig/list-nn','rb'))
+    #  use NN to give predictions for test_data
     list_pred = []
     list_key = [] # list of key (param) to get fs from test_data dict
     # extract test data for random forest without scaling fs
-    test_data_rfr = {}
+    test_data_nn = {}
     for params in test_data:
-        test_data_rfr[params] = test_data[params][0]
-    for rfr in list_rfr:
-        y_true, y_pred = util.rfr_test(rfr, test_data_rfr)
-        # perform log transform on predictionr results and 
+        test_data_nn[params] = test_data[params][0]
+    for nn in list_nn:
+        y_true, y_pred = util.nn_test(nn, test_data_nn)
+        # perform log transform on prediction results and 
         # convert p in y_pred from np.array to list format
         y_pred_transform = []
         for p in y_pred:
@@ -62,15 +61,13 @@ if __name__ == '__main__':
         # List of generic starting points
         p1_list.append([1, 1, 0.95, 4.5])
 
-        # List of starting points from RFR theta 1 predictions
-        sel_params_RFR_1 = list_pred[0][i]
-        p2_list.append(sel_params_RFR_1)
+        # List of starting points from NN theta 1000 predictions
+        sel_params_nn_1000 = list_pred[2][i]
+        p2_list.append(sel_params_nn_1000)
 
-        # List of starting points from average 4 RFRs prediction
-        arr = np.array([list_pred[0][i],list_pred[1][i],
-                        list_pred[2][i],list_pred[3][i]])
-        sel_params_RFR_avg = np.mean(arr, axis=0).tolist()
-        p3_list.append(sel_params_RFR_avg)
+        # List of starting points from NN theta 10000 prediction
+        sel_params_nn_10000 = list_pred[3][i]
+        p3_list.append(sel_params_nn_10000)
 
     # to make it easier for job array submission
     # append all three lists together into one list of all starting points
@@ -84,5 +81,5 @@ if __name__ == '__main__':
     for i in range(60):
         test_set.append((p_true_list_ext[i], fs_list_ext[i], p0_list[i]))
     pickle.dump(test_set, open(
-        'data/2d-splitmig/benchmarking_corrected_fs/troubleshoot/benchmarking_test_set_3',
+        'data/2d-splitmig/benchmarking_nn/benchmarking_test_set_6',
          'wb'), 2)

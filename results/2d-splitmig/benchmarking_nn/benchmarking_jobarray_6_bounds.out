@@ -1,0 +1,600 @@
+My SLURM_ARRAY_TASK_ID:  1
+Test case #: 1
+True params: [0.16132, 0.03825, 0.1936, 5.02948]
+Data Max Log Likelihood: -452.28342
+Starting params: [1, 1, 0.95, 4.5]
+Optimized params: [0.16351, 0.03881, 0.19323, 4.95154]
+Model Max Log Likelihood: -452.28869
+Optimization time for dadi only: 390.43s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187120 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  2
+Test case #: 2
+True params: [11.9821, 0.13989, 1.33115, 3.23133]
+Data Max Log Likelihood: -308.06259
+Starting params: [1, 1, 0.95, 4.5]
+Optimized params: [3.88074, 0.04546, 1.60484, 9.92985]
+Model Max Log Likelihood: -308.09963
+Optimization time for dadi only: 1596.68s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187121 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  3
+Test case #: 3
+True params: [0.01764, 3.40011, 1.25619, 4.97316]
+Data Max Log Likelihood: -211.49048
+Starting params: [1, 1, 0.95, 4.5]
+Optimized params: [0.01, 1.78193, 0.85924, 9.52591]
+Model Max Log Likelihood: -211.79774
+Optimization time for dadi only: 559.38s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187122 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  4
+Test case #: 4
+True params: [0.2179, 0.03227, 1.81321, 8.75558]
+Data Max Log Likelihood: -382.35303
+Starting params: [1, 1, 0.95, 4.5]
+Optimized params: [0.26371, 0.03893, 1.42352, 7.25946]
+Model Max Log Likelihood: -382.37115
+Optimization time for dadi only: 849.06s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187123 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  5
+Test case #: 5
+True params: [0.45738, 22.0372, 0.8696, 4.62029]
+Data Max Log Likelihood: -304.72873
+Starting params: [1, 1, 0.95, 4.5]
+Optimized params: [0.47074, 15.48918, 0.6834, 4.42193]
+Model Max Log Likelihood: -305.03716
+Optimization time for dadi only: 495.58s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187124 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  6
+Test case #: 6
+True params: [1.28659, 9.27295, 1.5435, 3.50168]
+Data Max Log Likelihood: -203.87217
+Starting params: [1, 1, 0.95, 4.5]
+Optimized params: [1.42028, 9.86199, 1.7583, 2.64417]
+Model Max Log Likelihood: -315.46502
+Optimization time for dadi only: 300.84s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187125 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  7
+Test case #: 7
+True params: [95.59223, 1.7819, 1.12508, 7.38835]
+Data Max Log Likelihood: -172.40348
+Starting params: [1, 1, 0.95, 4.5]
+Optimized params: [36.79632, 1.81113, 0.99337, 7.82685]
+Model Max Log Likelihood: -272.67679
+Optimization time for dadi only: 656.06s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187126 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  8
+Test case #: 8
+True params: [0.38835, 4.14297, 1.52703, 5.16939]
+Data Max Log Likelihood: -229.6206
+Starting params: [1, 1, 0.95, 4.5]
+Optimized params: [0.28712, 3.73386, 0.5459, 7.02909]
+Model Max Log Likelihood: -464.4066
+Optimization time for dadi only: 314.88s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187127 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  9
+Test case #: 9
+True params: [2.93846, 0.5621, 1.62293, 2.31597]
+Data Max Log Likelihood: -250.3962
+Starting params: [1, 1, 0.95, 4.5]
+Optimized params: [2.46828, 0.48792, 0.87714, 2.69479]
+Model Max Log Likelihood: -466.8528
+Optimization time for dadi only: 635.81s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187128 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  10
+Test case #: 10
+True params: [0.12073, 0.01047, 0.72585, 6.78276]
+Data Max Log Likelihood: -60.94574
+Starting params: [1, 1, 0.95, 4.5]
+Optimized params: [1.00602, 0.09411, 1.28866, 1.0]
+Model Max Log Likelihood: -1053.21522
+Optimization time for dadi only: 385.38s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187129 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  11
+Test case #: 11
+True params: [0.02449, 25.90936, 0.98999, 6.15038]
+Data Max Log Likelihood: -177.1275
+Starting params: [1, 1, 0.95, 4.5]
+Optimized params: [0.01421, 6.86878, 1.82934, 9.98643]
+Model Max Log Likelihood: -250.36097
+Optimization time for dadi only: 1524.54s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187136 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  12
+Test case #: 12
+True params: [5.72551, 28.83475, 0.77327, 6.58037]
+Data Max Log Likelihood: -193.48803
+Starting params: [1, 1, 0.95, 4.5]
+Optimized params: [5.58378, 34.38198, 0.84068, 7.04962]
+Model Max Log Likelihood: -203.44935
+Optimization time for dadi only: 847.23s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187137 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  13
+Test case #: 13
+True params: [51.87451, 0.1701, 1.43804, 9.85921]
+Data Max Log Likelihood: -320.71405
+Starting params: [1, 1, 0.95, 4.5]
+Optimized params: [17.83211, 0.14941, 1.99933, 10.0]
+Model Max Log Likelihood: -359.65402
+Optimization time for dadi only: 4403.64s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187138 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  14
+Test case #: 14
+True params: [1.49047, 0.03173, 1.53323, 3.0775]
+Data Max Log Likelihood: -211.99968
+Starting params: [1, 1, 0.95, 4.5]
+Optimized params: [0.48795, 0.01076, 0.88835, 9.09576]
+Model Max Log Likelihood: -279.99316
+Optimization time for dadi only: 2965.05s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187139 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  15
+Test case #: 15
+True params: [0.12413, 0.01974, 1.81863, 2.84861]
+Data Max Log Likelihood: -207.7848
+Starting params: [1, 1, 0.95, 4.5]
+Optimized params: [0.10192, 0.01597, 0.85073, 3.58002]
+Model Max Log Likelihood: -397.65772
+Optimization time for dadi only: 486.60s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187140 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  16
+Test case #: 16
+True params: [0.03532, 0.13737, 0.89282, 2.57076]
+Data Max Log Likelihood: -356.44886
+Starting params: [1, 1, 0.95, 4.5]
+Optimized params: [0.08519, 0.34131, 0.92217, 1.06159]
+Model Max Log Likelihood: -380.08845
+Optimization time for dadi only: 172.40s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187141 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  17
+Test case #: 17
+True params: [0.03174, 0.0116, 0.97958, 6.66445]
+Data Max Log Likelihood: -298.51168
+Starting params: [1, 1, 0.95, 4.5]
+Optimized params: [0.04826, 0.01733, 0.80995, 4.47712]
+Model Max Log Likelihood: -391.86188
+Optimization time for dadi only: 961.03s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187142 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  18
+Test case #: 18
+True params: [37.3398, 0.06245, 1.76226, 7.85674]
+Data Max Log Likelihood: -295.72734
+Starting params: [1, 1, 0.95, 4.5]
+Optimized params: [12.43534, 0.04742, 1.99902, 10.0]
+Model Max Log Likelihood: -304.19103
+Optimization time for dadi only: 2590.06s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187143 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  19
+Test case #: 19
+True params: [4.92653, 2.27877, 0.48159, 4.20251]
+Data Max Log Likelihood: -262.20491
+Starting params: [1, 1, 0.95, 4.5]
+Optimized params: [4.86912, 2.24151, 0.4735, 4.28391]
+Model Max Log Likelihood: -264.24547
+Optimization time for dadi only: 119.91s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187144 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  20
+Test case #: 20
+True params: [1.28116, 0.47694, 1.48777, 1.9151]
+Data Max Log Likelihood: -399.13014
+Starting params: [1, 1, 0.95, 4.5]
+Optimized params: [1.17128, 0.43488, 1.00665, 2.09791]
+Model Max Log Likelihood: -402.54481
+Optimization time for dadi only: 273.69s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187145 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  21
+Test case #: 1
+True params: [0.16132, 0.03825, 0.1936, 5.02948]
+Data Max Log Likelihood: -452.28342
+Starting params: [0.11986, 0.02673, 0.1, 7.87396]
+Optimized params: [0.16131, 0.03825, 0.19357, 5.02952]
+Model Max Log Likelihood: -452.28342
+Optimization time for dadi + NN_1000: 84.45s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187163 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  22
+Test case #: 2
+True params: [11.9821, 0.13989, 1.33115, 3.23133]
+Data Max Log Likelihood: -308.06259
+Starting params: [6.70427, 0.06699, 1.62198, 6.322]
+Optimized params: [4.19557, 0.04909, 1.99358, 9.22253]
+Model Max Log Likelihood: -308.0703
+Optimization time for dadi + NN_1000: 967.26s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187164 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  23
+Test case #: 3
+True params: [0.01764, 3.40011, 1.25619, 4.97316]
+Data Max Log Likelihood: -211.49048
+Starting params: [0.01698, 2.83517, 1.45278, 5.42527]
+Optimized params: [0.0159, 3.06376, 1.18731, 5.52258]
+Model Max Log Likelihood: -211.49053
+Optimization time for dadi + NN_1000: 663.59s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187165 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  24
+Test case #: 4
+True params: [0.2179, 0.03227, 1.81321, 8.75558]
+Data Max Log Likelihood: -382.35303
+Starting params: [0.5389, 0.06563, 1.32012, 5.06986]
+Optimized params: [0.32653, 0.04829, 2.0, 5.8521]
+Model Max Log Likelihood: -382.3547
+Optimization time for dadi + NN_1000: 418.37s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187166 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  25
+Test case #: 5
+True params: [0.45738, 22.0372, 0.8696, 4.62029]
+Data Max Log Likelihood: -304.72873
+Starting params: [0.42282, 38.38056, 1.23052, 4.86788]
+Optimized params: [0.45745, 22.04332, 0.87025, 4.61939]
+Model Max Log Likelihood: -304.72873
+Optimization time for dadi + NN_1000: 171.30s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187167 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  26
+Test case #: 6
+True params: [1.28659, 9.27295, 1.5435, 3.50168]
+Data Max Log Likelihood: -203.87217
+Starting params: [0.95177, 9.33598, 1.47909, 2.5591]
+Optimized params: [1.44381, 10.25242, 1.84718, 2.59921]
+Model Max Log Likelihood: -315.45475
+Optimization time for dadi + NN_1000: 198.03s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187168 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  27
+Test case #: 7
+True params: [95.59223, 1.7819, 1.12508, 7.38835]
+Data Max Log Likelihood: -172.40348
+Starting params: [40.80764, 3.74931, 1.46473, 7.99602]
+Optimized params: [100.0, 1.7576, 1.05182, 8.34695]
+Model Max Log Likelihood: -272.26321
+Optimization time for dadi + NN_1000: 932.51s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187169 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  28
+Test case #: 8
+True params: [0.38835, 4.14297, 1.52703, 5.16939]
+Data Max Log Likelihood: -229.6206
+Starting params: [0.22307, 5.6166, 1.45476, 6.39969]
+Optimized params: [0.31681, 4.58771, 1.52895, 6.3535]
+Model Max Log Likelihood: -464.32471
+Optimization time for dadi + NN_1000: 260.43s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187170 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  29
+Test case #: 9
+True params: [2.93846, 0.5621, 1.62293, 2.31597]
+Data Max Log Likelihood: -250.3962
+Starting params: [2.06996, 0.37911, 1.47963, 5.91442]
+Optimized params: [2.49595, 0.4908, 0.93346, 2.68072]
+Model Max Log Likelihood: -466.85634
+Optimization time for dadi + NN_1000: 157.56s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187171 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  30
+Test case #: 10
+True params: [0.12073, 0.01047, 0.72585, 6.78276]
+Data Max Log Likelihood: -60.94574
+Starting params: [0.61388, 0.08466, 2, 1]
+Optimized params: [0.8341, 0.07194, 0.17013, 1.0]
+Model Max Log Likelihood: -1048.39695
+Optimization time for dadi + NN_1000: 167.51s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187172 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  31
+Test case #: 11
+True params: [0.02449, 25.90936, 0.98999, 6.15038]
+Data Max Log Likelihood: -177.1275
+Starting params: [0.01859, 21.39818, 1.3249, 7.9867]
+Optimized params: [0.01723, 18.98589, 0.90164, 8.76716]
+Model Max Log Likelihood: -244.23716
+Optimization time for dadi + NN_1000: 353.35s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187194 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  32
+Test case #: 12
+True params: [5.72551, 28.83475, 0.77327, 6.58037]
+Data Max Log Likelihood: -193.48803
+Starting params: [8.33076, 42.77285, 1.13136, 6.66323]
+Optimized params: [5.51835, 36.78163, 0.84199, 7.22733]
+Model Max Log Likelihood: -203.44755
+Optimization time for dadi + NN_1000: 231.17s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187195 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  33
+Test case #: 13
+True params: [51.87451, 0.1701, 1.43804, 9.85921]
+Data Max Log Likelihood: -320.71405
+Starting params: [40.26322, 0.15375, 1.20118, 9.03236]
+Optimized params: [54.7643, 0.15882, 1.32344, 9.56545]
+Model Max Log Likelihood: -359.11808
+Optimization time for dadi + NN_1000: 206.39s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187196 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  34
+Test case #: 14
+True params: [1.49047, 0.03173, 1.53323, 3.0775]
+Data Max Log Likelihood: -211.99968
+Starting params: [1.409, 0.01823, 1.18377, 6.02775]
+Optimized params: [0.95548, 0.02113, 1.49569, 4.6321]
+Model Max Log Likelihood: -279.9744
+Optimization time for dadi + NN_1000: 601.89s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187197 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  35
+Test case #: 15
+True params: [0.12413, 0.01974, 1.81863, 2.84861]
+Data Max Log Likelihood: -207.7848
+Starting params: [0.13555, 0.0145, 1.16847, 3.62479]
+Optimized params: [0.11613, 0.01819, 0.93897, 3.14094]
+Model Max Log Likelihood: -397.65765
+Optimization time for dadi + NN_1000: 373.48s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187198 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  36
+Test case #: 16
+True params: [0.03532, 0.13737, 0.89282, 2.57076]
+Data Max Log Likelihood: -356.44886
+Starting params: [0.02744, 0.17252, 0.92573, 3.56141]
+Optimized params: [0.03154, 0.12673, 0.87568, 2.87888]
+Model Max Log Likelihood: -380.04115
+Optimization time for dadi + NN_1000: 233.94s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187199 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  37
+Test case #: 17
+True params: [0.03174, 0.0116, 0.97958, 6.66445]
+Data Max Log Likelihood: -298.51168
+Starting params: [0.05479, 0.02892, 1.28199, 5.01918]
+Optimized params: [0.05462, 0.01962, 1.59771, 3.91968]
+Model Max Log Likelihood: -391.82195
+Optimization time for dadi + NN_1000: 413.72s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187200 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  38
+Test case #: 18
+True params: [37.3398, 0.06245, 1.76226, 7.85674]
+Data Max Log Likelihood: -295.72734
+Starting params: [42.13264, 0.07551, 1.68639, 7.11693]
+Optimized params: [54.1342, 0.07265, 1.98281, 6.74493]
+Model Max Log Likelihood: -302.21669
+Optimization time for dadi + NN_1000: 442.09s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187201 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  39
+Test case #: 19
+True params: [4.92653, 2.27877, 0.48159, 4.20251]
+Data Max Log Likelihood: -262.20491
+Starting params: [7.33425, 2.02134, 0.60646, 5.23154]
+Optimized params: [4.86933, 2.24108, 0.47349, 4.2873]
+Model Max Log Likelihood: -264.24547
+Optimization time for dadi + NN_1000: 87.80s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187202 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  40
+Test case #: 20
+True params: [1.28116, 0.47694, 1.48777, 1.9151]
+Data Max Log Likelihood: -399.13014
+Starting params: [0.90336, 0.36637, 1.34013, 3.42003]
+Optimized params: [1.16847, 0.43331, 1.00113, 2.10559]
+Model Max Log Likelihood: -402.54486
+Optimization time for dadi + NN_1000: 136.32s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187203 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  41
+Test case #: 1
+True params: [0.16132, 0.03825, 0.1936, 5.02948]
+Data Max Log Likelihood: -452.28342
+Starting params: [0.12756, 0.03133, 0.1, 6.96133]
+Optimized params: [0.16112, 0.0382, 0.19355, 5.03628]
+Model Max Log Likelihood: -452.28347
+Optimization time for dadi + NN_10000: 60.64s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187216 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  42
+Test case #: 2
+True params: [11.9821, 0.13989, 1.33115, 3.23133]
+Data Max Log Likelihood: -308.06259
+Starting params: [7.16858, 0.08691, 1.52642, 6.17789]
+Optimized params: [4.20673, 0.04924, 2.0, 9.19277]
+Model Max Log Likelihood: -308.07029
+Optimization time for dadi + NN_10000: 1564.87s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187217 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  43
+Test case #: 3
+True params: [0.01764, 3.40011, 1.25619, 4.97316]
+Data Max Log Likelihood: -211.49048
+Starting params: [0.01744, 2.82114, 1.48529, 5.25692]
+Optimized params: [0.01681, 3.23713, 1.22442, 5.22287]
+Model Max Log Likelihood: -211.4905
+Optimization time for dadi + NN_10000: 455.50s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187218 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  44
+Test case #: 4
+True params: [0.2179, 0.03227, 1.81321, 8.75558]
+Data Max Log Likelihood: -382.35303
+Starting params: [0.46046, 0.06732, 1.33808, 5.55442]
+Optimized params: [0.30632, 0.04534, 2.0, 6.23085]
+Model Max Log Likelihood: -382.35376
+Optimization time for dadi + NN_10000: 892.71s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187219 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  45
+Test case #: 5
+True params: [0.45738, 22.0372, 0.8696, 4.62029]
+Data Max Log Likelihood: -304.72873
+Starting params: [0.51005, 42.41302, 1.09652, 4.18608]
+Optimized params: [0.50427, 35.2561, 1.66702, 4.15711]
+Model Max Log Likelihood: -305.07625
+Optimization time for dadi + NN_10000: 270.07s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187220 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  46
+Test case #: 6
+True params: [1.28659, 9.27295, 1.5435, 3.50168]
+Data Max Log Likelihood: -203.87217
+Starting params: [0.96182, 12.09071, 1.48123, 1.69852]
+Optimized params: [1.44716, 10.31848, 1.86404, 2.59072]
+Model Max Log Likelihood: -315.45501
+Optimization time for dadi + NN_10000: 168.19s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187221 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  47
+Test case #: 7
+True params: [95.59223, 1.7819, 1.12508, 7.38835]
+Data Max Log Likelihood: -172.40348
+Starting params: [48.76375, 3.45559, 1.44779, 6.93778]
+Optimized params: [91.00517, 1.76125, 1.04768, 8.22953]
+Model Max Log Likelihood: -272.28531
+Optimization time for dadi + NN_10000: 496.30s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187222 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  48
+Test case #: 8
+True params: [0.38835, 4.14297, 1.52703, 5.16939]
+Data Max Log Likelihood: -229.6206
+Starting params: [0.3017, 8.00671, 1.16904, 4.84806]
+Optimized params: [0.3036, 4.34871, 1.24605, 6.64193]
+Model Max Log Likelihood: -464.30742
+Optimization time for dadi + NN_10000: 276.12s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187223 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  49
+Test case #: 9
+True params: [2.93846, 0.5621, 1.62293, 2.31597]
+Data Max Log Likelihood: -250.3962
+Starting params: [1.32869, 0.51723, 1.42065, 6.40031]
+Optimized params: [2.48531, 0.48935, 0.89775, 2.68734]
+Model Max Log Likelihood: -466.85242
+Optimization time for dadi + NN_10000: 381.03s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187224 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  50
+Test case #: 10
+True params: [0.12073, 0.01047, 0.72585, 6.78276]
+Data Max Log Likelihood: -60.94574
+Starting params: [0.07894, 0.01799, 2, 1]
+Optimized params: [0.16603, 0.01599, 1.9683, 5.72766]
+Model Max Log Likelihood: -1056.84341
+Optimization time for dadi + NN_10000: 750.45s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187225 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  51
+Test case #: 11
+True params: [0.02449, 25.90936, 0.98999, 6.15038]
+Data Max Log Likelihood: -177.1275
+Starting params: [0.02267, 34.65505, 1.2071, 7.04255]
+Optimized params: [0.02387, 27.01259, 0.98381, 6.2409]
+Model Max Log Likelihood: -244.08537
+Optimization time for dadi + NN_10000: 289.92s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187240 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  52
+Test case #: 12
+True params: [5.72551, 28.83475, 0.77327, 6.58037]
+Data Max Log Likelihood: -193.48803
+Starting params: [7.99784, 47.2746, 1.08202, 6.47124]
+Optimized params: [5.52293, 36.64546, 0.84174, 7.19964]
+Model Max Log Likelihood: -203.44755
+Optimization time for dadi + NN_10000: 273.82s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187241 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  53
+Test case #: 13
+True params: [51.87451, 0.1701, 1.43804, 9.85921]
+Data Max Log Likelihood: -320.71405
+Starting params: [43.51516, 0.14204, 1.09095, 9.31164]
+Optimized params: [49.44759, 0.1604, 1.59947, 9.5183]
+Model Max Log Likelihood: -359.04378
+Optimization time for dadi + NN_10000: 772.43s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187242 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  54
+Test case #: 14
+True params: [1.49047, 0.03173, 1.53323, 3.0775]
+Data Max Log Likelihood: -211.99968
+Starting params: [1.10355, 0.01864, 1.19888, 6.34052]
+Optimized params: [1.16506, 0.02573, 1.63063, 3.80927]
+Model Max Log Likelihood: -279.97742
+Optimization time for dadi + NN_10000: 478.53s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187243 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  55
+Test case #: 15
+True params: [0.12413, 0.01974, 1.81863, 2.84861]
+Data Max Log Likelihood: -207.7848
+Starting params: [0.13052, 0.01627, 1.23193, 4.06115]
+Optimized params: [0.11147, 0.01747, 0.90805, 3.27187]
+Model Max Log Likelihood: -397.65753
+Optimization time for dadi + NN_10000: 409.96s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187244 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  56
+Test case #: 16
+True params: [0.03532, 0.13737, 0.89282, 2.57076]
+Data Max Log Likelihood: -356.44886
+Starting params: [0.02084, 0.13898, 1.02783, 4.73222]
+Optimized params: [0.02486, 0.1, 0.7594, 3.64891]
+Model Max Log Likelihood: -380.04138
+Optimization time for dadi + NN_10000: 360.97s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187245 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  57
+Test case #: 17
+True params: [0.03174, 0.0116, 0.97958, 6.66445]
+Data Max Log Likelihood: -298.51168
+Starting params: [0.04462, 0.02515, 1.49455, 5.35768]
+Optimized params: [0.044, 0.0158, 1.44861, 4.86604]
+Model Max Log Likelihood: -391.82256
+Optimization time for dadi + NN_10000: 453.91s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187246 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  58
+Test case #: 18
+True params: [37.3398, 0.06245, 1.76226, 7.85674]
+Data Max Log Likelihood: -295.72734
+Starting params: [45.61728, 0.06811, 1.61614, 7.07801]
+Optimized params: [50.78012, 0.06662, 1.91283, 7.35676]
+Model Max Log Likelihood: -302.21354
+Optimization time for dadi + NN_10000: 503.50s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187247 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  59
+Test case #: 19
+True params: [4.92653, 2.27877, 0.48159, 4.20251]
+Data Max Log Likelihood: -262.20491
+Starting params: [7.46288, 1.81079, 0.46968, 4.1187]
+Optimized params: [4.86954, 2.24195, 0.47352, 4.28437]
+Model Max Log Likelihood: -264.24547
+Optimization time for dadi + NN_10000: 76.27s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187248 by 8am on 2021/05/14.
+My SLURM_ARRAY_TASK_ID:  60
+Test case #: 20
+True params: [1.28116, 0.47694, 1.48777, 1.9151]
+Data Max Log Likelihood: -399.13014
+Starting params: [0.80516, 0.38756, 1.29968, 3.219]
+Optimized params: [1.16443, 0.4325, 0.971, 2.11023]
+Model Max Log Likelihood: -402.54418
+Optimization time for dadi + NN_10000: 103.41s 
+
+Detailed performance metrics for this job will be available at https://metrics.hpc.arizona.edu/#job_viewer?action=show&realm=SUPREMM&resource_id=73&local_job_id=1187113 by 8am on 2021/05/14.

@@ -6,8 +6,6 @@ import numpy as np
 import random
 import matplotlib.pyplot as plt
 import pickle
-# specify the path to util.py file
-sys.path.insert(1, os.path.join(os.getcwd(), 'bin'))
 import util
 
 if __name__ == '__main__': 
@@ -16,8 +14,9 @@ if __name__ == '__main__':
     # list_test_dict = pickle.load(open('data/2d-splitmig/test-data-fixed-m','rb'))
     # list_test_dict = pickle.load(open('data/2d-splitmig/test-data-vary-T','rb'))
     # list_test_dict = pickle.load(open('data/2d-splitmig/test-data-vary-T-100','rb'))
-    list_test_dict = pickle.load(open('data/2d-splitmig/test-data-corrected','rb'))
-    # list_test_dict = pickle.load(open('data/2d-splitmig/test-data-vary-T-m','rb'))
+    # list_test_dict = pickle.load(open('data/2d-splitmig/test-data-vary-T-m','rb'))    
+    list_test_dict = pickle.load(open('data/2d-splitmig/test-data-corrected-2','rb'))
+
 
     # load list of trained rfr
     list_rfr = pickle.load(open('data/2d-splitmig/list-rfr','rb'))
@@ -34,7 +33,7 @@ if __name__ == '__main__':
 
     # Create four figures for each of the four param
     fig1=plt.figure(1, figsize=(22,16), dpi=300)
-    # plt.title("nu1")
+    plt.title("nu1")
     # plt.title("nu1-sampling")
     # plt.title("nu1-fixed-m")
     # plt.title("nu1-vary-T")
@@ -43,13 +42,13 @@ if __name__ == '__main__':
     # plt.title("nu1-finer-Tm")
     # plt.title("nu1-vary-T-100")
     # plt.title("nu1-vary-T-100-sampling")
-    plt.title("nu1-corrected_m")
+    # plt.title("nu1-corrected_m")
     # plt.title("nu1-vary-T-m")
     # plt.title("nu1-v0.24-poisson")
     plt.axis("off")
     
     fig2=plt.figure(2, figsize=(22,16), dpi=300)
-    # plt.title("nu2")
+    plt.title("nu2")
     # plt.title("nu2-sampling")
     # plt.title("nu2-fixed-m")
     # plt.title("nu2-vary-T")
@@ -58,13 +57,13 @@ if __name__ == '__main__':
     # plt.title("nu2-finer-Tm")
     # plt.title("nu2-vary-T-100")
     # plt.title("nu2-vary-T-100-sampling")
-    plt.title("nu2-corrected_m")
+    # plt.title("nu2-corrected_m")
     # plt.title("nu2-vary-T-m")
     # plt.title("nu2-v0.24-poisson")
     plt.axis("off")
 
     fig3=plt.figure(3, figsize=(22,16), dpi=300)
-    # plt.title("T")
+    plt.title("T")
     # plt.title("T-sampling")
     # plt.title("T-fixed-m")
     # plt.title("T-vary-T")
@@ -73,13 +72,13 @@ if __name__ == '__main__':
     # plt.title("T-finer-Tm")
     # plt.title("T-vary-T-100")
     # plt.title("T-vary-T-100-sampling")
-    plt.title("T-corrected_m")
+    # plt.title("T-corrected_m")
     # plt.title("T-vary-T-m")
     # plt.title("T-v0.24-poisson")
     plt.axis("off")
 
     fig4=plt.figure(4, figsize=(22,16), dpi=300)
-    # plt.title("m")
+    plt.title("m")
     # plt.title("m-sampling")
     # plt.title("m-fixed-m")
     # plt.title("m-vary-T")
@@ -88,7 +87,7 @@ if __name__ == '__main__':
     # plt.title("m-finer-Tm")
     # plt.title("m-vary-T-100")
     # plt.title("m-vary-T-100-sampling")
-    plt.title("m-corrected_m")
+    # plt.title("m-corrected_m")
     # plt.title("m-vary-T-m")
     # plt.title("m-v0.24-poisson")
     plt.axis("off")

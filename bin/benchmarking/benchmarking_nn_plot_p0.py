@@ -6,13 +6,17 @@ import matplotlib.pyplot as plt
 from scipy import stats
 
 if __name__ == '__main__': 
-    # load test set that contains the random forest prediction
-    # test_set_1 = pickle.load(open('data/2d-splitmig/benchmarking_corrected_fs/benchmarking_test_set_1','rb'))
-    # test_set_2 = pickle.load(open('data/2d-splitmig/benchmarking_corrected_fs/benchmarking_test_set_2','rb'))
-    # test_set_3 = pickle.load(open('data/2d-splitmig/benchmarking_corrected_fs/benchmarking_test_set_3','rb'))
-    test_set_1 = pickle.load(open('data/2d-splitmig/benchmarking_corrected_fs/troubleshoot/benchmarking_test_set_1','rb'))
-    test_set_2 = pickle.load(open('data/2d-splitmig/benchmarking_corrected_fs/troubleshoot/benchmarking_test_set_2','rb'))
-    test_set_3 = pickle.load(open('data/2d-splitmig/benchmarking_corrected_fs/troubleshoot/benchmarking_test_set_3','rb'))
+    # import test set files to plot and check input prediction
+    test_set_1 = pickle.load(open(
+        'data/2d-splitmig/benchmarking_nn/benchmarking_test_set_4_bounds','rb'))
+    test_set_2 = pickle.load(open(
+        'data/2d-splitmig/benchmarking_nn/benchmarking_test_set_5_bounds','rb'))
+    test_set_3 = pickle.load(open(
+        'data/2d-splitmig/benchmarking_nn/benchmarking_test_set_6_bounds','rb'))
+
+    # # combine all results into one set
+    # test_set = test_set_1 + test_set_2 + test_set_3
+    
     # each test set is a list of length 60 tuples
     # each tuple is (p_true, fs, p0)
     # where p0 is 20 dadi only, 20 RFR_1, 20 avg_RFR4
@@ -47,14 +51,12 @@ if __name__ == '__main__':
     count_pos = 1
     for pred in y_pred: # for 3 cases
         param_true, param_pred = util.sort_by_param(y_true, pred)
-        # r2_by_param = util.rfr_r2_score(y_true, pred)[1]
         # using Spearman rho instead of Pearson's coefficient
         rho_by_param = stats.spearmanr(y_true, pred)
 
         for i in range(4):
             plt.figure(1)
             fig.add_subplot(3, 4, count_pos)
-            # util.plot_by_param(param_true[i], param_pred[i], r2_by_param[i])
             util.plot_by_param(param_true[i], param_pred[i], rho=rho_by_param[0][i][i+4])
             count_pos += 1
 
@@ -69,9 +71,8 @@ if __name__ == '__main__':
     plt.subplot(3, 4, 4)
     plt.title('m')
     plt.subplot(3, 4, 5)
-    plt.ylabel('RFR_1')
+    plt.ylabel('NN_1000')
     plt.subplot(3, 4, 9)
-    plt.ylabel('RFR_avg')
+    plt.ylabel('NN_10000')
 
-    # fig.savefig('results/2d-splitmig/benchmarking_corrected_fs/benchmarking_dadi_v_RFR_start_p.png', bbox_inches='tight')
-    fig.savefig('data/2d-splitmig/benchmarking_corrected_fs/normalized/benchmarking_dadi_v_RFR_start_p_norm_fs.png', bbox_inches='tight')
+    fig.savefig('results/2d-splitmig/benchmarking_nn/benchmarking_nn_all_p0_Spearman.png', bbox_inches='tight')

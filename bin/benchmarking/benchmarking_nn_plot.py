@@ -6,23 +6,17 @@ import matplotlib.pyplot as plt
 from scipy import stats
 
 if __name__ == '__main__': 
-    # import result files from hpc and test files
-    # test files are just to check to make sure results are expected
-    # test_set = pickle.load(open('benchmarking_test_set','rb'))
-    # test_set_2 = pickle.load(open('benchmarking_test_set_2','rb'))
-    # test_set_3 = pickle.load(open('benchmarking_test_set_3','rb'))
+    # import result files from hpc
+    result_set_1 = pickle.load(open(
+        'results/2d-splitmig/benchmarking_nn/benchmarking_results_nn_4_bounds','rb'))
+    result_set_2 = pickle.load(open(
+        'results/2d-splitmig/benchmarking_nn/benchmarking_results_nn_5_bounds','rb'))
+    result_set_3 = pickle.load(open(
+        'results/2d-splitmig/benchmarking_nn/benchmarking_results_nn_6_bounds','rb'))
 
-    result_set = pickle.load(open(
-        'data/2d-splitmig/benchmarking_corrected_fs/normalized/benchmarking_results_set_no_perturb_3','rb'))
-
-    # result_set_1 = pickle.load(open(
-    #     'data/2d-splitmig/benchmarking_corrected_fs/normalized/benchmarking_results_set_no_perturb_1','rb'))
-    # result_set_2 = pickle.load(open(
-    #     'data/2d-splitmig/benchmarking_corrected_fs/normalized/benchmarking_results_set_no_perturb_2','rb'))
-    # result_set_3 = pickle.load(open(
-    #     'data/2d-splitmig/benchmarking_corrected_fs/normalized/benchmarking_results_set_no_perturb_3','rb'))
-
-    # result_set = result_set_1 + result_set_2 + result_set_3
+    # combine all results into one set
+    result_set = result_set_1 + result_set_2 + result_set_3
+    
     y_true = []
     y_pred_1 = []
     y_pred_2 = []
@@ -61,8 +55,8 @@ if __name__ == '__main__':
     plt.subplot(3, 4, 4)
     plt.title('m')
     plt.subplot(3, 4, 5)
-    plt.ylabel('dadi + RFR_1')
+    plt.ylabel('dadi + NN_1000')
     plt.subplot(3, 4, 9)
-    plt.ylabel('dadi + RFR_avg')
+    plt.ylabel('dadi + NN_10000')
 
-    fig.savefig('results/2d-splitmig/benchmarking_corrected_fs/benchmarking_no_perturb_3_Spearman.png', bbox_inches='tight')
+    fig.savefig('results/2d-splitmig/benchmarking_nn/benchmarking_nn_all_Spearman.png', bbox_inches='tight')
