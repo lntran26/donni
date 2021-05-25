@@ -40,8 +40,8 @@ if __name__ == '__main__':
     '''
         )
 
-    #theta_list = [1, 100, 1000, 10000]
-    theta_list = [1, 1000]
+    theta_list = [1, 100, 1000, 10000]
+    #theta_list = [1, 1000]
     print('Theta list:', theta_list)
     '''
     func = dadi.Demographics2D.split_mig
@@ -50,10 +50,12 @@ if __name__ == '__main__':
     logs = [True, True, False, False] # nu1 and nu2 are in log-scale
     '''
 
-    list_train_dict = pickle.load(open('train_set','rb'))
-    list_train_dict = [list_train_dict[0], list_train_dict[2]] # 1 and 1000
-    list_test_dict = pickle.load(open('test_set', 'rb'))
-    list_test_dict = [list_test_dict[0], list_test_dict[2]] # 1 and 1000
+    #list_train_dict = pickle.load(open('train_set','rb'))
+    list_train_dict = pickle.load(open('train_set_exclude','rb'))
+    #list_train_dict = [list_train_dict[0], list_train_dict[2]] # 1 and 1000
+    #list_test_dict = pickle.load(open('test_set', 'rb'))
+    list_test_dict = pickle.load(open('test_set_exclude', 'rb'))
+    #list_test_dict = [list_test_dict[0], list_test_dict[2]] # 1 and 1000
 
     
     size = len(theta_list)
