@@ -2,13 +2,10 @@ import numpy as np
 import dadi
 import pickle
 from sklearn.neural_network import MLPRegressor
-from sklearn.ensemble import RandomForestRegressor
 import matplotlib.pyplot as plt
 
 def bootstrap_predictions():
-    ml_name = 'rf' # 'nn'
-    ml = pickle.load(open('/groups/rgutenk/lnt/projects/ml-dadi/data/list-rfr', 'rb'))
-    ml = ml[0] # for list-rfr, use trained on theta 1
+    nn_1000 = pickle.load(open('nn_trained_on_1000', 'rb'))
     # maybe also run a test with nn trained on 10,000
     bs_samples = pickle.load(open('../../data/test_set_bootstraps', 'rb'))
     # form of bs_samples is list of dictionaries in the order 100, 1000, 10000
@@ -31,25 +28,23 @@ def bootstrap_predictions():
             orig_fs = all_fs[0]   # single fs
             orig_fs = orig_fs/orig_fs.sum()
             bs_fs_list = all_fs[1]          # list length 200
-            orig_pred = ml.predict([orig_fs.flatten()]).flatten()
+            orig_pred = nn_1000.predict([orig_fs.flatten()]).flatten()
             bs_pred_list = []
             for bs_fs in bs_fs_list:
                 bs_fs = bs_fs/bs_fs.sum()
-                bs_pred = ml.predict([bs_fs.flatten()]).flatten()
+                bs_pred = nn_1000.predict([bs_fs.flatten()]).flatten()
                 bs_pred_list.append(bs_pred)
             pred_dict[true_p] = [orig_pred, bs_pred_list]
         pred_dict_list.append(pred_dict)
     
-    pickle.dump(pred_dict_list, open(f'../../results/bootstrap_{ml_name}', 'wb'), 2)
+    pickle.dump(pred_dict_list, open('../../results/bootstrap', 'wb'), 2)
 
-def bootstrap_intervals(params, percentile=95):
+def bootstrap_intervals(datafile, params, theta_i, percentile=95):
     '''
     pass a list of params as argument, e.g., [nu1, nu2, T, m]
     '''
-    bs_results = pickle.load(open('bootstrap', 'rb'))
-    #pred_theta = bs_results[1] # dict of preds for fs scaled by theta 1000
-    pred_theta = bs_results[2] # dict of preds for fs scaled by theta 10000
-    #pred_theta = bs_results[0] # dict of preds for fs scaled by theta 100
+    bs_results = pickle.load(open(datafile, 'rb'))
+    pred_theta = bs_results[theta_i] # dict of preds for fs scaled by theta with index [100, 1000, 10000]
     keys = list(pred_theta.keys())
     all_intervals_by_param = [[], [], [], []]
     for j,key in enumerate(keys):
@@ -76,28 +71,29 @@ def bootstrap_intervals(params, percentile=95):
     # list length 4, inner list length 200, inner list length 4 [nu1, nu2, T, m]
     # where nu1 = [list 1, list 2 ...] where list 1 = [true, orig, lower, upper]
 
-def plot_distribution(params, n):
-    bs_results = pickle.load(open('bootstrap', 'rb'))
+def plot_distribution(datafile, params, theta_i, n):
+    theta_list = [100, 1000, 10000]
+    bs_results = pickle.load(open(datafile, 'rb'))
     #pred_100 = bs_results[0]
-    pred_1000 = bs_results[1]
+    #pred_1000 = bs_results[1]
     #pred_10000 = bs_results[2]
-    p_orig = list(pred_1000.keys())[n]
-    dist = pred_1000[p_orig][1]
+    pred_theta = bs_results[theta_i]
+    p_orig = list(pred_theta.keys())[n]
+    dist = pred_theta[p_orig][1]
     dist = np.array(dist)
     dist = dist.transpose(1, 0)
-    fig, axs = plt.subplots(4)
+    fig, axs = plt.subplots(4, figsize=(5, 8))
     for i in range(len(params)):
         true = p_orig[i]
         axs[i].axvline(x=true, c='red', label='true')
-        orig = pred_1000[p_orig][0][i]
+        orig = pred_theta[p_orig][0][i]
         axs[i].axvline(x=orig, c='blue', label='original')
         axs[i].hist(dist[i], bins='sqrt')
         axs[i].set_title(params[i])
-    plt.legend()
+    handles, labels = axs[len(params)-1].get_legend_handles_labels()
+    fig.legend(handles, labels, loc='upper right')
     plt.tight_layout()
-    plt.show()
-
-    
+    plt.savefig(f'results/{datafile}_distribution_{n}_theta{theta_list[theta_i]}.png')
 
 def sort_by_param(p_sets):
     p_sorted = [] # list by param
@@ -108,10 +104,11 @@ def sort_by_param(p_sets):
         p_sorted.append(p)
     return p_sorted
 
-def plot_coverage(params, expected):
+def plot_coverage(datafile, params, expected, theta_i):
+    theta_list = [100, 1000, 10000]
     observed = [[] for x in range(len(params))]
     for perc in expected:
-        ints = bootstrap_intervals(params, percentile=perc)
+        ints = bootstrap_intervals(datafile, params, theta_i, percentile=perc)
         size = len(ints[0])
         for p_i,int_arr,param in zip(range(len(params)),ints,params): # list by params
             covered = 0
@@ -125,25 +122,37 @@ def plot_coverage(params, expected):
     fig = plt.figure()
     ax = fig.add_subplot(1,1,1)
     colors = ['red', 'blue', 'green', 'yellow']
-    ax.plot(expected, expected, label='expected', color='gray')
+    ax.plot(expected, expected, label='match', color='gray')
     for i in range(len(params)):
         ax.plot(expected, observed[i], label=params[i], marker='o', color=colors[i])
     ax.legend()
+    ax.set_xlabel("expected")
+    ax.set_ylabel("observed")
     plt.xticks(np.arange(min(expected), max(expected)+1, 5))
     plt.yticks(np.arange(min(expected), max(expected)+1, 5))
     plt.tight_layout()
-    plt.show()
+    plt.savefig(f'results/{datafile}_coverage_theta{theta_list[theta_i]}.png')
 
 if __name__ == '__main__': 
-    bootstrap_predictions()
-    #params = ['nu1', 'nu2', 'T', 'm']
-    #expected = [95, 90, 80, 50, 30, 15]
-    #plot_coverage(params, expected)
-    #plot_distribution(params, 0)
+    #datafile = 'bootstrap_nn'
+    params = ['nu1', 'nu2', 'T', 'm']
+    theta_list = [100, 1000, 10000]
+    expected = [95, 90, 80, 50, 30, 15]
+    for datafile in ('bootstrap_nn', 'bootstrap_rf'):
+        for theta_i in range(3):
+            #plot_coverage(datafile, params, expected, theta_i)
+            plot_distribution(datafile, params, theta_i, 87)
 
     '''
-        # plot all intervals
-        x = range(size)
+    size = 50
+    int_arr_all = bootstrap_intervals(datafile, params, theta_i)
+    int_arr_all = np.array(int_arr_all)
+    print(int_arr_all.shape)
+    # plot all intervals
+    x = range(size)
+    for param,int_arr in zip(params, int_arr_all):
+        int_arr = int_arr[:size] # take the first [size] results instead of using all 200
+        int_arr = int_arr.transpose(1, 0)
         fig = plt.figure(figsize=(20, 5))
         ax = fig.add_subplot(1,1,1)
         minor_ticks = np.arange(0, size)
@@ -153,14 +162,14 @@ if __name__ == '__main__':
         ax.grid(which='both')
 
         ax.scatter(x, int_arr[0], c="red", label="true") # true
-        
         neg_int = int_arr[1] - int_arr[2]
         pos_int = int_arr[3] - int_arr[1]
         ax.errorbar(x, int_arr[1], yerr=[neg_int, pos_int], fmt='bo', label="orig")
         ax.set_title(param)
         ax.legend()
         
-        plt.tight_layout()
-        plt.show()
-        '''
+        plt.savefig(f'results/{datafile}_{param}_{size}_intervals_theta{theta_list[theta_i]}.png')
+    '''
+
+                
             
