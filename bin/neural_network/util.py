@@ -92,6 +92,32 @@ def generating_data_parallel_log(params_list, theta_list,
     return list_dicts
 
 
+def generating_data_log_bootstraps(params_list, theta_list, 
+                                func, ns, pts_l, logs, ncpu=None):
+    '''
+    Generate data with bootstrapping. Creates a dictionary that maps the params
+    used to generate the fs (key) to a list of length 2 (value). The first
+    item in the list is the original fs data set. The second item in the list 
+    is a list (length 200) of the bootstrap data obtained by sampling from the 
+    original fs.
+    Note: does not take theta=1 since no sampling can be done on smooth data.
+    '''
+    arg_list = [(p, func, ns, pts_l, logs) for p in params_list]
+    with Pool(processes=ncpu) as pool:
+            fs_list = pool.map(worker_func_log, arg_list)
+
+    list_dicts = []
+    for theta in theta_list:
+        data_dict = {}
+        for params, fs in zip(params_list, fs_list):
+            fs_tostore = (theta*abs(fs)).sample()
+            data_dict[params] = [fs_tostore, []]
+            for i in range(200):
+                data_dict[params][1].append(fs_tostore.sample())       
+        list_dicts.append(data_dict)
+    return list_dicts
+
+
 
 def log_transform_data(list_data_dict, num_list):
     """
@@ -242,6 +268,7 @@ def plot_by_param(true, pred, r2=None, msle=None, c=None, ax=None):
     msle: one msle score for one param of one train:test pair
     TO DO: ADD ARGUMENTS FOR AXIS LABEL, axis scale, title, etc CUSTOMIZATION
     '''
+    
     # assign ax variable to customize axes
     if ax is None:
         ax = plt.gca()
@@ -251,21 +278,20 @@ def plot_by_param(true, pred, r2=None, msle=None, c=None, ax=None):
     if c is None:
         plt.scatter(true, pred, s=20*2**3)
     else:
-        plt.scatter(true, pred, c=c, vmax=5, s=20*2**3)
+        plt.scatter(true, pred, c=c, vmax=5)#, s=20*2**3)
         # plt.scatter(true, pred, c=c)
         # plt.scatter(true, pred, c=c, vmax=0.5)
-        cbar = plt.colorbar(fraction=0.047)
-        cbar.ax.zorder = -1
-        cbar.ax.set_title(r'$\frac{T}{ν}$', fontweight='bold', fontsize=50)
+        # cbar = plt.colorbar(fraction=0.047)
+        # cbar.ax.zorder = -1
         # plt.text(1.06, 0.65, r'$\frac{T}{ν}$', fontweight='bold', fontsize=40, transform = ax.transAxes)
-        # cbar.set_label("T/nu", labelpad=+1)
-        # cbar.set_label("m_true", labelpad=+1)
+        # cbar.ax.set_title(r'$\frac{T}{ν}$', fontweight='bold', fontsize=50)
+        # cbar.set_label(r'$\frac{T}{ν}$', fontweight='bold', rotation='horizontal', position=(-0.3,0.5))
     # axis labels to be customized
-    plt.xlabel("true", fontweight='bold')
-    plt.ylabel("predicted", fontweight='bold')
+    plt.xlabel("true")#, fontweight='bold')
+    plt.ylabel("predicted")#, fontweight='bold')
 
     # only plot in log scale if the difference between max and min is large
-    if max(true+pred)/min(true+pred) > 1000:
+    if max(true+pred)/min(true+pred) > 100:
         plt.xscale("log")
         plt.yscale("log")
         # axis scales to be customized
@@ -281,10 +307,13 @@ def plot_by_param(true, pred, r2=None, msle=None, c=None, ax=None):
         # plt.plot(np.unique(true), y_fit, color='salmon')
     else:
         # axis scales to be customized
-        plt.xlim([min(true+pred)-0.5, max(true+pred)+0.5])
-        plt.ylim([min(true+pred)-0.5, max(true+pred)+0.5])
+        #plt.xlim([min(true+pred)-0.5, max(true+pred)+0.5])
+        #plt.ylim([min(true+pred)-0.5, max(true+pred)+0.5])
         # plot a slope 1 line
-        plt.plot([-5, 13], [-5, 13], linewidth=4)
+        #plt.plot([-1, 13], [-1, 13], linewidth=4)
+        ax_min = min(min(true), min(pred)) - 0.05
+        ax_max = max(max(true), max(pred)) + 0.05
+        ax.plot([ax_min, ax_max], [ax_min, ax_max])
     
     # display equation /of best fit line & scores on plot
     # equation = 'y = ' + str(round(m,4)) + 'x' ' + ' + str(round(b,4))
@@ -296,6 +325,7 @@ def plot_by_param(true, pred, r2=None, msle=None, c=None, ax=None):
         plt.text(0.4, 0.9, r'$R^{2}$: ' + str(round(r2,4)),
         horizontalalignment='center', verticalalignment='center', fontsize=40,
         transform = ax.transAxes)
+
 
 # ! log-scale param, define log
 def plot_by_param_log(true, pred, log, ax, r2=None, rho=None, case=None, vals=None):
@@ -315,10 +345,11 @@ def plot_by_param_log(true, pred, log, ax, r2=None, rho=None, case=None, vals=No
             horizontalalignment='center',
             verticalalignment='center', transform=ax.transAxes)
     if rho:
-         ax.text(0.3, 0.7, "rho: " + str(round(rho, 4)), fontsize=16,
+         ax.text(0.3, 0.8, "rho: " + str(round(rho, 4)), fontsize=16,
             horizontalalignment='center',
             verticalalignment='center', transform=ax.transAxes)
-    #ax.set_title(f"{case[0]}: test theta {case[1]}", fontsize=14)
+    if case:
+        ax.set_title(f"{case[0]}: test theta {case[1]}", fontsize=14)
     ax.set_xlabel("true")
     ax.set_ylabel("predicted")
     ax.scatter(true, pred, c=vals)
@@ -330,7 +361,7 @@ def nn_train(train_dict, nn=None, solver='adam'):
     y_train_label = [params for params in train_dict]
     if nn is None:
         # Load NN, specifying ncpu for parallel processing
-        nn = MLPRegressor(solver = 'adam', max_iter=400, alpha=0.001,
+        nn = MLPRegressor(solver=solver, max_iter=400, alpha=0.001,
                         hidden_layer_sizes=(2000,), learning_rate='adaptive')
     nn = nn.fit(X_train_input, y_train_label)
     return nn
