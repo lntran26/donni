@@ -205,10 +205,10 @@ if __name__ == '__main__':
     # fig3.savefig('results/2d-splitmig/test/T-vary-T-100-sampling-test-100.png', bbox_inches='tight')
     # fig4.savefig('results/2d-splitmig/test/m-vary-T-100-sampling-test-100.png', bbox_inches='tight')
 
-    fig1.savefig('results/2d-splitmig/test/corrected_m/nu1-corrected_m.png', bbox_inches='tight')
-    fig2.savefig('results/2d-splitmig/test/corrected_m/nu2-corrected_m.png', bbox_inches='tight')
-    fig3.savefig('results/2d-splitmig/test/corrected_m/T-corrected_m.png', bbox_inches='tight')
-    fig4.savefig('results/2d-splitmig/test/corrected_m/m-corrected_m.png', bbox_inches='tight')
+    # fig1.savefig('results/2d-splitmig/test/corrected_m/nu1-corrected_m.png', bbox_inches='tight')
+    # fig2.savefig('results/2d-splitmig/test/corrected_m/nu2-corrected_m.png', bbox_inches='tight')
+    # fig3.savefig('results/2d-splitmig/test/corrected_m/T-corrected_m.png', bbox_inches='tight')
+    # fig4.savefig('results/2d-splitmig/test/corrected_m/m-corrected_m.png', bbox_inches='tight')
 
     # fig1.savefig('results/2d-splitmig/test/vary-T-m/nu1-vary-T-m.png', bbox_inches='tight')
     # fig2.savefig('results/2d-splitmig/test/vary-T-m/nu2-vary-T-m.png', bbox_inches='tight')
@@ -224,3 +224,8 @@ if __name__ == '__main__':
     # fig2.savefig('results/2d-splitmig/test/v0.24-poisson/nu2-v0.24-poisson.png', bbox_inches='tight')
     # fig3.savefig('results/2d-splitmig/test/v0.24-poisson/T-v0.24-poisson.png', bbox_inches='tight')
     # fig4.savefig('results/2d-splitmig/test/v0.24-poisson/m-v0.24-poisson.png', bbox_inches='tight')
+
+    fig1.show()
+    fig2.show()
+    fig3.show()
+    fig4.show()
