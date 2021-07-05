@@ -4,23 +4,25 @@ import pickle
 from sklearn.neural_network import MLPRegressor
 import matplotlib.pyplot as plt
 
-def bootstrap_predictions():
-    nn_1000 = pickle.load(open('nn_trained_on_1000', 'rb'))
-    # maybe also run a test with nn trained on 10,000
-    bs_samples = pickle.load(open('../../data/test_set_bootstraps', 'rb'))
-    # form of bs_samples is list of dictionaries in the order 100, 1000, 10000
-    # each dictionary is of the form {(true param) : [original fs, [bootstrap fs x 200]] x 200}
-    
-    # TODO: run the original synthetic data set through the NN and save the prediction
-    # then, run the 200 bootstrap fs through the NN, sort the predictions by each of the 
-    # 4 params, and save those (create the 95% confidence interval by choosing the 5th
-    # and 195th as bounds)
+theta_list = [100, 1000, 10000] # global variable
+# Note: needs to match the list used in *bootstrap_data.py
 
-    # same form as bs_samples except do [original pred params, [bootstrap pred params x 200]]
+save_to = '../../results/bootstrapping/' # global variable
+# path to directory where you want all of the results to be saved
 
+def bootstrap_predictions(ml_file, bs_data_file):
+    '''
+    Runs the ML predictions for all of the generated bootstrap samples and saves
+    to the results folder.
+    ml_file: path to the trained ML model
+    bs_data_file: path to the bootstrap data.
+    '''
+    ml_model = pickle.load(open(ml_file, 'rb'))
+    bs_samples = pickle.load(open(bs_data_file, 'rb'))
+    # The form of bs_samples is a list of dictionaries in the order theta = [100, 1000, 10000]
+    # and each dictionary is of the form {(true param) : [original fs, [bootstrap fs x 200]] x 200}
+    # unless otherwise specified in *bootstrap_data.py
     # NOTE: none of the fs in bs_samples are normed
-
-    thetas = [100, 1000, 10000]
     pred_dict_list = []
     for d in bs_samples:
         pred_dict = {}
@@ -28,23 +30,28 @@ def bootstrap_predictions():
             orig_fs = all_fs[0]   # single fs
             orig_fs = orig_fs/orig_fs.sum()
             bs_fs_list = all_fs[1]          # list length 200
-            orig_pred = nn_1000.predict([orig_fs.flatten()]).flatten()
+            orig_pred = ml_model.predict([orig_fs.flatten()]).flatten()
             bs_pred_list = []
             for bs_fs in bs_fs_list:
                 bs_fs = bs_fs/bs_fs.sum()
-                bs_pred = nn_1000.predict([bs_fs.flatten()]).flatten()
+                bs_pred = ml_model.predict([bs_fs.flatten()]).flatten()
                 bs_pred_list.append(bs_pred)
             pred_dict[true_p] = [orig_pred, bs_pred_list]
         pred_dict_list.append(pred_dict)
-    
-    pickle.dump(pred_dict_list, open('../../results/bootstrap', 'wb'), 2)
+    file_name = ml_file[ml_file.rindex('/')+1:] # should get name after last slash
+    pickle.dump(pred_dict_list, open(f'{save_to}bootstrap_{file_name}', 'wb'), 2)
 
-def bootstrap_intervals(datafile, params, theta_i, percentile=95):
+def bootstrap_intervals(datafile, params, theta, percentile=95):
     '''
-    pass a list of params as argument, e.g., [nu1, nu2, T, m]
+    Generates a list of intervals sorted by param containing true value, original value, 
+    lower bound, and upper bound
+    datafile: path to the bootstrap prediction results (obtained from bootstrap_predictions())
+    params: list of params used in the model as strings, e.g, ['nu1', 'nu2', 'T', 'm']
+    theta: the desired theta to use (must be from theta_list above)
+    percentile: the desired % interval 
     '''
     bs_results = pickle.load(open(datafile, 'rb'))
-    pred_theta = bs_results[theta_i] # dict of preds for fs scaled by theta with index [100, 1000, 10000]
+    pred_theta = bs_results[theta_list.index(theta)] # dict of preds for fs scaled by theta with index [100, 1000, 10000]
     keys = list(pred_theta.keys())
     all_intervals_by_param = [[], [], [], []]
     for j,key in enumerate(keys):
@@ -68,90 +75,24 @@ def bootstrap_intervals(datafile, params, theta_i, percentile=95):
             interval = [true, orig, low, high]
             all_intervals_by_param[i].append(interval)
     return all_intervals_by_param
-    # list length 4, inner list length 200, inner list length 4 [nu1, nu2, T, m]
+    # list length 4, inner list length 200, inner list length 4
+    # e.g., outermost list: [nu1, nu2, T, m]
     # where nu1 = [list 1, list 2 ...] where list 1 = [true, orig, lower, upper]
 
-def plot_distribution(datafile, params, theta_i, n):
-    theta_list = [100, 1000, 10000]
-    bs_results = pickle.load(open(datafile, 'rb'))
-    #pred_100 = bs_results[0]
-    #pred_1000 = bs_results[1]
-    #pred_10000 = bs_results[2]
-    pred_theta = bs_results[theta_i]
-    p_orig = list(pred_theta.keys())[n]
-    dist = pred_theta[p_orig][1]
-    dist = np.array(dist)
-    dist = dist.transpose(1, 0)
-    fig, axs = plt.subplots(4, figsize=(5, 8))
-    for i in range(len(params)):
-        true = p_orig[i]
-        axs[i].axvline(x=true, c='red', label='true')
-        orig = pred_theta[p_orig][0][i]
-        axs[i].axvline(x=orig, c='blue', label='original')
-        axs[i].hist(dist[i], bins='sqrt')
-        axs[i].set_title(params[i])
-    handles, labels = axs[len(params)-1].get_legend_handles_labels()
-    fig.legend(handles, labels, loc='upper right')
-    plt.tight_layout()
-    plt.savefig(f'results/{datafile}_distribution_{n}_theta{theta_list[theta_i]}.png')
-
-def sort_by_param(p_sets):
-    p_sorted = [] # list by param
-    for i in range(len(p_sets[0])):
-        p = [] # single param list (e.g., nu1)
-        for p_set in p_sets:
-            p.append(p_set[i])
-        p_sorted.append(p)
-    return p_sorted
-
-def plot_coverage(datafile, params, expected, theta_i):
-    theta_list = [100, 1000, 10000]
-    observed = [[] for x in range(len(params))]
-    for perc in expected:
-        ints = bootstrap_intervals(datafile, params, theta_i, percentile=perc)
-        size = len(ints[0])
-        for p_i,int_arr,param in zip(range(len(params)),ints,params): # list by params
-            covered = 0
-            int_arr = np.array(int_arr)
-            int_arr = int_arr.transpose(1, 0)
-            # now in the form [all true], [all orig], [all lower], [all upper]; indices match up
-            for i in range(len(int_arr[0])):
-                if int_arr[0][i] >= int_arr[2][i] and int_arr[0][i] <= int_arr[3][i]:
-                    covered += 1
-            observed[p_i].append(covered/2)
-    fig = plt.figure()
-    ax = fig.add_subplot(1,1,1)
-    colors = ['red', 'blue', 'green', 'yellow']
-    ax.plot(expected, expected, label='match', color='gray')
-    for i in range(len(params)):
-        ax.plot(expected, observed[i], label=params[i], marker='o', color=colors[i])
-    ax.legend()
-    ax.set_xlabel("expected")
-    ax.set_ylabel("observed")
-    plt.xticks(np.arange(min(expected), max(expected)+1, 5))
-    plt.yticks(np.arange(min(expected), max(expected)+1, 5))
-    plt.tight_layout()
-    plt.savefig(f'results/{datafile}_coverage_theta{theta_list[theta_i]}.png')
-
-if __name__ == '__main__': 
-    #datafile = 'bootstrap_nn'
-    params = ['nu1', 'nu2', 'T', 'm']
-    theta_list = [100, 1000, 10000]
-    expected = [95, 90, 80, 50, 30, 15]
-    for datafile in ('bootstrap_nn', 'bootstrap_rf'):
-        for theta_i in range(3):
-            #plot_coverage(datafile, params, expected, theta_i)
-            plot_distribution(datafile, params, theta_i, 87)
-
+def plot_intervals(datafile, params, theta, size=50):
     '''
-    size = 50
-    int_arr_all = bootstrap_intervals(datafile, params, theta_i)
+    Plot all of the [size] intervals for the specified theta
+    datafile: path to the bootstrap prediction results (obtained from bootstrap_predictions())
+    params: list of params used in the model as strings, e.g, ['nu1', 'nu2', 'T', 'm']
+    theta: the desired theta to use (must be from theta_list above)
+    size: number of intervals to plot; take the first [size] results instead of using all 200
+    (or however many bootstrap samples were generated)
+    '''
+    int_arr_all = bootstrap_intervals(datafile, params, theta)
     int_arr_all = np.array(int_arr_all)
-    print(int_arr_all.shape)
-    # plot all intervals
     x = range(size)
     for param,int_arr in zip(params, int_arr_all):
-        int_arr = int_arr[:size] # take the first [size] results instead of using all 200
+        int_arr = int_arr[:size]
         int_arr = int_arr.transpose(1, 0)
         fig = plt.figure(figsize=(20, 5))
         ax = fig.add_subplot(1,1,1)
@@ -167,9 +108,108 @@ if __name__ == '__main__':
         ax.errorbar(x, int_arr[1], yerr=[neg_int, pos_int], fmt='bo', label="orig")
         ax.set_title(param)
         ax.legend()
-        
-        plt.savefig(f'results/{datafile}_{param}_{size}_intervals_theta{theta_list[theta_i]}.png')
-    '''
+        file_name = datafile[datafile.rindex('/')+1:] # should get the name after last slash
+        plt.savefig(f'{save_to}{file_name}_{param}_{size}intervals_theta{theta}.png')
 
-                
-            
+def plot_distribution(datafile, params, theta, n):
+    '''
+    Plots the distribution of all of the bootstraps for some specified sample n 
+    datafile: path to the bootstrap prediction results (obtained from bootstrap_predictions())
+    params: list of params used in the model as strings, e.g, ['nu1', 'nu2', 'T', 'm']
+    theta: the desired theta to use (must be from theta_list above)
+    n: the index to use from the bootstrap results. For example, if bootstrap_data generated
+    a total of 100 original fs and 300 bootstrap fs for each of the originals, a valid n would
+    be 0-99, and the distribution of all 300 predictions for all parameters for that specific fs
+    will be plotted.
+    '''
+    bs_results = pickle.load(open(datafile, 'rb'))
+    pred_theta = bs_results[theta_list.index(theta)]
+    p_orig = list(pred_theta.keys())[n]
+    dist = pred_theta[p_orig][1]
+    dist = np.array(dist)
+    dist = dist.transpose(1, 0)
+    fig, axs = plt.subplots(4, figsize=(5, 8))
+    for i in range(len(params)):
+        true = p_orig[i]
+        axs[i].axvline(x=true, c='red', label='true')
+        orig = pred_theta[p_orig][0][i]
+        axs[i].axvline(x=orig, c='blue', label='original')
+        axs[i].hist(dist[i], bins='sqrt')
+        axs[i].set_title(params[i])
+    handles, labels = axs[len(params)-1].get_legend_handles_labels()
+    fig.legend(handles, labels, loc='upper right')
+    plt.tight_layout()
+    file_name = datafile[datafile.rindex('/')+1:] # should get the name after last slash
+    plt.savefig(f'{save_to}{file_name}_distribution{n}_theta{theta}.png')
+
+def sort_by_param(p_sets):
+    '''
+    util used by bootstrap_intervals
+    '''
+    p_sorted = [] # list by param
+    for i in range(len(p_sets[0])):
+        p = [] # single param list (e.g., nu1)
+        for p_set in p_sets:
+            p.append(p_set[i])
+        p_sorted.append(p)
+    return p_sorted
+
+def plot_coverage(datafile, params, theta, desired):
+    '''
+    Plots coverage results for all the parameters in the model
+    datafile: path to the bootstrap prediction results (obtained from bootstrap_predictions())
+    params: list of params used in the model as strings, e.g, ['nu1', 'nu2', 'T', 'm']
+    theta: the desired theta to use (must be from theta_list above)
+    desired: list of the desired coveragte percentages to look at e.g., [30, 50, 80, 95]
+    '''
+    observed = [[] for x in range(len(params))]
+    for perc in desired:
+        ints = bootstrap_intervals(datafile, params, theta, percentile=perc)
+        size = len(ints[0])
+        for p_i,int_arr,param in zip(range(len(params)),ints,params): # list by params
+            covered = 0
+            int_arr = np.array(int_arr)
+            int_arr = int_arr.transpose(1, 0)
+            # now in the form [all true], [all orig], [all lower], [all upper]; indices match up
+            for i in range(len(int_arr[0])):
+                if int_arr[0][i] >= int_arr[2][i] and int_arr[0][i] <= int_arr[3][i]:
+                    covered += 1
+            observed[p_i].append(covered/2)
+    fig = plt.figure()
+    ax = fig.add_subplot(1,1,1)
+    colors = ['red', 'blue', 'green', 'yellow']
+    ax.plot(desired, desired, label='match', color='gray')
+    for i in range(len(params)):
+        ax.plot(desired, observed[i], label=params[i], marker='o', color=colors[i])
+    ax.legend()
+    ax.set_xlabel("desired")
+    ax.set_ylabel("observed")
+    plt.xticks(np.arange(min(desired), max(desired)+1, 5))
+    plt.yticks(np.arange(min(desired), max(desired)+1, 5))
+    plt.tight_layout()
+    file_name = datafile[datafile.rindex('/')+1:] # should get the name after last slash
+    plt.savefig(f'{save_to}{file_name}_coverage_theta{theta}.png')
+
+if __name__ == '__main__': 
+    # generate file containing bootstrap prediction results 
+    ml_file = '../../data/nn_1000'
+    bs_data_file = '../../data/test_set_bootstraps'
+    bootstrap_predictions(ml_file, bs_data_file)
+
+    # use the different plotting functions
+    datafile = f'{save_to}bootstrap_nn_1000'
+    params = ['nu1', 'nu2', 'T', 'm']
+    theta = 1000
+    # plot first 100 intervals for theta = 1000
+    plot_intervals(datafile, params, theta, size=100)
+    # plot distribution for theta = 1000, chosen sample index = 23
+    plot_distribution(datafile, params, theta, 23)
+    # plot coverage for theta = 1000
+    desired = [95, 90, 80, 50, 30, 15]
+    plot_coverage(datafile, params, theta, desired)
+
+    # if you would like to generate plots for all thetas at once, use a loop
+    for theta in theta_list:
+        plot_coverage(datafile, params, theta, desired)
+        plot_distribution(datafile, params, theta, 0) # 0th index
+        plot_intervals(datafile, params, theta) # size 50

@@ -2,6 +2,10 @@ import dadi
 import numpy as np
 import pickle
 import random
+# specify the path to util.py file
+import os
+import sys
+sys.path.insert(1, os.path.join(os.getcwd(), 'bin/neural_network'))
 import util
 
 if __name__ == '__main__': 
