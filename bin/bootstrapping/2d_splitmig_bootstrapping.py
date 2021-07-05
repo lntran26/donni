@@ -2,6 +2,7 @@ import numpy as np
 import dadi
 import pickle
 from sklearn.neural_network import MLPRegressor
+from sklearn.ensemble import RandomForestRegressor
 import matplotlib.pyplot as plt
 
 theta_list = [100, 1000, 10000] # global variable
