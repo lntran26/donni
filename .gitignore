@@ -287,3 +287,9 @@ ml_dadi/2d_splitmig/data/train_data
 ml_dadi/2d_splitmig/results/bootstrap/boostrap_pred_rfr_1
 ml_dadi/2d_splitmig/results/bootstrap/boostrap_pred_rfr_100
 ml_dadi/2d_splitmig/results/bootstrap/boostrap_pred_rfr_1000
+ml_dadi/2d_IM/data/train_data
+ml_dadi/2d_IM/data/test_data
+ml_dadi/2d_IM/data/list_rfr_hpc
+ml_dadi/2d_IM/data/list_rfr
+ml_dadi/2d_IM/data/list_mlpr_hpc
+ml_dadi/2d_IM/data/list_mlpr
