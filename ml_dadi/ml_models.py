@@ -44,6 +44,14 @@ def rfr_train(train_dict, ncpu=None):
     rfr = rfr.fit(X_train_input, y_train_label)
     return rfr
 
+def model_test(model, test_dict):
+    y_true, y_pred = [], []
+    for params in test_dict:
+        y_true.append(params)
+        test_fs = test_dict[params].data.flatten()
+        y_pred.append(model.predict([test_fs]).flatten())
+    return y_true, y_pred
+
 def rfr_test(rfr, test_dict):
     y_true, y_pred = [], []
     for params in test_dict:
