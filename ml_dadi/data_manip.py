@@ -78,8 +78,7 @@ def generating_data_parallel_log(params_list, theta_list,
             if fs_tostore.sum()==0:
                 pass
             else:    
-                data_dict[params] = fs_tostore/fs_tostore.sum()
-                #data_dict[params] = fs_tostore             
+                data_dict[params] = fs_tostore/fs_tostore.sum()           
         list_dicts.append(data_dict)
     return list_dicts
 
@@ -180,7 +179,7 @@ def un_log_transform_predict(y_predict, num_list):
 
 def sort_by_param(y_true, y_pred):
     '''
-    Sort the output of rfr_test or mlpr_test into lists of true vs predict 
+    Sort the output of model_test into lists of true vs predict 
     values by each param used in the model
     Returns: param_true and param_pred are each a list of lists, each sublist
     contains true or pred values for one param
