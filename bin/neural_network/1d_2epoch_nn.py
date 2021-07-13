@@ -9,6 +9,7 @@ import numpy as np
 import random
 import util
 import matplotlib.pyplot as plt
+import pickle
 
 
 if __name__ == '__main__': 
@@ -33,10 +34,11 @@ if __name__ == '__main__':
     maxTnu = 5 # for exclusion
     # generate parameter list for training
     train_params = []
-    for nu in np.linspace(-2, 2, 21):
-        for T in np.linspace(0.1, 2, 20):
-           if T/10**nu <= maxTnu:
-               train_params.append((round(nu, 2), round(T, 2)))
+    while len(train_params) < 400:
+        nu = random.random() * 4 - 2
+        T = random.random() * 1.9 + 0.1
+        if T/10**nu <= maxTnu:
+            train_params.append((round(nu, 2), round(T, 2)))
     # print training set info 
     print('n_samples training: ', len(train_params))
     print('Range of training params:', min(train_params), 'to', 
@@ -58,7 +60,7 @@ if __name__ == '__main__':
             max(test_params))
 
     # generate a list of theta values to run scaling and add variance
-    theta_list = [1, 1000]
+    theta_list = [1, 100, 1000, 10000]
     print('Theta list:', theta_list)
 
     func = dadi.Demographics1D.two_epoch
@@ -80,8 +82,8 @@ if __name__ == '__main__':
     train_i = 0
     for train_dict in list_train_dict:
         print("Training with theta = ", theta_list[train_i])
-        nn = util.nn_train(train_dict, solver='lbfgs')
-
+        nn = util.nn_train(train_dict, solver='lbfgs', layers=(200,))
+        pickle.dump(nn, open(f'mlpr_{theta_list[train_i]}', 'wb'), 2)
         test_i = 0
         for test_dict in list_test_dict:
             y_true, y_predict = util.nn_test(nn, test_dict)
@@ -113,5 +115,5 @@ if __name__ == '__main__':
     fig2.tight_layout(rect=[0,0,1,0.95])    
     #fig1.savefig(f'nn_nu_{timestr}.png')
     #fig2.savefig(f'nn_T_{timestr}.png')
-    
+    plt.show()
     print("END")

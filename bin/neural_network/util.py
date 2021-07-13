@@ -11,6 +11,7 @@ import numpy as np
 import math
 from copy import deepcopy
 from sklearn.neural_network import MLPRegressor
+from sklearn import preprocessing
 
 # Technical details for working with multiprocessing Pools:
 # First, they only work with single-argument functions.
@@ -354,7 +355,7 @@ def plot_by_param_log(true, pred, log, ax, r2=None, rho=None, case=None, vals=No
     ax.set_ylabel("predicted")
     ax.scatter(true, pred, c=vals)
 
-def nn_train(train_dict, nn=None, solver='adam'):
+def nn_train(train_dict, nn=None, solver='adam', layers=(2000,)):
     # Load training data set from dictionary into arrays of input and
     # corresponding labels
     X_train_input = [train_dict[params].data.flatten() for params in train_dict]
@@ -362,7 +363,7 @@ def nn_train(train_dict, nn=None, solver='adam'):
     if nn is None:
         # Load NN, specifying ncpu for parallel processing
         nn = MLPRegressor(solver=solver, max_iter=400, alpha=0.001,
-                        hidden_layer_sizes=(2000,), learning_rate='adaptive')
+                        hidden_layer_sizes=layers, learning_rate='adaptive')
     nn = nn.fit(X_train_input, y_train_label)
     return nn
 
