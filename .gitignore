@@ -294,3 +294,8 @@ ml_dadi/2d_IM/data/list_rfr
 ml_dadi/2d_IM/data/list_mlpr_hpc
 ml_dadi/2d_IM/data/list_mlpr
 ml_dadi/2d_IM/data/train_data_test
+ml_dadi/1d_2epoch/data/new_log/list_mlpr_exclude_log_adam
+ml_dadi/1d_2epoch/data/new_log/list_mlpr_exclude_log_lbfgs
+ml_dadi/1d_2epoch/data/new_log/list_rfr_exclude_log
+ml_dadi/1d_2epoch/data/new_log/test_data_exclude_log
+ml_dadi/1d_2epoch/data/new_log/train_data_exclude_log
