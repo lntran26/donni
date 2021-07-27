@@ -301,3 +301,4 @@ ml_dadi/1d_2epoch/data/new_log/test_data_exclude_log
 ml_dadi/1d_2epoch/data/new_log/train_data_exclude_log
 ml_dadi/1d_2epoch/results/bootstrap/new_log/boostrap_pred_rfr_10000
 ml_dadi/1d_2epoch/results/bootstrap/new_log/boostrap_pred_mlpr_1000
+ml_dadi/1d_2epoch/data/test_data_msprime
