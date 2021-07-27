@@ -3,6 +3,7 @@ import dadi
 import math
 import copy
 import numpy as np
+import msprime
 
 def worker_func(args):
     (p, func, ns, pts_l) = args
@@ -195,6 +196,51 @@ def sort_by_param(y_true, y_pred):
         param_pred.append(param_list_pred)
         n+=1
     return param_true, param_pred
+
+def msprime_two_epoch(s1, p):
+    (nu, T) = p
+    dem = msprime.Demography()
+    dem.add_population(initial_size=s1*10**nu) # size at present time
+    dem.add_population_parameters_change(time=2*s1*T, 
+                                        initial_size=s1) # size of ancestral pop
+
+    return dem
+
+def msprime_generate_fs(args):
+    (dem, ns, ploidy, seq_l, recomb, mut) = args
+    # simuate tree sequences
+    ts = msprime.sim_ancestry(samples=ns, ploidy=ploidy, demography=dem, 
+                                sequence_length=seq_l, 
+                                recombination_rate=recomb)
+    # simulate mutation to add variation
+    mts = msprime.sim_mutations(ts, rate=mut, discrete_genome=False)
+    # Using discrete_genome=False means that the mutation model will conform 
+    # to the classic infinite sites assumption, 
+    # where each mutation in the simulation occurs at a new site.
+    
+    # convert tree sequence to allele frequency spectrum
+    afs = mts.allele_frequency_spectrum(polarised=True, span_normalise=False)
+    # polarised=True: generate unfolded/ancestral state known fs
+    # span_normalise=False: by default, windowed statistics are divided by the 
+    # sequence length, so they are comparable between windows.
+    
+    # convert to dadi fs object
+    fs = dadi.Spectrum(afs)
+    if fs.sum() == 0:
+        pass
+    else:
+        fs_tostore = fs/fs.sum()
+    return fs_tostore
+
+def msprime_generate_data_parallel(params_list, dem_list, ns, ploidy, seq_l, recomb, mut, ncpu=None):
+    arg_list = [(dem, ns, ploidy, seq_l, recomb, mut) for dem in dem_list]
+    with Pool(processes=ncpu) as pool:
+        fs_list = pool.map(msprime_generate_fs, arg_list)
+
+    data_dict = {}
+    for params, fs in zip(params_list, fs_list):
+        data_dict[params] = fs
+    return data_dict
 
 # Test code:
 # We protect this test code with this Python idiom. This means the test
