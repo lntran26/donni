@@ -1,95 +1,7 @@
+import numpy as np
 import matplotlib.pyplot as plt
 import ml_models, data_manip
 from scipy import stats
-
-def plot_by_param_4x4(true,pred,log=False,r2=None,msle=None,rho=None,c=None):
-    # TO DO: add arg for dot size, line width to make 2x2 and 4x4 the same fn
-    # also text font size
-    '''
-    Plot a single true vs. predict panel for one train:test pair
-    true, pred = list of true and predicted values for one param,
-    which can be obtained from sort_by_param;
-    r2: one r2 score for one param of one train:test pair
-    msle: one msle score for one param of one train:test pair
-    '''
-    ax = plt.gca()
-    # make square plots with two axes the same size
-    ax.set_aspect('equal','box')
-    if c is None:
-        plt.scatter(true, pred, s=8*2**3) # 's' to change dots size
-    else:
-        plt.scatter(true, pred, c=c, vmax=5, s=8*2**3) #vmax: colorbar limit
-        cbar = plt.colorbar(fraction=0.047)
-        cbar.ax.set_title(r'$\frac{T}{ν}$', fontweight='bold', fontsize=20)
-    # axis labels to be customized
-    plt.xlabel("true", fontweight='bold')
-    plt.ylabel("predicted", fontweight='bold')
-
-    # only plot in log scale if log specified for the param
-    if log:
-        plt.xscale("log")
-        plt.yscale("log")
-        # axis scales customized to data
-        plt.xlim([min(true+pred)*10**-0.5, max(true+pred)*10**0.5])
-        plt.ylim([min(true+pred)*10**-0.5, max(true+pred)*10**0.5])
-    else:
-        # axis scales customized to data
-        plt.xlim([min(true+pred)-0.5, max(true+pred)+0.5])
-        plt.ylim([min(true+pred)-0.5, max(true+pred)+0.5])
-    # plot a slope 1 line
-    plt.axline((0,0),(1,1),linewidth=2)
-    if r2 != None:
-        plt.text(0.4, 0.9, r'$R^{2}$: ' + str(round(r2,4)), horizontalalignment='center', verticalalignment='center', fontsize=20,
-        transform = ax.transAxes)
-    if rho != None:
-        plt.text(0.4, 0.9, "\n\nρ: " + str(round(rho,4)), horizontalalignment='center', verticalalignment='center', fontsize=20,transform = ax.transAxes)
-    if msle != None:
-        plt.text(0.4, 0.9, "\n\n\n\nMSLE: " + str(round(msle,4)), horizontalalignment='center', verticalalignment='center', fontsize=20,transform = ax.transAxes)        
-
-# plotting function with specific settings for 2x2 plot
-def plot_by_param_2x2(true,pred,log=False,r2=None,msle=None,rho=None,c=None):
-    '''
-    true, pred = list of true and predicted values for one param,
-    which can be obtained from sort_by_param;
-    r2: one r2 score for one param of one train:test pair
-    msle: one msle score for one param of one train:test pair
-    '''
-    # assign ax variable to customize axes
-    ax = plt.gca()
-    # make square plots with two axes the same size
-    ax.set_aspect('equal','box')
-    if c is None:
-        plt.scatter(true, pred, s=20*2**3) # 's' to change dots size
-    else:
-        plt.scatter(true, pred, c=c, vmax=5, s=20*2**3) #vmax: colorbar limit
-        cbar = plt.colorbar(fraction=0.047)
-        # cbar.ax.zorder = -1
-        cbar.ax.set_title(r'$\frac{T}{ν}$', fontweight='bold', fontsize=50)
-    # axis labels to be customized
-    plt.xlabel("true", fontweight='bold')
-    plt.ylabel("predicted", fontweight='bold')
-
-    # only plot in log scale if log specified for the param
-    if log:
-        plt.xscale("log")
-        plt.yscale("log")
-        # axis scales customized to data
-        plt.xlim([min(true+pred)*10**-0.5, max(true+pred)*10**0.5])
-        plt.ylim([min(true+pred)*10**-0.5, max(true+pred)*10**0.5])
-    else:
-        # axis scales customized to data
-        plt.xlim([min(true+pred)-0.5, max(true+pred)+0.5])
-        plt.ylim([min(true+pred)-0.5, max(true+pred)+0.5])
-    # plot a slope 1 line
-    plt.axline((0,0),(1,1),linewidth=2)
-
-    if r2 != None:
-        plt.text(0.4, 0.9, r'$R^{2}$: ' + str(round(r2,4)), horizontalalignment='center', verticalalignment='center', fontsize=40,
-        transform = ax.transAxes)
-    if rho != None:
-        plt.text(0.4, 0.9, "\n\nρ: " + str(round(rho,4)), horizontalalignment='center', verticalalignment='center', fontsize=40,transform = ax.transAxes)
-    if msle != None:
-        plt.text(0.4, 0.9, "\n\n\n\nMSLE: " + str(round(msle,4)), horizontalalignment='center', verticalalignment='center', fontsize=40,transform = ax.transAxes)  
 
 def plot_accuracy_single(
     true, pred,size,log=False,r2=None,msle=None,rho=None,c=None):
@@ -194,3 +106,102 @@ def plot_accuracy_multi(
                                     r2=r2_by_param[i],
                                     rho=rho_by_param[0][i][i+len(params)])
             count_pos += 1
+
+# plotting for bootstrap, to be cleaned up
+def plot_intervals(int_arr_all, params, size=50):
+    '''
+    Plot all of the [size] intervals for the specified theta
+    int_arr_all: all_intervals_by_param output from bootstrap_intervals()
+    params: list of params used in the model as strings, 
+    e.g, ['nu1', 'nu2', 'T', 'm']
+    size: number of intervals to plot; take the first [size] results instead of using all 200
+    (or however many bootstrap samples were generated)
+    '''
+    x = range(size)
+    for param,int_arr in zip(params, int_arr_all):
+        int_arr = np.array(int_arr[:size])
+        int_arr = int_arr.transpose(1, 0)
+        fig = plt.figure(figsize=(20, 5))
+        ax = fig.add_subplot(1,1,1)
+        minor_ticks = np.arange(0, size)
+        major_ticks = np.arange(0, size, 10)
+        ax.set_xticks(major_ticks)
+        ax.set_xticks(minor_ticks, minor=True)
+        ax.grid(which='both')
+
+        ax.scatter(x, int_arr[0], c="red", label="true") # true
+        neg_int = int_arr[1] - int_arr[2]
+        pos_int = int_arr[3] - int_arr[1]
+        ax.errorbar(x, int_arr[1], yerr=[neg_int, pos_int], fmt='bo', label="orig")
+        ax.set_title(param)
+        ax.legend()
+        plt.show()            
+
+def plot_distribution(bootstrap_pred_i, params, n):
+    '''
+    Plots the distribution of all of the bootstraps for some specified sample n 
+    bootstrap_pred_i: a single dict for 1 theta case 
+    from the list of dictionaries output from bootstrap_predictions()
+    params: list of params used in the model as strings, 
+    e.g, ['nu1', 'nu2', 'T', 'm']
+    theta_i: the index of desired theta to use from theta_list
+    n: the index to use from the bootstrap results. 
+    For example, if bootstrap_data generated a total of 100 original fs 
+    and 300 bootstrap fs for each of the originals, a valid n would be 0-99,
+    and the distribution of all 300 predictions for all parameters for that
+    specific fs will be plotted.
+    '''
+    p_orig = list(bootstrap_pred_i.keys())[n]
+    dist = bootstrap_pred_i[p_orig][1]
+    dist = np.array(dist)
+    dist = dist.transpose(1, 0)
+    fig, axs = plt.subplots(len(params), figsize=(5, 8))
+    for i in range(len(params)):
+        true = p_orig[i]
+        axs[i].axvline(x=true, c='red', label='true')
+        orig = bootstrap_pred_i[p_orig][0][i]
+        axs[i].axvline(x=orig, c='blue', label='original')
+        axs[i].hist(dist[i], bins='sqrt')
+        axs[i].set_title(params[i])
+    handles, labels = axs[len(params)-1].get_legend_handles_labels()
+    fig.legend(handles, labels, loc='upper right')
+    plt.tight_layout()
+    plt.show()
+    # plt.savefig(f'results/{datafile}_distribution_{n}_theta{theta_list[theta_i]}.png')
+
+def plot_coverage(bootstrap_pred_i, params, expected):
+    '''
+    Plots coverage results for all the parameters in the model
+    bootstrap_pred_i: a single dict for 1 theta case 
+    from the list of dictionaries output from bootstrap_predictions()
+    params: list of params used in the model as strings, e.g, ['nu1', 'nu2', 'T', 'm']
+    expected: list of the expected coveragte percentages to look at e.g., [30, 50, 80, 95]
+    '''
+    observed = [[] for x in range(len(params))]
+    for perc in expected:
+        ints = data_manip.bootstrap_intervals(bootstrap_pred_i, 
+                                                params, percentile=perc)
+        size = len(ints[0])
+        for p_i,int_arr,param in zip(range(len(params)),ints,params): # list by params
+            covered = 0
+            int_arr = np.array(int_arr)
+            int_arr = int_arr.transpose(1, 0)
+            # now in the form [all true], [all orig], [all lower], [all upper]; indices match up
+            for i in range(len(int_arr[0])):
+                if int_arr[0][i] >= int_arr[2][i] and int_arr[0][i] <= int_arr[3][i]:
+                    covered += 1
+            observed[p_i].append(covered/2)
+    fig = plt.figure()
+    ax = fig.add_subplot(1,1,1)
+    colors = ['red', 'blue', 'green', 'yellow']
+    ax.plot(expected, expected, label='match', color='gray')
+    for i in range(len(params)):
+        ax.plot(expected, observed[i], label=params[i], marker='o', color=colors[i])
+    ax.legend()
+    ax.set_xlabel("expected")
+    ax.set_ylabel("observed")
+    plt.xticks(np.arange(min(expected), max(expected)+1, 5))
+    plt.yticks(np.arange(min(expected), max(expected)+1, 5))
+    plt.tight_layout()
+    plt.show()
+    # plt.savefig(f'results/{datafile}_coverage_theta{theta_list[theta_i]}.png')
