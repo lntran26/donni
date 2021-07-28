@@ -4,9 +4,7 @@ import ml_models, data_manip
 from scipy import stats
 
 def plot_accuracy_single(
-    true, pred,size,log=False,r2=None,msle=None,rho=None,c=None):
-    # TO DO: add arg for dot size, line width to make 2x2 and 4x4 the same fn
-    # also text font size
+    true,pred,size,log=False,r2=None,msle=None,rho=None,c=None):
     '''
     Plot a single true vs. predict panel for one train:test pair
     true, pred = list of true and predicted values for one param,
@@ -53,14 +51,15 @@ def plot_accuracy_single(
         plt.text(0.4, 0.9, "\n\n\n\nMSLE: " + str(round(msle,4)), horizontalalignment='center', verticalalignment='center', 
         fontsize=size[2],transform = ax.transAxes)  
 
-def plot_accuracy_multi(
-    list_models, list_test_dict, params, model_name, logs, size):
-    # list_models = list_mlpr or list_rfr
-    # params = ['s', r'$ν_1$', r'$ν_2$', 'T', 'm12', 'm21']
-    # models = [' RFR',' MLPR']
-    # logs = [False, True, True, False, False, False]
-    # size = ((title_font_size, title_pad), (axis_font_size, axis_pad), single_plot_size_tuple, fig_size)
-    # size = ((30, 20), (20, 60),(8,2,20))
+def plot_accuracy_multi(list_models, list_test_dict, params, model_name, logs,
+                        size, r2=True, msle=False, rho=True, c=False):
+    '''list_models = list_mlpr or list_rfr
+    params = ['s', r'$ν_1$', r'$ν_2$', 'T', 'm12', 'm21']
+    models = [' RFR',' MLPR']
+    logs = [False, True, True, False, False, False]
+    size = ((title_font_size, title_pad), (axis_font_size, axis_pad), single_plot_size_tuple, fig_size)
+    size = ((30, 20), (20, 60),(8,2,20))
+    '''
     for i in range(len(params)):
         plt.figure(i+1, figsize=size[3], dpi=300)
         plt.gca().set_title(params[i]+' '+model_name, fontsize=size[0][0] , fontweight='bold', pad=size[0][1])
@@ -78,33 +77,53 @@ def plot_accuracy_multi(
         plt.rcParams.update({'font.size': size[1][0]})
         plt.rcParams.update({'font.weight': 'bold'})
 
-    # testing, and plotting
+    # testing and plotting
     count_pos = 1
     for model in reversed(list_models):# flip the order of variance for plotting
         for test_dict in list_test_dict:
             y_true, y_pred = ml_models.model_test(model, test_dict)
             # sort test results by param for plotting
             param_true, param_pred = data_manip.sort_by_param(y_true, y_pred)
-            # calculate r2 and rho scores by param
-            r2_by_param = ml_models.r2(y_true, y_pred)[1]
-            rho_by_param = stats.spearmanr(y_true, y_pred)
+            # # this version will calculate scores in log scale if log
+            # if r2:
+            #     r2_by_param = ml_models.r2(y_true, y_pred)[1]
+            # if rho:
+            #     rho_by_param = stats.spearmanr(y_true, y_pred)
+
+            # Colorbar setting is only for 1D_2epoch model currently:        
+            if c: # make list of T/nu based on param_true values
+                T_over_nu =[T/10**nu for T, nu in zip(param_true[1], param_true[0])]
+            else:
+                T_over_nu = None
             
             # PLOT MULTIPLE SUBPLOT
             for i in range(len(params)):
                 plt.figure(i+1).add_subplot(len(list_models), 
                                             len(list_test_dict), count_pos)
                 if logs[i]:
-                    log_p_true = [10**p_true for p_true in param_true[i]]
-                    log_p_pred = [10**p_pred for p_pred in param_pred[i]]
-                    plot_accuracy_single(log_p_true, log_p_pred, size[2],    
-                                    log=True,
-                                    r2=r2_by_param[i],
-                                    rho=rho_by_param[0][i][i+len(params)])
+                    plot_p_true = [10**p_true for p_true in param_true[i]]
+                    plot_p_pred = [10**p_pred for p_pred in param_pred[i]]
                 else:
-                    plot_accuracy_single(param_true[i], param_pred[i], 
-                                    size[2],
-                                    r2=r2_by_param[i],
-                                    rho=rho_by_param[0][i][i+len(params)])
+                    plot_p_true = param_true[i]
+                    plot_p_pred = param_pred[i]
+                if r2:
+                    r2_to_plot = ml_models.r2(plot_p_true, plot_p_pred)[0]
+                    # r2_to_plot = r2_by_param[i] # this is score for log vals
+                else:
+                    r2_to_plot = None
+                if msle: # have to do msle after log-conversion because vals need to be non-neg
+                    msle_to_plot = ml_models.msle(plot_p_true, plot_p_pred)[0]
+                else:
+                    msle_to_plot = None
+                if rho:
+                    rho_to_plot = stats.spearmanr(plot_p_true, plot_p_pred)[0]
+                    # rho_to_plot = rho_by_param[0][i][i+len(params)] # this is score for log vals
+                else:
+                    rho_to_plot = None
+                plot_accuracy_single(plot_p_true, plot_p_pred, size[2],
+                                        log=logs[i], r2=r2_to_plot,
+                                        msle=msle_to_plot, rho=rho_to_plot, 
+                                        c=T_over_nu)
             count_pos += 1
 
 # plotting for bootstrap, to be cleaned up
