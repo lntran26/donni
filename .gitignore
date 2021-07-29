@@ -310,3 +310,4 @@ ml_dadi/1d_2epoch/data/new_func/list_rfr
 ml_dadi/1d_2epoch/data/new_func/test_data
 ml_dadi/1d_2epoch/data/new_func/train_data
 ml_dadi/2d_splitmig/data/new_func/test_data
+ml_dadi/1d_2epoch/data/new_func/test_data_full
