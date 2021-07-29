@@ -21,7 +21,7 @@ def plot_accuracy_single(
     if c is None:
         plt.scatter(true, pred, s=size[0]*2**3) # 's' to change dots size
     else:
-        plt.scatter(true, pred, c=c, vmax=5, s=8*2**3) #vmax: colorbar limit
+        plt.scatter(true, pred, c=c, vmax=5, s=size[0]*2**3) #vmax: colorbar limit
         cbar = plt.colorbar(fraction=0.047)
         cbar.ax.set_title(r'$\frac{T}{ν}$', fontweight='bold', fontsize=size[2])
     # axis labels to be customized
@@ -42,10 +42,10 @@ def plot_accuracy_single(
     # plot a slope 1 line
     plt.axline((0,0),(1,1),linewidth=size[1])
     if r2 != None:
-        plt.text(0.4, 0.9, r'$R^{2}$: ' + str(round(r2,4)), horizontalalignment='center', verticalalignment='center', 
+        plt.text(0.4, 0.9, "\n\n" + r'$R^{2}$: ' + str(round(r2,4)), horizontalalignment='center', verticalalignment='center', 
         fontsize=size[2], transform = ax.transAxes)
     if rho != None:
-        plt.text(0.4, 0.9, "\n\nρ: " + str(round(rho,4)), horizontalalignment='center', verticalalignment='center', 
+        plt.text(0.4, 0.9, "ρ: " + str(round(rho,4)), horizontalalignment='center', verticalalignment='center', 
         fontsize=size[2],transform = ax.transAxes)
     if msle != None:
         plt.text(0.4, 0.9, "\n\n\n\nMSLE: " + str(round(msle,4)), horizontalalignment='center', verticalalignment='center', 
