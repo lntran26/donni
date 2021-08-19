@@ -169,46 +169,58 @@ def msprime_two_epoch(s1, p):
 
     return dem
 
-def msprime_generate_fs(args):
-    '''Simulate TS under msprime model, summarize as AFS
-    then convert to dadi FS'''
-    (dem, ns, ploidy, seq_l, recomb, mut) = args
-    # simuate tree sequences
-    ts = msprime.sim_ancestry(samples=ns, ploidy=ploidy, demography=dem, 
-                                sequence_length=seq_l, 
-                                recombination_rate=recomb)
-    # simulate mutation to add variation
-    mts = msprime.sim_mutations(ts, rate=mut, discrete_genome=False)
-    # Using discrete_genome=False means that the mutation model will conform 
-    # to the classic infinite sites assumption, 
-    # where each mutation in the simulation occurs at a new site.
-    
-    # convert tree sequence to allele frequency spectrum
-    afs = mts.allele_frequency_spectrum(polarised=True, span_normalise=False)
-    # polarised=True: generate unfolded/ancestral state known fs
-    # span_normalise=False: by default, windowed statistics are divided by the 
-    # sequence length, so they are comparable between windows.
-    
-    # convert to dadi fs object
-    fs = dadi.Spectrum(afs)
-    if fs.sum() == 0:
-        pass
-    else:
-        fs_tostore = fs/fs.sum()
-    return fs_tostore
+def msprime_split_mig(s1, p):
+    (nu1, nu2, T, m) = p
+    dem = msprime.Demography()
+    dem.add_population(name="A", initial_size=s1*10**nu1) # pop1 at present time
+    dem.add_population(name="B", initial_size=s1*10**nu2) # pop2 at present time
+    dem.add_population(name="C", initial_size=s1) # ancestral pop
+    dem.add_population_split(time=2*s1*T, derived=["A", "B"], ancestral="C")
+    dem.set_symmetric_migration_rate(["A", "B"], m/(2*s1))
+    return dem
 
-def msprime_generate_data(params_list, dem_list, ns, ploidy, seq_l, recomb, mut, ncpu=None):
+def msprime_generate_ts(args):
+    '''Simulate TS under msprime demography model'''
+    (dem, ns, ploidy, seq_l, recomb) = args
+    # simuate tree sequences
+    return(msprime.sim_ancestry(samples=ns, ploidy=ploidy, demography=dem, 
+                                sequence_length=seq_l, 
+                                recombination_rate=recomb))
+
+def msprime_generate_data(params_list, dem_list, ns, ploidy, seq_l, 
+                            recomb, mut, sample_nodes=None, ncpu=None):
     '''Parallelized version for generating data from msprime 
     using multiprocessing.
     Output format same as generate_data with dadi but FS were simulated
     and summarized from TS data generated under msprime models.'''
-    arg_list = [(dem, ns, ploidy, seq_l, recomb, mut) for dem in dem_list]
+    arg_list = [(dem, ns, ploidy, seq_l, recomb) for dem in dem_list]
     with Pool(processes=ncpu) as pool:
-        fs_list = pool.map(msprime_generate_fs, arg_list)
+        ts_list = pool.map(msprime_generate_ts, arg_list)
 
     data_dict = {}
-    for params, fs in zip(params_list, fs_list):
-        data_dict[params] = fs
+    for params, ts in zip(params_list, ts_list):
+        # simulate mutation to add variation
+        mts = msprime.sim_mutations(ts, rate=mut, discrete_genome=False)
+        # Using discrete_genome=False means that the mutation model will 
+        # conform to the classic infinite sites assumption, 
+        # where each mutation in the simulation occurs at a new site.
+
+        # print statement for troubleshooting only
+        # print(f'nu={10**params[0]:.2f}, T={params[1]:.2f}, #SNPs={mts.num_mutations}') # 1d_2epoch
+        # print(f'nu1={10**params[0]:.2f}, nu2={10**params[1]:.2f}, T={params[2]:.2f}, m={params[3]:.2f}, #SNPs={mts.num_mutations}') # 2d_splitmig
+
+        # convert mts to afs 
+        afs = mts.allele_frequency_spectrum(sample_sets=sample_nodes,
+                                        polarised=True, span_normalise=False)
+        # polarised=True: generate unfolded/ancestral state known fs
+        # span_normalise=False: by default, windowed statistics are divided by the 
+        # sequence length, so they are comparable between windows.
+        # convert afs to dadi fs object, normalize and save
+        fs = dadi.Spectrum(afs)
+        if fs.sum() == 0:
+            pass
+        else:
+            data_dict[params] = fs/fs.sum()
     return data_dict
 
 # Test code:
