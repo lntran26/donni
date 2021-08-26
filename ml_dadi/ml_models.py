@@ -3,6 +3,7 @@ from sklearn.ensemble import ExtraTreesRegressor
 from sklearn.neural_network import MLPRegressor
 from sklearn import preprocessing
 from sklearn.metrics import mean_squared_log_error, r2_score
+from scipy import stats
 
 def model_train(model, train_dict):
     # Load training data set from dictionary into arrays of input and
@@ -27,6 +28,13 @@ def vrfr_train(train_dict, ncpu=None):
     return model_train(vrfr, train_dict)
 
 def model_test(model, test_dict):
+    """Test the performance of a trained ML model on test data set
+    model: a trained scikit-learn ML model
+    test_dict: test data set as a dictionary with true params as keys
+    and sfs as corresponding values
+    Output: Tuple of two lists, first list is true params, second list
+    is params predicted by the trained model
+    """
     y_true, y_pred = [], []
     for params in test_dict:
         y_true.append(params)
@@ -41,10 +49,16 @@ def r2(y_true, y_pred):
     return score, score_by_param
 
 def msle(y_true, y_pred):
+    """msle only works for non-log values because values need to be non-neg"""
     score = mean_squared_log_error(y_true, y_pred)
     score_by_param = mean_squared_log_error(y_true, y_pred,
     multioutput='raw_values')
     return score, score_by_param
+
+def rho(y_true, y_pred):
+    """stats.spearmanr returns two values: correlation and p-value
+    Here we only want the correlation value"""
+    return stats.spearmanr(y_true, y_pred)[0]
 
 # # Functions for MLPR
 # def mlpr_train(train_dict, mlpr=None, std=False, solver='adam', max_iter=400):
