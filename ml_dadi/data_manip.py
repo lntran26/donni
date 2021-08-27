@@ -54,24 +54,24 @@ def generating_data(params_list, theta_list, func, ns, pts_l,
         list_dicts.append(data_dict)
     return list_dicts
 
-def sort_by_param(y_true, y_pred):
-    '''
-    Sort the output of model_test into lists of true vs predict 
-    values by each param used in the model
-    Returns: param_true and param_pred are each a list of lists, each sublist
-    contains true or pred values for one param
-    '''
-    param_true, param_pred = [], []
-    n=0
-    while n < len(y_true[0]):
-        param_list_true, param_list_pred = [], []
-        for true, pred in zip(y_true, y_pred):
-            param_list_true.append(true[n])
-            param_list_pred.append(pred[n])
-        param_true.append(param_list_true)
-        param_pred.append(param_list_pred)
-        n+=1
-    return param_true, param_pred
+# def sort_by_param(y_true, y_pred):
+#     '''
+#     Sort the output of model_test into lists of true vs predict 
+#     values by each param used in the model
+#     Returns: param_true and param_pred are each a list of lists, each sublist
+#     contains true or pred values for one param
+#     '''
+#     param_true, param_pred = [], []
+#     n=0
+#     while n < len(y_true[0]):
+#         param_list_true, param_list_pred = [], []
+#         for true, pred in zip(y_true, y_pred):
+#             param_list_true.append(true[n])
+#             param_list_pred.append(pred[n])
+#         param_true.append(param_list_true)
+#         param_pred.append(param_list_pred)
+#         n+=1
+#     return param_true, param_pred
 
 def bootstrap_predictions(trained_model, bootstrap_data):
     '''
