@@ -81,9 +81,10 @@ def plot_accuracy_multi(list_models, list_test_dict, params, model_name, logs,
     count_pos = 1
     for model in reversed(list_models):# flip the order of variance for plotting
         for test_dict in list_test_dict:
-            y_true, y_pred = ml_models.model_test(model, test_dict)
+            # y_true, y_pred = ml_models.model_test(model, test_dict)
+            param_true, param_pred = ml_models.model_test(model, test_dict, sort=True)
             # sort test results by param for plotting
-            param_true, param_pred = data_manip.sort_by_param(y_true, y_pred)
+            # param_true, param_pred = data_manip.sort_by_param(y_true, y_pred)
 
             # Colorbar setting is only for 1D_2epoch model currently:        
             if c: # make list of T/nu based on param_true values
