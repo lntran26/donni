@@ -1,8 +1,8 @@
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.ensemble import ExtraTreesRegressor
 from sklearn.neural_network import MLPRegressor
-from sklearn import preprocessing
 from sklearn.metrics import mean_squared_log_error, r2_score
+import numpy as np
 from scipy import stats
 
 def model_train(model, train_dict):
@@ -27,19 +27,44 @@ def vrfr_train(train_dict, ncpu=None):
     vrfr = ExtraTreesRegressor(n_jobs=ncpu)
     return model_train(vrfr, train_dict)
 
-def model_test(model, test_dict):
+def model_test(model, test_dict, sort=False):
     """Test the performance of a trained ML model on test data set
     model: a trained scikit-learn ML model
     test_dict: test data set as a dictionary with true params as keys
     and sfs as corresponding values
     Output: Tuple of two lists, first list is true params, second list
-    is params predicted by the trained model
+    is params predicted by the trained model_name
+    sort: if True will sort the true and pred values by params
     """
     y_true, y_pred = [], []
     for params in test_dict:
-        y_true.append(params)
-        test_fs = test_dict[params].data.flatten()
+        # make a list of all true values
+        # y_true is a list of param tuples
+        y_true.append(params) 
+
+        # make a list of all prediction values
+        # first, we need to manipulate the form test data (SFS)
+        test_fs = test_dict[params].data.flatten() 
+        # test_dict[params] is a dadi spectrum object
+        # .data change the spectrum object into a numpy array
+        # .flatten() to convert into 1D array
+
+        # next, we use the trained ML model to make prediction
+        # and save into the list of predictions, y_pred
         y_pred.append(model.predict([test_fs]).flatten())
+        # note: test_fs needs to be in a list form [test_fs]
+        # for correct array dimension to be read by model.predict()
+        # since scikit-learn predict() expects a 2D array object
+    if sort: 
+        # sort the lists by params instead of by test data set
+        # before sorting:
+            # y_true or y_pred = 
+            #   [[p1_test1, p2_test1,...],...,[p1_test100, p2_test100,...],...]
+        y_true = np.array(y_true).T.tolist()
+        y_pred = np.array(y_pred).T.tolist()
+        # after sorting:
+            # y_true or y_pred = 
+            # [[p1_test1,...,p1_test100,...],[p2_test1,p2_test100,...],..]      
     return y_true, y_pred
 
 # Functions for scores
