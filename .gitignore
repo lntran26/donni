@@ -334,3 +334,16 @@ ml_dadi/2d_splitmig/data/msprime/1.0e+08_1.0e-11
 ml_dadi/2d_splitmig/data/msprime/test_params
 ml_dadi/2d_splitmig/data/new_func/list_mlpr_random
 ml_dadi/2d_splitmig/data/new_func/list_rfr_random
+ml_dadi/1d_2epoch/data/train_data_full_no_log
+ml_dadi/1d_2epoch/data/train_data_full_log
+ml_dadi/1d_2epoch/data/train_data_exclude_log
+ml_dadi/1d_2epoch/data/test_data_full_no_log
+ml_dadi/1d_2epoch/data/test_data_full_log
+ml_dadi/1d_2epoch/data/test_data_exclude_log
+ml_dadi/1d_2epoch/data/list_rfr_full_no_log
+ml_dadi/1d_2epoch/data/list_mlpr_lbfgs_full_no_log
+ml_dadi/1d_2epoch/data/list_mlpr_lbfgs_full_log
+ml_dadi/1d_2epoch/data/list_mlpr_lbfgs_exclude_log
+ml_dadi/1d_2epoch/data/list_mlpr_adam_full_no_log
+ml_dadi/1d_2epoch/data/list_mlpr_adam_full_log
+ml_dadi/1d_2epoch/data/list_mlpr_adam_exclude_log
