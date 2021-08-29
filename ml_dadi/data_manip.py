@@ -223,9 +223,6 @@ def msprime_generate_data(params_list, dem_list, ns, ploidy, seq_l,
 
 
 # Test code:
-# We protect this test code with this Python idiom. This means the test
-# code won't run when we "import util", which is useful for defining
-# functions we'll want to use in multiple scripts.
 if __name__ == "__main__":
     import time
     import numpy as np
@@ -262,4 +259,3 @@ if __name__ == "__main__":
         test_params_log, theta_list, func, ns, pts_l, logs)
     print('Parallel execution time to generate data 1D log: {0:.2f}s'
           .format(time.time()-start))
-    # print(list_test_dict[0].keys())
