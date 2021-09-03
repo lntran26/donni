@@ -12,3 +12,4 @@ data/*
 *.xlsx
 ml_dadi/*/data/*
 ml_dadi/*/results/*
+ml_dadi/*/.ipynb_checkpoints/
