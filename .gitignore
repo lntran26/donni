@@ -1,11 +1,10 @@
 .vscode
 .DS_Store
 __pycache__
-results/.DS_Store
 troubleshoot
 draft-code
 .Rhistory
-bin/.ipynb_checkpoints/Figures-checkpoint.ipynb
+bin/.ipynb_checkpoints/*
 results/*
 data/*
 *.png
