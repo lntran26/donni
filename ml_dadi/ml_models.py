@@ -94,7 +94,7 @@ def model_search(model, train_dict, param_grid, n_top=5):
     train_labels = [params for params in train_dict]
 
     # grid search
-    cv = GridSearchCV(model, param_grid, n_jobs=-1)
+    cv = GridSearchCV(model, param_grid, n_jobs=-1, verbose=4)
     cv.fit(train_features, train_labels)
     results = cv.cv_results_
 
