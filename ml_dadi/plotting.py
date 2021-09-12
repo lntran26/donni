@@ -348,7 +348,7 @@ def plot_coverage(bootstrap_pred, theta, params, expected):
     ax.legend()
 
 
-def plot_distribution(bootstrap_pred, theta, params, n):
+def plot_distribution(bootstrap_pred, theta, params, n, figsize=(5,8)):
     '''
     Plots the distribution of all of the bootstraps for some specified sample n 
 
@@ -367,7 +367,8 @@ def plot_distribution(bootstrap_pred, theta, params, n):
     dist = bootstrap_pred[p_orig][1]
     dist = np.array(dist)
     dist = dist.transpose(1, 0)
-    fig, axs = plt.subplots(len(params), figsize=(5, 8))
+    # size = len(params)
+    fig, axs = plt.subplots(len(params), figsize=figsize)
     for i in range(len(params)):
         true = p_orig[i]
         axs[i].axvline(x=true, c='red', label='true')
@@ -375,6 +376,9 @@ def plot_distribution(bootstrap_pred, theta, params, n):
         axs[i].axvline(x=orig, c='blue', label='original')
         axs[i].hist(dist[i], bins='sqrt')
         axs[i].set_title(f'{params[i]}, theta={theta}, dataset #{n}', 
-                            fontsize=15, fontweight='bold')
+                            fontsize=15, fontweight='bold', pad=10)
+        axs[i].set_xlabel(' ', fontsize=15, fontweight='bold', labelpad=10)
+        axs[i].set_ylabel(' ', fontsize=15, fontweight='bold', labelpad=10)
+
     handles, labels = axs[len(params)-1].get_legend_handles_labels()
-    fig.legend(handles, labels)
+    fig.legend(handles, labels, loc='upper right', bbox_to_anchor=(0.9, 0.9))
