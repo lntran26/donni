@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import ml_models
 from ml_models import model_test
+import data_manip
 
 
 def plot_accuracy_single(x, y, size=[8, 2, 20], x_label="true",
@@ -197,87 +198,121 @@ def plot_accuracy_multi(list_models, list_test_dict, logs, params,
     # Plot the results
     plot_accuracy_multi_data(data, logs, params, size, title,
                              x_label=x_label, y_label=y_label,
-                             sub_x_label=sub_x_label, sub_y_label=sub_y_label, 
+                             sub_x_label=sub_x_label, sub_y_label=sub_y_label,
                              r2=r2, msle=msle, rho=rho, c=c)
 
 
 # plotting for bootstrap, to be cleaned up
-def plot_intervals(int_arr_all, params, size=50):
+
+def bootstrap_intervals(bootstrap_pred, params, percentile=95):
     '''
-    Plot all of the [size] intervals for the specified theta
-    int_arr_all: all_intervals_by_param output from bootstrap_intervals()
+    Helper function for plot_coverage() and plot_interval():
+    Generates a list of intervals sorted by param containing true value, 
+    original value, lower bound, and upper bound
+    Inputs:
+    bootstrap_pred: a single dict for 1 theta case 
+    from the list of dictionaries output from bootstrap_predictions()
     params: list of params used in the model as strings, 
     e.g, ['nu1', 'nu2', 'T', 'm']
+    theta_i: the index of desired theta to use from theta_list
+    percentile: the desired % confidence interval 
+
+    Output: a list of length len(params),
+    with inner lists of length len(list_bstr_fs_pred),
+    with innermost list length 4 (true, orig, lower, upper).
+    E.g., all_intervals_by_param = [nu1, nu2, T, m]
+    where nu1=[list1,...,list200] where list1=[true, orig, lower, upper]
+    '''
+    keys = list(bootstrap_pred.keys())  # get dict keys into a list
+
+    # list of lists to store results for each param
+    all_intervals_by_param = [[] for p in params]
+
+    for j, key in enumerate(keys):  # key = true params
+        # preds=[orig fs pred,[200 bstr_fs pred]]
+        preds = bootstrap_pred[key]
+
+        # sort preds by param
+        bstr_by_param = np.array(preds[1]).T.tolist()
+
+        bounds = (100 - percentile) / 2 / 100  # e.g., 5th value is index 4
+
+        offset = int(len(bstr_by_param[0]) * bounds) - 1
+
+        for i, cur_p in enumerate(params):
+            # sorted by current param, e.g., all nu1 preds sorted
+            all_cur_p = bstr_by_param[i]
+            all_cur_p.sort()
+
+            # load true and original sample fs params
+            true = key[i]
+            orig = preds[0][i]
+
+            # set confidence interval values
+            low = all_cur_p[offset]
+            high = all_cur_p[len(all_cur_p) - offset]
+
+            interval = [true, orig, low, high]
+
+            # store the sorted confidence interval by param
+            all_intervals_by_param[i].append(interval)
+
+    return all_intervals_by_param
+
+
+def plot_intervals(bootstrap_pred, theta, params, size=50):
+    '''
+    Plot all of the [size] intervals for the specified theta
+
+    bootstrap_pred: a single dict for 1 theta case 
+    from the list of dictionaries output from bootstrap_predictions()
+    params: list of params used in the model as strings, 
+    e.g, ['nu1', 'nu2', 'T', 'm']
+    theta: str or int, theta case for the bootstrap_pred
     size: number of intervals to plot; take the first [size] results instead of using all 200
     (or however many bootstrap samples were generated)
     '''
+
+    int_arr_all = bootstrap_intervals(bootstrap_pred, params)
+
     x = range(size)
+
     for param, int_arr in zip(params, int_arr_all):
         int_arr = np.array(int_arr[:size])
         int_arr = int_arr.transpose(1, 0)
+
         fig = plt.figure(figsize=(20, 5))
-        ax = fig.add_subplot(1, 1, 1)
+        # ax = fig.add_subplot(1, 1, 1)
+        ax = plt.gca()
         minor_ticks = np.arange(0, size)
         major_ticks = np.arange(0, size, 10)
         ax.set_xticks(major_ticks)
-        ax.set_xticks(minor_ticks, minor=x)
+        ax.set_xticks(minor_ticks, minor=True)
         ax.grid(which='both')
 
-        ax.scatter(x, int_arr[0], c="red", label="x")  # x
+        ax.scatter(x, int_arr[0], c="red", label="true")
         neg_int = int_arr[1] - int_arr[2]
         pos_int = int_arr[3] - int_arr[1]
         ax.errorbar(x, int_arr[1], yerr=[
                     neg_int, pos_int], fmt='bo', label="orig")
-        ax.set_title(param)
+
+        ax.set_title(f'{param}, theta={theta}', fontsize=12, fontweight='bold')
         ax.legend()
-        plt.show()
 
 
-def plot_distribution(bootstrap_y_i, params, n):
-    '''
-    Plots the distribution of all of the bootstraps for some specified sample n 
-    bootstrap_y_i: a single dict for 1 theta case 
-    from the list of dictionaries output from bootstrap_yictions()
-    params: list of params used in the model as strings, 
-    e.g, ['nu1', 'nu2', 'T', 'm']
-    theta_i: the index of desired theta to use from theta_list
-    n: the index to use from the bootstrap results. 
-    For example, if bootstrap_data generated a total of 100 original fs 
-    and 300 bootstrap fs for each of the originals, a valid n would be 0-99,
-    and the distribution of all 300 yictions for all parameters for that
-    specific fs will be plotted.
-    '''
-    p_orig = list(bootstrap_y_i.keys())[n]
-    dist = bootstrap_y_i[p_orig][1]
-    dist = np.array(dist)
-    dist = dist.transpose(1, 0)
-    fig, axs = plt.subplots(len(params), figsize=(5, 8))
-    for i in range(len(params)):
-        x = p_orig[i]
-        axs[i].axvline(x=x, c='red', label='x')
-        orig = bootstrap_y_i[p_orig][0][i]
-        axs[i].axvline(x=orig, c='blue', label='original')
-        axs[i].hist(dist[i], bins='sqrt')
-        axs[i].set_title(params[i])
-    handles, labels = axs[len(params)-1].get_legend_handles_labels()
-    fig.legend(handles, labels, loc='upper right')
-    plt.tight_layout()
-    plt.show()
-    # plt.savefig(f'results/{datafile}_distribution_{n}_theta{theta_list[theta_i]}.png')
-
-
-def plot_coverage(bootstrap_y_i, params, expected):
+def plot_coverage(bootstrap_pred, theta, params, expected):
     '''
     Plots coverage results for all the parameters in the model
-    bootstrap_y_i: a single dict for 1 theta case 
-    from the list of dictionaries output from bootstrap_yictions()
+
+    bootstrap_pred: a single dict for 1 theta case 
+    from the list of dictionaries output from bootstrap_predictions()
     params: list of params used in the model as strings, e.g, ['nu1', 'nu2', 'T', 'm']
+    theta: str or int, theta case for the bootstrap_pred
     expected: list of the expected coveragte percentages to look at e.g., [30, 50, 80, 95]
     '''
     observed = [[] for x in range(len(params))]
     for perc in expected:
-        ints = data_manip.bootstrap_intervals(bootstrap_y_i,
-                                              params, percentile=perc)
+        ints = bootstrap_intervals(bootstrap_pred, params, percentile=perc)
         size = len(ints[0])
         # list by params
         for p_i, int_arr, param in zip(range(len(params)), ints, params):
@@ -289,18 +324,57 @@ def plot_coverage(bootstrap_y_i, params, expected):
                 if int_arr[0][i] >= int_arr[2][i] and int_arr[0][i] <= int_arr[3][i]:
                     covered += 1
             observed[p_i].append(covered/2)
-    fig = plt.figure()
-    ax = fig.add_subplot(1, 1, 1)
-    colors = ['red', 'blue', 'green', 'yellow']
-    ax.plot(expected, expected, label='match', color='gray')
+
+    # fig = plt.figure()
+    ax = plt.gca()
+    ax.set_aspect('equal', 'box')
+    font = {'weight': 'bold', 'size': 12}
+    plt.rc('font', **font)
+
+    ax.set_title(f'theta={theta}', fontsize=15, fontweight='bold')
+    ax.set_xlabel("expected", fontsize=12, fontweight='bold')
+    ax.set_ylabel("observed", fontsize=12, fontweight='bold')
+
     for i in range(len(params)):
-        ax.plot(expected, observed[i], label=params[i],
-                marker='o', color=colors[i])
+        ax.plot(expected, observed[i],
+                label=params[i], marker='o', linewidth=2)
+    ax.plot(expected, expected, label='match', linewidth=2, color="black")
+
+    plt.xticks(np.arange(min(expected), max(expected)+5, 10))
+    plt.yticks(np.arange(min(expected), max(expected)+5, 10))
+    plt.xlim([0, 100])
+    plt.ylim([0, 100])
+
     ax.legend()
-    ax.set_xlabel("expected")
-    ax.set_ylabel("observed")
-    plt.xticks(np.arange(min(expected), max(expected)+1, 5))
-    plt.yticks(np.arange(min(expected), max(expected)+1, 5))
-    plt.tight_layout()
-    plt.show()
-    # plt.savefig(f'results/{datafile}_coverage_theta{theta_list[theta_i]}.png')
+
+
+def plot_distribution(bootstrap_pred, theta, params, n):
+    '''
+    Plots the distribution of all of the bootstraps for some specified sample n 
+
+    bootstrap_pred: a single dict for 1 theta case 
+    from the list of dictionaries output from bootstrap_predictions()
+    params: list of params used in the model as strings, 
+    e.g, ['nu1', 'nu2', 'T', 'm']
+    theta: str or int, theta case for the bootstrap_pred
+    n: the index to use from the bootstrap results. 
+    For example, if bootstrap_data generated a total of 100 original fs 
+    and 300 bootstrap fs for each of the originals, a valid n would be 0-99,
+    and the distribution of all 300 yictions for all parameters for that
+    specific fs will be plotted.
+    '''
+    p_orig = list(bootstrap_pred.keys())[n]
+    dist = bootstrap_pred[p_orig][1]
+    dist = np.array(dist)
+    dist = dist.transpose(1, 0)
+    fig, axs = plt.subplots(len(params), figsize=(5, 8))
+    for i in range(len(params)):
+        true = p_orig[i]
+        axs[i].axvline(x=true, c='red', label='true')
+        orig = bootstrap_pred[p_orig][0][i]
+        axs[i].axvline(x=orig, c='blue', label='original')
+        axs[i].hist(dist[i], bins='sqrt')
+        axs[i].set_title(f'{params[i]}, theta={theta}, dataset #{n}', 
+                            fontsize=15, fontweight='bold')
+    handles, labels = axs[len(params)-1].get_legend_handles_labels()
+    fig.legend(handles, labels)
