@@ -7,6 +7,8 @@ import msprime
 
 
 def worker_func(args):
+    '''Helper function for generating_data()
+    Help with parallelization with Pool'''
     (p, func, ns, pts_l) = args
     func_ex = dadi.Numerics.make_extrap_func(func)
     return func_ex(p, ns, pts_l)
@@ -55,6 +57,34 @@ def generating_data(params_list, theta_list, func, ns, pts_l,
                     data_dict[params] = fs_tostore/fs_tostore.sum()
         list_dicts.append(data_dict)
     return list_dicts
+
+
+def worker_func_opt(args):
+    '''Helper function for dadi_opt()
+    Help with parallelization with Pool'''
+    (p, fs, func, pts_l, lb, ub) = args
+    func_ex = dadi.Numerics.make_extrap_func(func)
+    return dadi.Inference.opt(p, fs, func_ex, pts_l, lower_bound=lb,
+                              upper_bound=ub)
+
+
+def dadi_opt(p_list, fs_list, func, pts_l, lb, ub, ncpu=None):
+    '''Parallelized version for running dadi optimization with multiprocessing.
+    If npcu=None, it will use all the CPUs on the machine. 
+    Otherwise user can specify a limit.
+    '''
+    args_list = [(p, fs, func, pts_l, lb, ub)
+                 for p, fs in zip(p_list, fs_list)]
+    with Pool(processes=ncpu) as pool:
+        opt_list = pool.map(worker_func_opt, args_list)
+    return opt_list
+
+
+def converged(top):
+    if round(abs(top[0][1][1]-top[1][1][1]), 2) <= 0.05:
+        if round(abs(top[0][1][1]-top[2][1][1]), 2) <= 0.05:
+            return True
+    return False
 
 
 def bootstrap_predictions(trained_model, bootstrap_data):
