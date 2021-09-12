@@ -8,6 +8,7 @@ from scipy import stats
 
 
 def model_train(model, train_dict):
+    # helper function for individual ML_train models
     # Load training data set from dictionary into arrays of input and
     # corresponding labels
     X_train_input = [train_dict[params].data.flatten()
@@ -17,10 +18,12 @@ def model_train(model, train_dict):
     return model.fit(X_train_input, y_train_label)
 
 
-def mlpr_train(train_dict, mlpr=None, solver='adam', max_iter=400):
+def mlpr_train(train_dict, mlpr=None, hidden_layer_sizes=(100,),
+               activation='relu', solver='adam', alpha=0.1, max_iter=500):
     if mlpr is None:  # default MLPR setting if not specified
-        mlpr = MLPRegressor(solver=solver, max_iter=max_iter, alpha=0.01,
-                            hidden_layer_sizes=(2000,), learning_rate='adaptive')
+        mlpr = MLPRegressor(hidden_layer_sizes=hidden_layer_sizes,
+                            activation=activation, solver=solver,
+                            alpha=alpha, max_iter=max_iter)
     return model_train(mlpr, train_dict)
 
 
@@ -74,37 +77,15 @@ def model_test(model, test_dict, sort=False):
         # [[p1_test1,...,p1_test100,...],[p2_test1,p2_test100,...],..]
     return y_true, y_pred
 
-# Functions for scores
-
-
-def r2(y_true, y_pred):
-    score = r2_score(y_true, y_pred)
-    score_by_param = r2_score(y_true, y_pred, multioutput='raw_values')
-    return score, score_by_param
-
-
-def msle(y_true, y_pred):
-    """msle only works for non-log values because values need to be non-neg"""
-    score = mean_squared_log_error(y_true, y_pred)
-    score_by_param = mean_squared_log_error(y_true, y_pred,
-                                            multioutput='raw_values')
-    return score, score_by_param
-
-
-def rho(y_true, y_pred):
-    """stats.spearmanr returns two values: correlation and p-value
-    Here we only want the correlation value"""
-    return stats.spearmanr(y_true, y_pred)[0]
-
 
 def model_search(model, train_dict, param_grid, n_top=5):
     '''Use GridSearchCV to search for the best hyperparameters
     for ML models
 
     model: ML algorthims such as MLPR or RFR
-    train_dict:
-    param_grid:
-    n_top:
+    train_dict: dictionary of training data used for the tuning
+    param_grid: dictionary of different model hyperparameters to be tuned
+    n_top: int, number of top results to print out
     '''
 
     # load training data from train_dict
@@ -126,3 +107,65 @@ def model_search(model, train_dict, param_grid, n_top=5):
                           results['std_test_score'][candidate]))
             print("Parameters: {0}".format(results['params'][candidate]))
             print("")
+
+
+def model_bootstrap(model, bootstrap_data):
+    '''
+    Note: replacing the bootstrap_predictions() method
+    Runs the ML predictions for all of the bootstrapped FS
+    trained_model is a single trained ML such as rfr_1000 used for prediction
+    bootstrap_data is a list of dictionaries of 200 items with the format 
+    {true_p:[orig_fs,[200 bootstrapped fs from orig_fs]]}
+    for each theta case in the list.
+    return: a list of bootstrap_pred dictionaries of the same
+    format as bootstrap_data
+    '''
+    bootstrap_pred = []
+    for theta_case in bootstrap_data:
+        pred_dict = {}  # dictionary storing prediction results
+
+        for true_p, all_fs in theta_case.items():
+            # load elements from bootstrap data
+            orig_fs = all_fs[0]  # single original fs
+            # list of 200 bootstrapped fs from orig_fs
+            list_bstr_fs = all_fs[1]
+
+            # run prediction for the original fs
+            orig_fs = orig_fs/orig_fs.sum()  # normalize for prediction
+            orig_fs_pred = model.predict([orig_fs.flatten()]).flatten()
+
+            # run prediction for fs bootstrapped from original fs
+            list_bstr_fs_pred = []
+            for bstr_fs in list_bstr_fs:
+                bstr_fs = bstr_fs/bstr_fs.sum()  # normalize before prediction
+                bstr_fs_pred = model.predict([bstr_fs.flatten()]).flatten()
+                list_bstr_fs_pred.append(tuple(bstr_fs_pred))
+
+            # save all predictions into a dictionary for each theta case
+            pred_dict[true_p] = [tuple(orig_fs_pred), list_bstr_fs_pred]
+
+        # save all dictionaries into a list for multiple theta cases
+        bootstrap_pred.append(pred_dict)
+    return bootstrap_pred
+
+# Functions for scores
+
+
+def r2(y_true, y_pred):
+    score = r2_score(y_true, y_pred)
+    score_by_param = r2_score(y_true, y_pred, multioutput='raw_values')
+    return score, score_by_param
+
+
+def msle(y_true, y_pred):
+    """msle only works for non-log values because values need to be non-neg"""
+    score = mean_squared_log_error(y_true, y_pred)
+    score_by_param = mean_squared_log_error(y_true, y_pred,
+                                            multioutput='raw_values')
+    return score, score_by_param
+
+
+def rho(y_true, y_pred):
+    """stats.spearmanr returns two values: correlation and p-value
+    Here we only want the correlation value"""
+    return stats.spearmanr(y_true, y_pred)[0]
