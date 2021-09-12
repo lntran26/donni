@@ -69,7 +69,7 @@ def plot_accuracy_single(x, y, size=[8, 2, 20], x_label="true",
 
 def plot_accuracy_multi_data(data, logs, params,
                              size=((30, 20), (20, 80), (8, 2, 20), (24, 22)),
-                             title=None, x_label=None, y_label=None,
+                             title=" ", x_label=None, y_label=None,
                              sub_x_label="true", sub_y_label="predict",
                              r2=False, msle=False, rho=True, c=False):
     '''
@@ -169,7 +169,8 @@ def plot_accuracy_multi_data(data, logs, params,
 
 def plot_accuracy_multi(list_models, list_test_dict, logs, params,
                         size=((30, 20), (20, 80), (8, 2, 20), (24, 22)),
-                        title=None, x_label=None, y_label=None,
+                        title=" ", x_label=None, y_label=None,
+                        sub_x_label="true", sub_y_label="predict",
                         r2=False, msle=False, rho=True, c=False):
     '''
     Plot multiple panels of true vs pred plots with correlation scores 
@@ -195,7 +196,8 @@ def plot_accuracy_multi(list_models, list_test_dict, logs, params,
 
     # Plot the results
     plot_accuracy_multi_data(data, logs, params, size, title,
-                             x_label=x_label, y_label=y_label, 
+                             x_label=x_label, y_label=y_label,
+                             sub_x_label=sub_x_label, sub_y_label=sub_y_label, 
                              r2=r2, msle=msle, rho=rho, c=c)
 
 
