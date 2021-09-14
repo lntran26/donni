@@ -95,13 +95,14 @@ def plot_accuracy_multi_data(data, logs, params,
     for i, param in enumerate(params):  # plot one figure per param in list
         plt.figure(i+1, figsize=size[3], dpi=300)
 
+        # set plot axes
+        ax = plt.gca()
+
         # set plot title
-        plt.gca().set_title(
+        ax.set_title(
             params[i]+' '+title, fontsize=size[0][0],
             fontweight='bold', pad=size[0][1])
 
-        # set plot axes
-        ax = plt.gca()
         # set axis labels
         ax.set_xlabel(x_label, fontsize=size[1][0],
                       fontweight='bold', labelpad=size[1][1])
