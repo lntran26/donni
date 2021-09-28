@@ -301,7 +301,7 @@ def plot_intervals(bootstrap_pred, theta, params, size=50):
         ax.legend()
 
 
-def plot_coverage(bootstrap_pred, theta, params, expected):
+def plot_coverage(bootstrap_pred, theta, params, expected = [95, 90, 80, 50, 30, 15]):
     '''
     Plots coverage results for all the parameters in the model
 
