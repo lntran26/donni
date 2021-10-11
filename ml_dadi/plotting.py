@@ -7,7 +7,7 @@ import data_manip
 
 def plot_accuracy_single(x, y, size=[8, 2, 20], x_label="true",
                          y_label="predict", log=False,
-                         r2=None, msle=None, rho=None, c=None):
+                         r2=None, msle=None, rho=None, c=None, title=None):
     '''
     Plot a single x vs. y scatter plot panel, with correlation scores
 
@@ -66,6 +66,8 @@ def plot_accuracy_single(x, y, size=[8, 2, 20], x_label="true",
         plt.text(0.4, 0.9, "\n\n\n\nMSLE: " + str(round(msle, 4)),
                  horizontalalignment='center', verticalalignment='center',
                  fontsize=size[2], transform=ax.transAxes)
+    if title != None:
+        ax.set_title(title, fontsize=size[2],fontweight='bold')
 
 
 def plot_accuracy_multi_data(data, logs, params,
