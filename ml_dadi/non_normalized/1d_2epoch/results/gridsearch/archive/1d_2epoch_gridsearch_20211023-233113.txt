@@ -1,0 +1,167 @@
+hidden_layer_sizes : [(200,), (500,)]
+activation : ['tanh', 'relu']
+solver : ['lbfgs', 'adam']
+max_iter : [5000]
+Fitting 5 folds for each of 8 candidates, totalling 40 fits
+[CV 2/5] END activation=tanh, hidden_layer_sizes=(200,), max_iter=5000, solver=lbfgs;, score=-0.123 total time= 7.1min
+[CV 5/5] END activation=tanh, hidden_layer_sizes=(500,), max_iter=5000, solver=lbfgs;, score=0.181 total time=21.8min
+/Users/linhtran/anaconda3/lib/python3.8/site-packages/sklearn/neural_network/_multilayer_perceptron.py:500: ConvergenceWarning: lbfgs failed to converge (status=1):
+STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
+
+Increase the number of iterations (max_iter) or scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+  self.n_iter_ = _check_optimize_result("lbfgs", opt_res, self.max_iter)
+/Users/linhtran/anaconda3/lib/python3.8/site-packages/sklearn/neural_network/_multilayer_perceptron.py:500: ConvergenceWarning: lbfgs failed to converge (status=1):
+STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
+
+Increase the number of iterations (max_iter) or scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+  self.n_iter_ = _check_optimize_result("lbfgs", opt_res, self.max_iter)
+[CV 1/5] END activation=tanh, hidden_layer_sizes=(200,), max_iter=5000, solver=lbfgs;, score=-0.275 total time= 6.8min
+[CV 4/5] END activation=tanh, hidden_layer_sizes=(500,), max_iter=5000, solver=lbfgs;, score=0.004 total time=21.9min
+[CV 5/5] END activation=relu, hidden_layer_sizes=(500,), max_iter=5000, solver=adam;, score=-126.364 total time=  26.7s
+/Users/linhtran/anaconda3/lib/python3.8/site-packages/sklearn/neural_network/_multilayer_perceptron.py:500: ConvergenceWarning: lbfgs failed to converge (status=1):
+STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
+
+Increase the number of iterations (max_iter) or scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+  self.n_iter_ = _check_optimize_result("lbfgs", opt_res, self.max_iter)
+/Users/linhtran/anaconda3/lib/python3.8/site-packages/sklearn/neural_network/_multilayer_perceptron.py:500: ConvergenceWarning: lbfgs failed to converge (status=1):
+STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
+
+Increase the number of iterations (max_iter) or scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+  self.n_iter_ = _check_optimize_result("lbfgs", opt_res, self.max_iter)
+[CV 1/5] END activation=tanh, hidden_layer_sizes=(200,), max_iter=5000, solver=adam;, score=0.358 total time= 1.9min
+[CV 1/5] END activation=tanh, hidden_layer_sizes=(500,), max_iter=5000, solver=lbfgs;, score=0.030 total time=25.4min
+[CV 1/5] END activation=relu, hidden_layer_sizes=(500,), max_iter=5000, solver=adam;, score=-38.470 total time=  26.3s
+[CV 2/5] END activation=relu, hidden_layer_sizes=(500,), max_iter=5000, solver=adam;, score=-18.428 total time=  25.4s
+[CV 3/5] END activation=relu, hidden_layer_sizes=(500,), max_iter=5000, solver=adam;, score=-78.847 total time=  24.6s
+[CV 4/5] END activation=relu, hidden_layer_sizes=(500,), max_iter=5000, solver=adam;, score=-8.450 total time=  29.3s
+/Users/linhtran/anaconda3/lib/python3.8/site-packages/sklearn/neural_network/_multilayer_perceptron.py:500: ConvergenceWarning: lbfgs failed to converge (status=1):
+STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
+
+Increase the number of iterations (max_iter) or scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+  self.n_iter_ = _check_optimize_result("lbfgs", opt_res, self.max_iter)
+
+ Model with rank: 1
+Mean validation score: 0.430 (std: 0.022)
+Parameters: {'activation': 'tanh', 'hidden_layer_sizes': (500,), 'max_iter': 5000, 'solver': 'adam'}
+
+ Model with rank: 2
+Mean validation score: 0.351 (std: 0.021)
+Parameters: {'activation': 'tanh', 'hidden_layer_sizes': (200,), 'max_iter': 5000, 'solver': 'adam'}
+
+ Model with rank: 3
+Mean validation score: 0.015 (std: 0.111)
+Parameters: {'activation': 'tanh', 'hidden_layer_sizes': (500,), 'max_iter': 5000, 'solver': 'lbfgs'}
+
+ Model with rank: 4
+Mean validation score: -0.089 (std: 0.152)
+Parameters: {'activation': 'tanh', 'hidden_layer_sizes': (200,), 'max_iter': 5000, 'solver': 'lbfgs'}
+
+ Model with rank: 5
+Mean validation score: -22.114 (std: 21.142)
+Parameters: {'activation': 'relu', 'hidden_layer_sizes': (200,), 'max_iter': 5000, 'solver': 'adam'}
+
+ Model with rank: 6
+Mean validation score: -54.112 (std: 43.440)
+Parameters: {'activation': 'relu', 'hidden_layer_sizes': (500,), 'max_iter': 5000, 'solver': 'adam'}
+
+ Model with rank: 7
+Mean validation score: -404.503 (std: 131.517)
+Parameters: {'activation': 'relu', 'hidden_layer_sizes': (500,), 'max_iter': 5000, 'solver': 'lbfgs'}
+
+ Model with rank: 8
+Mean validation score: -1063.168 (std: 1037.797)
+Parameters: {'activation': 'relu', 'hidden_layer_sizes': (200,), 'max_iter': 5000, 'solver': 'lbfgs'}
+[CV 3/5] END activation=tanh, hidden_layer_sizes=(200,), max_iter=5000, solver=lbfgs;, score=-0.104 total time= 8.0min
+[CV 3/5] END activation=tanh, hidden_layer_sizes=(500,), max_iter=5000, solver=adam;, score=0.447 total time= 2.7min
+[CV 1/5] END activation=relu, hidden_layer_sizes=(200,), max_iter=5000, solver=lbfgs;, score=-340.689 total time= 5.1min
+[CV 4/5] END activation=relu, hidden_layer_sizes=(200,), max_iter=5000, solver=lbfgs;, score=-1653.814 total time= 2.1min
+[CV 2/5] END activation=relu, hidden_layer_sizes=(200,), max_iter=5000, solver=adam;, score=-11.746 total time=  14.6s
+[CV 3/5] END activation=relu, hidden_layer_sizes=(200,), max_iter=5000, solver=adam;, score=-4.086 total time=  18.4s
+[CV 5/5] END activation=relu, hidden_layer_sizes=(200,), max_iter=5000, solver=adam;, score=-63.382 total time=  23.0s
+[CV 2/5] END activation=relu, hidden_layer_sizes=(500,), max_iter=5000, solver=lbfgs;, score=-579.274 total time=13.6min
+/Users/linhtran/anaconda3/lib/python3.8/site-packages/sklearn/neural_network/_multilayer_perceptron.py:500: ConvergenceWarning: lbfgs failed to converge (status=1):
+STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
+
+Increase the number of iterations (max_iter) or scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+  self.n_iter_ = _check_optimize_result("lbfgs", opt_res, self.max_iter)
+/Users/linhtran/anaconda3/lib/python3.8/site-packages/sklearn/neural_network/_multilayer_perceptron.py:500: ConvergenceWarning: lbfgs failed to converge (status=1):
+STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
+
+Increase the number of iterations (max_iter) or scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+  self.n_iter_ = _check_optimize_result("lbfgs", opt_res, self.max_iter)
+[CV 2/5] END activation=tanh, hidden_layer_sizes=(200,), max_iter=5000, solver=adam;, score=0.328 total time= 1.7min
+[CV 5/5] END activation=tanh, hidden_layer_sizes=(200,), max_iter=5000, solver=adam;, score=0.388 total time= 2.3min
+[CV 3/5] END activation=tanh, hidden_layer_sizes=(500,), max_iter=5000, solver=lbfgs;, score=-0.169 total time=21.3min
+[CV 5/5] END activation=relu, hidden_layer_sizes=(500,), max_iter=5000, solver=lbfgs;, score=-295.037 total time= 9.8min
+/Users/linhtran/anaconda3/lib/python3.8/site-packages/sklearn/neural_network/_multilayer_perceptron.py:500: ConvergenceWarning: lbfgs failed to converge (status=1):
+STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
+
+Increase the number of iterations (max_iter) or scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+  self.n_iter_ = _check_optimize_result("lbfgs", opt_res, self.max_iter)
+/Users/linhtran/anaconda3/lib/python3.8/site-packages/sklearn/neural_network/_multilayer_perceptron.py:500: ConvergenceWarning: lbfgs failed to converge (status=1):
+STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
+
+Increase the number of iterations (max_iter) or scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+  self.n_iter_ = _check_optimize_result("lbfgs", opt_res, self.max_iter)
+[CV 5/5] END activation=tanh, hidden_layer_sizes=(200,), max_iter=5000, solver=lbfgs;, score=-0.133 total time= 7.6min
+[CV 2/5] END activation=tanh, hidden_layer_sizes=(500,), max_iter=5000, solver=adam;, score=0.419 total time= 2.7min
+[CV 5/5] END activation=tanh, hidden_layer_sizes=(500,), max_iter=5000, solver=adam;, score=0.448 total time= 2.7min
+[CV 3/5] END activation=relu, hidden_layer_sizes=(200,), max_iter=5000, solver=lbfgs;, score=-128.289 total time= 3.1min
+[CV 5/5] END activation=relu, hidden_layer_sizes=(200,), max_iter=5000, solver=lbfgs;, score=-2835.746 total time= 6.1min
+[CV 3/5] END activation=relu, hidden_layer_sizes=(500,), max_iter=5000, solver=lbfgs;, score=-268.699 total time=11.4min
+/Users/linhtran/anaconda3/lib/python3.8/site-packages/sklearn/neural_network/_multilayer_perceptron.py:500: ConvergenceWarning: lbfgs failed to converge (status=1):
+STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
+
+Increase the number of iterations (max_iter) or scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+  self.n_iter_ = _check_optimize_result("lbfgs", opt_res, self.max_iter)
+/Users/linhtran/anaconda3/lib/python3.8/site-packages/sklearn/neural_network/_multilayer_perceptron.py:500: ConvergenceWarning: lbfgs failed to converge (status=1):
+STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
+
+Increase the number of iterations (max_iter) or scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+  self.n_iter_ = _check_optimize_result("lbfgs", opt_res, self.max_iter)
+/Users/linhtran/anaconda3/lib/python3.8/site-packages/sklearn/neural_network/_multilayer_perceptron.py:500: ConvergenceWarning: lbfgs failed to converge (status=1):
+STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
+
+Increase the number of iterations (max_iter) or scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+  self.n_iter_ = _check_optimize_result("lbfgs", opt_res, self.max_iter)
+[CV 4/5] END activation=tanh, hidden_layer_sizes=(200,), max_iter=5000, solver=lbfgs;, score=0.189 total time= 7.5min
+[CV 1/5] END activation=tanh, hidden_layer_sizes=(500,), max_iter=5000, solver=adam;, score=0.390 total time= 2.3min
+[CV 4/5] END activation=tanh, hidden_layer_sizes=(500,), max_iter=5000, solver=adam;, score=0.445 total time= 2.8min
+[CV 2/5] END activation=relu, hidden_layer_sizes=(200,), max_iter=5000, solver=lbfgs;, score=-357.303 total time= 5.1min
+[CV 1/5] END activation=relu, hidden_layer_sizes=(200,), max_iter=5000, solver=adam;, score=-18.561 total time=  29.8s
+[CV 4/5] END activation=relu, hidden_layer_sizes=(200,), max_iter=5000, solver=adam;, score=-12.795 total time=  20.9s
+[CV 1/5] END activation=relu, hidden_layer_sizes=(500,), max_iter=5000, solver=lbfgs;, score=-547.056 total time=13.6min
+/Users/linhtran/anaconda3/lib/python3.8/site-packages/sklearn/neural_network/_multilayer_perceptron.py:500: ConvergenceWarning: lbfgs failed to converge (status=1):
+STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
+
+Increase the number of iterations (max_iter) or scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+  self.n_iter_ = _check_optimize_result("lbfgs", opt_res, self.max_iter)
+/Users/linhtran/anaconda3/lib/python3.8/site-packages/sklearn/neural_network/_multilayer_perceptron.py:500: ConvergenceWarning: lbfgs failed to converge (status=1):
+STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
+
+Increase the number of iterations (max_iter) or scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+  self.n_iter_ = _check_optimize_result("lbfgs", opt_res, self.max_iter)
+[CV 3/5] END activation=tanh, hidden_layer_sizes=(200,), max_iter=5000, solver=adam;, score=0.337 total time= 1.4min
+[CV 4/5] END activation=tanh, hidden_layer_sizes=(200,), max_iter=5000, solver=adam;, score=0.344 total time= 1.9min
+[CV 2/5] END activation=tanh, hidden_layer_sizes=(500,), max_iter=5000, solver=lbfgs;, score=0.030 total time=21.3min
+[CV 4/5] END activation=relu, hidden_layer_sizes=(500,), max_iter=5000, solver=lbfgs;, score=-332.447 total time= 9.8min
+/Users/linhtran/anaconda3/lib/python3.8/site-packages/sklearn/neural_network/_multilayer_perceptron.py:500: ConvergenceWarning: lbfgs failed to converge (status=1):
+STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
+
+Increase the number of iterations (max_iter) or scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+  self.n_iter_ = _check_optimize_result("lbfgs", opt_res, self.max_iter)
