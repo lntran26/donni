@@ -11,6 +11,7 @@ import sys
 import pickle
 import re
 import numpy as np
+from contextlib import redirect_stdout
 from sklearn.neural_network import MLPRegressor
 from sklearn.model_selection import GridSearchCV
 
@@ -155,12 +156,12 @@ def get_args():
                         help='Level of GridsearchCV Verbose',
                         default=4)
 
-    # parser.add_argument('-o',
-    #                     '--outfile',
-    #                     help='Output filename',
-    #                     metavar='FILE',
-    #                     type=argparse.FileType('wt'),
-    #                     default=sys.stdout)
+    parser.add_argument('-o',
+                        '--outfile',
+                        help='Output filename',
+                        metavar='FILE',
+                        type=argparse.FileType('wt'),
+                        default=sys.stdout)
 
     # parser.add_argument('-e',
     #                     '--errfile',
@@ -209,17 +210,12 @@ def main():
     # check if the file exists:
     if os.path.isfile(args.data):
         train_dict = pickle.load(open(args.data, 'rb'))
+        print(f'Data file used is {args.data}')#, file=args.outfile)
     else:
-        print(f'Error: {args.data}: File not found', file=sys.stderr)
+        sys.exit(f'Error: {args.data}: File not found')
 
     # Specify the ML models to be optimized
     mlpr = MLPRegressor()
-
-    # # Reroute all output to outfiles if specified
-    # if args.outfile is not sys.stdout:
-    #     sys.stdout = args.outfile
-    # if args.errfile is not sys.stderr:
-    #     sys.stderr = args.errfile
 
     # process input from command line into a dictionary of params
     param_dict = {}
@@ -235,7 +231,22 @@ def main():
         n_models *= len(param_dict[hyperparam])
 
     # call model_search to run gridsearch and store results
-    results = model_search(mlpr, train_dict, param_dict, args.verbose)
+    # redirecting info from stdout to file
+    # sys.stderr = sys.stdout # reroute err to stdout as well here
+    # with redirect_stderr(args.outfile):
+    # results = model_search(mlpr, train_dict, param_dict, args.verbose)
+
+
+    # load training data from train_dict
+    train_features = [train_dict[params].data.flatten()
+                      for params in train_dict]
+    train_labels = [params for params in train_dict]
+
+    # perform grid search using selected model, data, and params
+    with redirect_stdout(args.outfile):
+        cv = GridSearchCV(mlpr, param_dict, n_jobs=-1, verbose=args.verbose)
+        cv.fit(train_features, train_labels)
+        results = cv.cv_results_
 
     # todo: process results to print out certain things
     for i in range(1, n_models + 1):
