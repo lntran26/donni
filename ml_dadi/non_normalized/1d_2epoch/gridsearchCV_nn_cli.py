@@ -156,6 +156,12 @@ def get_args():
                         help='Level of GridsearchCV Verbose',
                         default=4)
 
+    parser.add_argument('-cv',
+                        '--cross_val',
+                        type=int,
+                        help='k-fold cross validation, default None=5',
+                        default=None)
+
     parser.add_argument('-o',
                         '--outfile',
                         help='Output filename',
@@ -210,7 +216,7 @@ def main():
     # check if the file exists:
     if os.path.isfile(args.data):
         train_dict = pickle.load(open(args.data, 'rb'))
-        print(f'Data file used is {args.data}')#, file=args.outfile)
+        print(f'Data file used is {args.data}')  # , file=args.outfile)
     else:
         sys.exit(f'Error: {args.data}: File not found')
 
@@ -223,7 +229,7 @@ def main():
         if arg not in ['data', 'outfile', 'errfile',
                        'verbose'] and getattr(args, arg) != None:
             param_dict[arg] = getattr(args, arg)
-            print(arg, ':', getattr(args, arg))#, file=args.outfile)
+            print(arg, ':', getattr(args, arg))  # , file=args.outfile)
 
     # get the total number of models being tested from param_dict
     n_models = 1
@@ -236,7 +242,6 @@ def main():
     # with redirect_stderr(args.outfile):
     # results = model_search(mlpr, train_dict, param_dict, args.verbose)
 
-
     # load training data from train_dict
     train_features = [train_dict[params].data.flatten()
                       for params in train_dict]
@@ -244,7 +249,8 @@ def main():
 
     # perform grid search using selected model, data, and params
     with redirect_stdout(args.outfile):
-        cv = GridSearchCV(mlpr, param_dict, n_jobs=-1, verbose=args.verbose)
+        cv = GridSearchCV(mlpr, param_dict, n_jobs=-1,
+                          verbose=args.verbose, cv=args.cross_val)
         cv.fit(train_features, train_labels)
         results = cv.cv_results_
 
@@ -252,13 +258,13 @@ def main():
     for i in range(1, n_models + 1):
         candidates = np.flatnonzero(results['rank_test_score'] == i)
         for candidate in candidates:
-            print('\n', f'Model with rank: {i}')#, file=args.outfile)
+            print('\n', f'Model with rank: {i}')  # , file=args.outfile)
             print("Mean validation score: {0:.3f} (std: {1:.3f})"
                   .format(results['mean_test_score'][candidate],
-                          results['std_test_score'][candidate]))#,
-                  #file=args.outfile)
-            print(f"Parameters: {results['params'][candidate]}")#,
-                  #file=args.outfile)
+                          results['std_test_score'][candidate]))  # ,
+            # file=args.outfile)
+            print(f"Parameters: {results['params'][candidate]}")  # ,
+            # file=args.outfile)
 
 
 # --------------------------------------------------
