@@ -14,8 +14,8 @@ def worker_func(args):
     return func_ex(p, ns, pts_l)
 
 
-def generating_data(params_list, theta_list, func, ns, pts_l,
-                    logs=None, bootstrap=False, norm=True, ncpu=None):
+def generating_data(params_list, theta_list, func, ns, pts_l, logs=None,
+                    sample=True, norm=True, bootstrap=False, ncpu=None):
     '''Parallelized version for generating data using multiprocessing.
     If npcu=None, it will use all the CPUs on the machine. 
     Otherwise user can specify a limit.
@@ -49,8 +49,10 @@ def generating_data(params_list, theta_list, func, ns, pts_l,
                 fs.flat[-1] = 0
                 if theta == 1:
                     fs_tostore = fs
-                else:
+                elif sample:
                     fs_tostore = (theta*abs(fs)).sample()
+                else:
+                    fs_tostore = (theta*abs(fs))
                 if fs_tostore.sum() == 0:
                     pass
                 elif norm:
