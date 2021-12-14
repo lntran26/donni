@@ -1,0 +1,3 @@
+dadi
+scikit-learn == 1.0.1
+mapie == 0.3.1
