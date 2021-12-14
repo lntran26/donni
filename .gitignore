@@ -15,3 +15,4 @@ ml_dadi/*/.ipynb_checkpoints/
 ml_dadi/1d_2epoch/test.ipynb
 bin/msprime/simulation2.ipynb
 archive
+out
