@@ -16,3 +16,4 @@ ml_dadi/1d_2epoch/test.ipynb
 bin/msprime/simulation2.ipynb
 archive
 out
+/tests/jupyter_nb
