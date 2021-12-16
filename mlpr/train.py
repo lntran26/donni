@@ -1,4 +1,4 @@
-"""Module for training mapie MLPR with dadi-simulated data"""
+"""Module for training MLPR with dadi-simulated data"""
 import pickle
 from sklearn.neural_network import MLPRegressor
 from mapie.regression import MapieRegressor
@@ -8,13 +8,17 @@ import numpy as np
 def train(mlpr_spec: dict, mlpr_dir: str, data_dir: str, mapie=True):
     '''
     Input:
-        model_spec: dictionary of MLPR architecture specification
-        model_dir: output directory to save trained models
-        data_dir: path to train data are stored
+        mlpr_spec: dictionary of MLPR architecture specification
+        mlpr_dir: output directory to save trained model(s)
+        data_dir: path to where train data (pickle file) are stored
         where data as a dictionary of training data, where keys are labels
         as tuples and values are dadi fs objects
         mapie: if False will use sklearn mlpr with multioutput option
         if True (default) will use mapie mlpr with single-output option'''
+    # data dir needs to be changed into just data
+    # so as to handle list of data dict since generate data
+    # generate multiple theta case
+
 
     # Load training data and parse into input and corresponding labels
     data_dict = pickle.load(open(data_dir, 'rb'))

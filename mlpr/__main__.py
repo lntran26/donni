@@ -29,8 +29,9 @@ def dadi_ml_parser():
     ## subcommand for generate_data
     generate_data_parser = subparsers.add_parser('generate_data')
     generate_data_parser.set_defaults(func=run_generate_data)
+    dem_model_list = []
     generate_data_parser.add_argument('model',
-                                      choices=[])  
+                                      choices=dem_model_list)  
     # model will dictate params_list, func, and logs
     generate_data_parser.add_argument('ns')
     generate_data_parser.add_argument('pts_l')  
@@ -53,14 +54,14 @@ def dadi_ml_parser():
 
 
     ## subcommand for predict
-    # predict_parser = subparsers.add_parser("predict")
-    # predict_parser.set_defaults(func=run_predict)
-    ## need to handle dir for multiple models for mapie
-    ## single dir for sklearn models
-    # predict_parser.add_argument("model_dir")
-    # predict_parser.add_argument("output_dir")
-    # predict_parser.add_argument("text_dir")
-    # predict_parser.add_argument("--evaluate", dest='reference_dir')
+    predict_parser = subparsers.add_parser("predict")
+    predict_parser.set_defaults(func=run_predict)
+    # need to handle dir for multiple models for mapie
+    # single dir for sklearn models
+    predict_parser.add_argument("model_dir")
+    predict_parser.add_argument("output_dir")
+    predict_parser.add_argument("text_dir")
+    predict_parser.add_argument("--evaluate", dest='reference_dir')
 
 
     ## subcommand for plot
@@ -75,5 +76,5 @@ def main(arg_list=None):
     args.func(args)
 
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()

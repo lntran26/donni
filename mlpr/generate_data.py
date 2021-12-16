@@ -66,7 +66,7 @@ if __name__ == "__main__":
     # specify param in log scale
     p_logs = [True, False]
     thetas = [1]
-    n_samples = 100
+    n_samples = 500
 
     # generate params
     import random
@@ -85,4 +85,4 @@ if __name__ == "__main__":
     # save data
     import pickle
     pickle.dump(data, open(
-        '../tests/test_data/1d_2epoch_100fs_exclude', 'wb'), 2)
+        '../tests/test_data/1d_2epoch_500fs_exclude', 'wb'), 2)
