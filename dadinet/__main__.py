@@ -2,28 +2,23 @@
 import argparse
 import pickle
 from inspect import getmembers, isfunction
-import dadi_dem_models
+import dadinet.dadi_dem_models as models
 
 # get demographic model names and functions from dadi_dem_models
-model_name, model_func = zip(*getmembers(dadi_dem_models, isfunction))
+model_name, model_func = zip(*getmembers(models, isfunction))
 dem_dict = dict(zip(model_name, model_func))
 
 
 def run_generate_data(args):
     '''Method to generate data given inputs from the
     generate_data subcommand'''
-    from generate_data import generate_fs
+
+    from dadinet.generate_data import generate_fs
     # get dem function from input model name
     func = dem_dict[args.model]
-    # # for debugging only
-    # print(func.__name__)
 
     # get params specifications for model
     dadi_func, params_list, logs = func(args.n_samples)
-    # # for debugging only
-    # print(dadi_func.__name__)
-    # print(params_list)
-    # print(logs)
 
     # generate data
     data = generate_fs(dadi_func, params_list, logs,
@@ -32,31 +27,37 @@ def run_generate_data(args):
                        args.normalize, args.bootstrap,
                        args.n_bstr, args.n_cpu)
 
-    # # for debugging only
-    # print(len(data))
-    # print(data[0])
-    # print(type(data[0]))
-    # print(type(list(data[0].values())[0]))
-    # print(list(data[0].values())[0].shape)
-    # print(list(data[0].values())[0].shape[0])
-    # print(len(list(data[0].values())[0].shape))
-    
-
     # save data to output dir
     pickle.dump(data, open(args.outdir, 'wb'), 2)
 
 
-def run_train(args):    
+def run_train(args):
     '''Method to train MLPR given inputs from the
     train subcommand'''
-    from train import train
+    
+    from dadinet.train import train
     ...
 
 
 def run_predict(args):
     '''Method to get prediction given inputs from the
     predict subcommand'''
-    from predict import predict
+    
+    from dadinet.predict import predict
+    ...
+
+
+def run_plot(args):
+    '''Method to plot outputs'''
+    
+    from dadinet.plot import plot
+    ...
+
+
+def run_tune(args):
+    '''Method to use hyperband for parameter tuning'''
+    
+    from dadinet.tune import tune
     ...
 
 
@@ -67,7 +68,7 @@ def dadi_ml_parser():
         description='Machine learning applications for dadi',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    subparsers = parser.add_subparsers(required=True)
+    subparsers = parser.add_subparsers(required=True, dest="subcommand")
 
     # subcommand for generate_data
     generate_data_parser = subparsers.add_parser(
@@ -140,17 +141,18 @@ def dadi_ml_parser():
     # predict_parser.add_argument("text_dir")
     # predict_parser.add_argument("--evaluate", dest='reference_dir')
 
-    # subcommand for stat
-    stat_parser = subparsers.add_parser(
-        "stat", help='Get prediction scores and statistics')
 
     # subcommand for plot
     plot_parser = subparsers.add_parser(
         "plot", help='Plot prediction results and statistics')
+    plot_parser.set_defaults(func=run_plot)
+    plot_parser.add_argument("data_dir")
 
     # subcommand for tune
     tune_parser = subparsers.add_parser(
         "tune", help='MLPR hyperparam tuning with hyperband')
+    tune_parser.set_defaults(func=run_tune)
+    tune_parser.add_argument("data_dir")
 
     return parser
 
@@ -170,7 +172,7 @@ def main(arg_list=None):
     args.func(args)
 
 
-if __name__ == "__main__":
-    # this will be commented out in the final code
-    # since main() will be accessed from the command line
-    main()
+# if __name__ == "__main__":
+#     # this will be commented out in the final code
+#     # since main() will be accessed from the command line
+#     main()
