@@ -8,4 +8,8 @@ test_generate_data:
 
 test_train:
 	pytest -xv --flake8 test_train.py
-	pylint *.py
+	pylint test_train.py
+
+test_integration:
+	pytest -xv --flake8 test_integration.py
+	pylint test_integration.py
