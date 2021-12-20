@@ -39,33 +39,32 @@ def run(model, sample_size, thetas, n_samples):
         assert pop_size == sample_size[i] + 1
 
 
-# test generate data for different demographic models, multiple thetas
 def test_run_two_epoch():
-    '''Test generate 20 FS datasets for the two_epoch model
-    with one population sample size 20 and theta=1'''
+    '''Generate three 10 FS datasets for the two_epoch model
+    with one population sample size 20 and three thetas: 1, 1e4, 1e2'''
 
-    run(models.two_epoch, [20], [1], 20)
+    run(models.two_epoch, [20], [1, 10000, 100], 10)
 
 
 def test_run_growth():
-    '''Test generate 10 FS datasets for the growth model
-    with one population sample size 15 and two thetas 1 and 1000'''
+    '''Generate two 20 FS datasets for the growth model
+    with one population sample size 100 and two thetas: 1 and 1e3'''
 
-    run(models.growth, [15], [1, 1000], 10)
+    run(models.growth, [100], [1, 1000], 20)
 
 
 def test_run_split_mig():
-    '''Test generate 5 FS datasets for the split migration model
-    with two populations sample sizes 10,15 and two thetas 1 and 100'''
+    '''Test generate one 5 FS datasets for the split migration model
+    with two populations sample sizes 10, 15 and theta 100'''
 
-    run(models.split_mig, [10, 15], [1, 100], 5)
+    run(models.split_mig, [10, 15], [100], 5)
 
 
 def test_run_IM():
-    '''Test generate 3 FS datasets for the IM model
-    with two populations sample sizes 20,21 and two thetas 1 and 10000'''
+    '''Test generate one 3 FS datasets for the IM model
+    with two populations sample sizes 30, 21 and theta 1000'''
 
-    run(models.IM, [20, 21], [1, 1000], 3)
+    run(models.IM, [30, 21], [1000], 3)
 
 
 # test generate data for bootstrap data
