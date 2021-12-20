@@ -1,27 +1,57 @@
 """Command-line interface setup for dadi-ml"""
 import argparse
+import pickle
+from inspect import getmembers, isfunction
+import dadi_dem_models
+
+# get demographic model names and functions from dadi_dem_models
+model_name, model_func = zip(*getmembers(dadi_dem_models, isfunction))
+dem_dict = dict(zip(model_name, model_func))
 
 
 def run_generate_data(args):
-    from generate_data import generate_data
-    import dadi_dem_models
+    '''Method to generate data given inputs from the
+    generate_data subcommand'''
+    from generate_data import generate_fs
+    # get dem function from input model name
+    func = dem_dict[args.model]
+    # # for debugging only
+    # print(func.__name__)
 
-    # method to get function from model name
-    args.model
-    ...
+    # get params specifications for model
+    dadi_func, params_list, logs = func(args.n_samples)
+    # # for debugging only
+    # print(dadi_func.__name__)
+    # print(params_list)
+    # print(logs)
+
+    # generate data
+    data = generate_fs(dadi_func, params_list, logs,
+                       args.theta, args.sample_sizes,
+                       args.grids, args.sampling,
+                       args.normalize, args.bootstrap,
+                       args.n_bstr, args.n_cpu)
+
+    # # for debugging only
+    # print(len(data))
+    # print(data[0])
+
+    # save data to output dir
+    pickle.dump(data, open(args.outdir, 'wb'), 2)
 
 
-def run_train(args):
+def run_train(args):    
+    '''Method to train MLPR given inputs from the
+    train subcommand'''
     from train import train
     ...
 
 
 def run_predict(args):
+    '''Method to get prediction given inputs from the
+    predict subcommand'''
     from predict import predict
     ...
-
-
-dadi_dem_models = ['two_epoch', 'growth', 'split_mig', 'IM']
 
 
 def dadi_ml_parser():
@@ -38,23 +68,50 @@ def dadi_ml_parser():
         'generate_data',
         help='Generate frequency spectra datasets')
     generate_data_parser.set_defaults(func=run_generate_data)
-    generate_data_parser.add_argument('--model', required=True, type=str,
-                                      choices=dadi_dem_models)
+
+    generate_data_parser.add_argument('--model', type=str,
+                                      choices=model_name,
+                                      required=True,
+                                      help="Name of dadi demographic model",)
     # model will dictate params_list, func, and logs
-    generate_data_parser.add_argument('--ns', required=True)
-    generate_data_parser.add_argument('--grids', required=True)
+    generate_data_parser.add_argument('--n_samples', type=_pos_int,
+                                      required=True,
+                                      help="How many FS to generate",)
+    generate_data_parser.add_argument('--sample_sizes', type=_pos_int,
+                                      nargs='+', action='store',
+                                      dest='sample_sizes',
+                                      required=True,
+                                      help="Sample sizes of populations",)
+    generate_data_parser.add_argument('--outdir',
+                                      type=str, required=True,
+                                      help="Path to save generated data")
+    generate_data_parser.add_argument('--grids', type=_pos_int,
+                                      nargs=3, help='Sizes of grids',
+                                      default=[40, 50, 60])
     generate_data_parser.add_argument('--theta', nargs='*', type=_pos_int,
                                       action='store',
-                                      dest='theta', default=[1])
-    generate_data_parser.add_argument('n_samples')
-    generate_data_parser.add_argument('--sample')
-    generate_data_parser.add_argument('--normalize')
-    generate_data_parser.add_argument('--bootstrap')
-    generate_data_parser.add_argument('--n_bstr')
-    generate_data_parser.add_argument('--n_cpu')
-    generate_data_parser.add_argument('outdir',
-                                      type=str,
-                                      help='Path to save generated data')
+                                      dest='theta',
+                                      help="Factor to multiply FS with",
+                                      default=[1])
+    generate_data_parser.add_argument('--sampling',
+                                      action='store_true',
+                                      help="Whether to sample FS when \
+                                          theta > 1",
+                                      default=True)
+    generate_data_parser.add_argument('--normalize', action='store_true',
+                                      help="Whether to normalize FS when \
+                                           theta > 1",
+                                      default=True)
+    generate_data_parser.add_argument('--bootstrap', action='store_true',
+                                      help="Whether to generate bootstrap \
+                                           FS data",
+                                      default=False)
+    generate_data_parser.add_argument('--n_bstr', type=_pos_int,
+                                      help="Number of bootstrap FS to generate\
+                                         for each FS (if bootstrap)",
+                                      default=200)
+    generate_data_parser.add_argument('--n_cpu', type=_pos_int,
+                                      help="Number of CPUs to use")
 
     # subcommand for train
     train_parser = subparsers.add_parser(
@@ -96,7 +153,7 @@ def _pos_int(input_int):
     """
     Check positive int."""
     if int(input_int) < 0:
-        raise argparse.ArgumentTypeError("Theta must be positive")
+        raise argparse.ArgumentTypeError(f"{input_int} is not a positive int")
     return int(input_int)
 
 
@@ -108,4 +165,6 @@ def main(arg_list=None):
 
 
 if __name__ == "__main__":
+    # this will be commented out in the final code
+    # since main() will be accessed from the command line
     main()

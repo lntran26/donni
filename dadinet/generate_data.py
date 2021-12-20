@@ -11,7 +11,7 @@ def worker_func(args):
     return func_ex(p, ns, pts_l)
 
 
-def generate_data(params_list, func, logs, theta_list, ns, pts_l,
+def generate_fs(func, params_list, logs, theta_list, ns, pts_l,
                   sample=True, norm=True, bootstrap=False,
                   n_bstr=200, ncpu=None):
     '''Parallelized version for generating data using multiprocessing.
@@ -80,7 +80,7 @@ if __name__ == "__main__":
         dem_params.append((log_nu, T))
 
     # generate data
-    data = generate_data(dem_params, dem, p_logs, thetas, sample_size, pts)
+    data = generate_fs(dem, dem_params, p_logs, thetas, sample_size, pts)
 
     # save data
     import pickle

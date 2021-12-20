@@ -18,7 +18,7 @@ def two_epoch(n_samples):
         nu = random.random() * 4 - 2
         T = random.random() * 1.9 + 0.1
         params_list.append((nu, T))
-    return params_list, func, logs
+    return func, params_list, logs
 
 
 def growth(n_samples):
@@ -35,7 +35,7 @@ def growth(n_samples):
         nu = random.random() * 4 - 2
         T = random.random() * 1.9 + 0.1
         params_list.append((nu, T))
-    return params_list, func, logs
+    return func, params_list, logs
 
 
 def split_mig(n_samples):
@@ -53,7 +53,7 @@ def split_mig(n_samples):
         T = random.random() * 1.9 + 0.1
         m = random.random() * 9 + 1
         params_list.append((nu1, nu2, T, m))
-    return params_list, func, logs
+    return func, params_list, logs
 
 
 def IM(n_samples):
@@ -73,4 +73,4 @@ def IM(n_samples):
         m12 = random.random() * 9 + 1
         m21 = random.random() * 9 + 1
         params_list.append((s, nu1, nu2, T, m12, m21))
-    return params_list, func, logs
+    return func, params_list, logs
