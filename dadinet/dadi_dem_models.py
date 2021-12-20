@@ -17,7 +17,6 @@ def two_epoch(n_samples):
         # nu range: 0.01-100; T range: 0.1-2
         nu = random.random() * 4 - 2
         T = random.random() * 1.9 + 0.1
-        # if T/10**log_nu <= 5: # exclude certain T & nu combo
         params_list.append((nu, T))
     return params_list, func, logs
 
