@@ -6,8 +6,9 @@ setup(
     description="Machine learning applications for dadi",
     author="Linh Tran",
     packages=["dadinet"],
+    # packges=find_packages(),
     install_requires=[
-        "dadi",
+        "dadi == 2.1.1",
         "scikit-learn == 1.0.1",
         "mapie == 0.3.1"
     ],
