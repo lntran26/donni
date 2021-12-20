@@ -5,11 +5,11 @@ setup(
     version="0.0.1",
     description="Machine learning applications for dadi",
     author="Linh Tran",
-    packages=find_packages(),
+    packages=["dadinet"],
     install_requires=[
         "dadi",
-        "scikit-learn",
-        "mapie"
+        "scikit-learn == 1.0.1",
+        "mapie == 0.3.1"
     ],
-    entry_points={"console_scripts": ["dadi-ml=mlpr.__main__:main"]},
+    entry_points={"console_scripts": ["dadi-ml=dadinet.__main__:main"]},
 )
