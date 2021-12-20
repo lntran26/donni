@@ -9,7 +9,7 @@ To install, clone this repo and run the following command
 ```python3 setup.py install```
 
 ## Requirements
-1. Python 3.7+
+1. Python 3.9+
 2. [dadi](https://dadi.readthedocs.io/en/latest/)
 3. [scikit-learn](https://scikit-learn.org/0.24/) 1.0.1
 4. [MAPIE](https://mapie.readthedocs.io/en/latest/) 0.3.1
