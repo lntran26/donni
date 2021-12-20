@@ -1,8 +1,11 @@
 test:
-	pytest -xv --pylint --flake8 *.py
+	pytest -xv --flake8 *.py
+	pylint *.py
 
 test_generate_data:
-	pytest -xv --pylint --flake8 test_generate_data.py
+	pytest -xv --flake8 test_generate_data.py
+	pylint test_generate_data.py
 
 test_train:
-	pytest -xv --pylint --flake8 test_train.py
+	pytest -xv --flake8 test_train.py
+	pylint *.py
