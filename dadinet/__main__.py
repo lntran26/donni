@@ -35,6 +35,12 @@ def run_generate_data(args):
     # # for debugging only
     # print(len(data))
     # print(data[0])
+    # print(type(data[0]))
+    # print(type(list(data[0].values())[0]))
+    # print(list(data[0].values())[0].shape)
+    # print(list(data[0].values())[0].shape[0])
+    # print(len(list(data[0].values())[0].shape))
+    
 
     # save data to output dir
     pickle.dump(data, open(args.outdir, 'wb'), 2)
