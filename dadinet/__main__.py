@@ -23,7 +23,8 @@ def run_generate_data(args):
     # generate data
     data = generate_fs(dadi_func, params_list, logs,
                        args.theta, args.sample_sizes,
-                       args.grids, args.sampling,
+                       args.grids, 
+                       # args.sampling,
                        args.normalize, args.bootstrap,
                        args.n_bstr, args.n_cpu)
 
@@ -95,16 +96,21 @@ def dadi_ml_parser():
     generate_data_parser.add_argument('--grids', type=_pos_int,
                                       nargs=3, help='Sizes of grids',
                                       default=[40, 50, 60])
+
     generate_data_parser.add_argument('--theta', nargs='*', type=_pos_int,
                                       action='store',
                                       dest='theta',
                                       help="Factor to multiply FS with",
                                       default=[1])
-    generate_data_parser.add_argument('--sampling',
-                                      action='store_true',
-                                      help="Whether to sample FS when \
-                                          theta > 1",
-                                      default=True)
+    # generate_data_parser.add_argument('--theta', type=_pos_int,
+    #                                   help="Factor to multiply FS with",
+    #                                   default=1)
+
+    # generate_data_parser.add_argument('--sampling',
+    #                                   action='store_true',
+    #                                   help="Whether to sample FS when \
+    #                                       theta > 1",
+    #                                   default=True)
     generate_data_parser.add_argument('--normalize', action='store_true',
                                       help="Whether to normalize FS when \
                                            theta > 1",
