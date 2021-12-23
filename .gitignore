@@ -3,7 +3,7 @@
 __pycache__
 archive
 out
-tests/*.ipynb
+*.ipynb
 build/*
 dadi_ml.egg-info/*
 dist/*
