@@ -6,7 +6,7 @@ Diffusion Approximation of Demographic Inference ([dadi](https://dadi.readthedoc
 ## Installation
 To install, clone this repo and run the following command
 
-```python3 setup.py install```
+```python setup.py install```
 
 ## Requirements
 1. Python 3.9+
@@ -17,4 +17,3 @@ To install, clone this repo and run the following command
 
 ## References
 1. [Gutenkunst et al., *PLoS Genet*, 2009.](https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1000695)
-2. 
