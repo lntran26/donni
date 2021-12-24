@@ -1,6 +1,7 @@
 '''
 Method for generating dadi-simulated fs datasets
 '''
+import sys
 from multiprocessing import Pool
 import dadi
 
@@ -15,8 +16,9 @@ def worker_func(args: tuple):
     return func_ex(p, ns, pts_l)
 
 
-def generate_fs(func, params_list, logs: list[bool], theta: int, ns: int, pts_l,
-                norm=True, bootstrap=False, n_bstr=200, ncpu=None) -> dict:
+def generate_fs(func, params_list, logs: list[bool], theta: int, ns, pts_l,
+                norm=True, sampling=True, bootstrap=False, n_bstr=200,
+                ncpu=None) -> dict:
     '''
     Parallelized generation of a dataset of multiple fs based on an input 
     demographic model and a list of several demographic parameters
@@ -25,7 +27,7 @@ def generate_fs(func, params_list, logs: list[bool], theta: int, ns: int, pts_l,
         params_list: demographic model param sets
         logs: indicate which dem param is in log10 values
         theta: value of theta
-        ns: population sample size
+        ns: population sample size(s)
         pts_l: dadi extrapolation grid values
         norm: whether to sample from and normalize the fs
         bootstrap: whether to generate bootstrap data
@@ -43,32 +45,31 @@ def generate_fs(func, params_list, logs: list[bool], theta: int, ns: int, pts_l,
 
     data_dict = {}
     for params, fs in zip(params_list, fs_list):
-        # mask corners of fs
+        # assign zeros to masked entries of fs
         fs.flat[0] = 0
         fs.flat[-1] = 0
 
         # generate data for bootstrapping
         if bootstrap:
+            if theta == 1:
+                sys.exit("Cannot bootstrap fs with theta=1")
             fs_tostore = (theta*abs(fs)).sample()
             data_dict[params] = [fs_tostore, []]
-            for i in range(n_bstr):  # num bootstrap samples for each fs
+            for _ in range(n_bstr):  # num bootstrap samples for each fs
                 data_dict[params][1].append(fs_tostore.sample())
 
         # generate regular data
         else:
-            if theta == 1:
-                fs_tostore = fs
-            else:  # theta != 1 for noisy or non-normalized data
-                if norm:  # sample and normalize
-                    fs_tostore = (theta*abs(fs).sample())
-                    if fs_tostore.sum() == 0:  # check zero fs after sampling
-                        pass
-                    else:
-                        fs_tostore = fs_tostore/fs_tostore.sum()
-                else:  # no sampling and normalizing
-                    fs_tostore = (theta*abs(fs))
-
-            # save data
+            fs_tostore = theta*abs(fs)
+            # sampling step, skip if theta==1
+            if sampling and theta != 1:
+                fs_tostore = fs_tostore.sample()
+                # rerun sampling step if fs.sum() is zero
+                while fs_tostore.sum() == 0:
+                    fs_tostore = theta*abs(fs).sample()
+            # normalization step
+            if norm:
+                fs_tostore = fs_tostore/fs_tostore.sum()
             data_dict[params] = fs_tostore
 
     return data_dict

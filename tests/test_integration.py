@@ -50,11 +50,10 @@ def run_generate_data_sub(args, args_expected):
         # check that program produces an output file
         assert os.path.isfile(outfile)
         # check that output file has the correct format
+        # this is only done briefly here as test_generate_data.py
+        # is already checking output data more rigorously
         data = pickle.load(open(outfile, 'rb'))
-        assert len(data) == len(args_expected['thetas'])
-        assert len(data[0]) == args_expected['n_samples']
-        for i, pop_size in enumerate(list(data[0].values())[0].shape):
-            assert pop_size == args_expected['sample_sizes'][i] + 1
+        assert len(data) == args_expected['n_samples']
 
     finally:  # remove output file
         if os.path.isfile(outfile):
@@ -65,9 +64,9 @@ def test_run_generate_data_sub_1():
     '''First generate_data test'''
 
     args = ['--model two_epoch', '--n_samples 5',
-            '--sample_sizes 10', '--theta 100 1000']
+            '--sample_sizes 10', '--theta 1000']
     args_expected = {'n_samples': 5,
-                     'sample_sizes': [10], 'thetas': [100, 1e3]}
+                     'sample_sizes': [10], 'thetas': 1000}
     run_generate_data_sub(args, args_expected)
 
 
@@ -77,5 +76,15 @@ def test_run_generate_data_sub_2():
     args = ['--model split_mig', '--n_samples 1',
             '--sample_sizes 15 20']
     args_expected = {'n_samples': 1,
-                     'sample_sizes': [15, 20], 'thetas': [1]}
+                     'sample_sizes': [15, 20], 'thetas': 1}
+    run_generate_data_sub(args, args_expected)
+
+
+def test_run_generate_data_bstr():
+    '''Generate bootstrap data test'''
+
+    args = ['--model two_epoch', '--n_samples 5',
+            '--sample_sizes 10', '--theta 100', '--bootstrap']
+    args_expected = {'n_samples': 5,
+                     'sample_sizes': [10], 'thetas': 1000}
     run_generate_data_sub(args, args_expected)

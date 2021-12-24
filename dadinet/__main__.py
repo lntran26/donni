@@ -23,10 +23,8 @@ def run_generate_data(args):
     # generate data
     data = generate_fs(dadi_func, params_list, logs,
                        args.theta, args.sample_sizes,
-                       args.grids, 
-                       # args.sampling,
-                       args.normalize, args.bootstrap,
-                       args.n_bstr, args.n_cpu)
+                       args.grids, args.normalize, args.sampling,
+                       args.bootstrap, args.n_bstr, args.n_cpu)
 
     # save data to output dir
     pickle.dump(data, open(args.outdir, 'wb'), 2)
@@ -35,7 +33,7 @@ def run_generate_data(args):
 def run_train(args):
     '''Method to train MLPR given inputs from the
     train subcommand'''
-    
+
     from dadinet.train import train
     ...
 
@@ -43,21 +41,21 @@ def run_train(args):
 def run_predict(args):
     '''Method to get prediction given inputs from the
     predict subcommand'''
-    
+
     from dadinet.predict import predict
     ...
 
 
 def run_plot(args):
     '''Method to plot outputs'''
-    
+
     from dadinet.plot import plot
     ...
 
 
 def run_tune(args):
     '''Method to use hyperband for parameter tuning'''
-    
+
     from dadinet.tune import tune
     ...
 
@@ -96,24 +94,16 @@ def dadi_ml_parser():
     generate_data_parser.add_argument('--grids', type=_pos_int,
                                       nargs=3, help='Sizes of grids',
                                       default=[40, 50, 60])
-
-    generate_data_parser.add_argument('--theta', nargs='*', type=_pos_int,
-                                      action='store',
-                                      dest='theta',
+    generate_data_parser.add_argument('--theta', type=_pos_int,
                                       help="Factor to multiply FS with",
-                                      default=[1])
-    # generate_data_parser.add_argument('--theta', type=_pos_int,
-    #                                   help="Factor to multiply FS with",
-    #                                   default=1)
-
-    # generate_data_parser.add_argument('--sampling',
-    #                                   action='store_true',
-    #                                   help="Whether to sample FS when \
-    #                                       theta > 1",
-    #                                   default=True)
+                                      default=1)
     generate_data_parser.add_argument('--normalize', action='store_true',
                                       help="Whether to normalize FS when \
                                            theta > 1",
+                                      default=True)
+    generate_data_parser.add_argument('--sampling', action='store_true',
+                                      help="Whether to sample FS when \
+                                          theta > 1",
                                       default=True)
     generate_data_parser.add_argument('--bootstrap', action='store_true',
                                       help="Whether to generate bootstrap \
@@ -146,7 +136,6 @@ def dadi_ml_parser():
     # predict_parser.add_argument("output_dir")
     # predict_parser.add_argument("text_dir")
     # predict_parser.add_argument("--evaluate", dest='reference_dir')
-
 
     # subcommand for plot
     plot_parser = subparsers.add_parser(
