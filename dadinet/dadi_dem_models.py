@@ -14,7 +14,8 @@ def two_epoch(n_samples):
     params_list = []
     while len(params_list) < n_samples:
         # pick random values in specified range
-        # nu range: 0.01-100; T range: 0.1-2
+        # nu range: 0.01-100 --> log10 nu range: -2 to 2
+        # T range: 0.1-2
         nu = random.random() * 4 - 2
         T = random.random() * 1.9 + 0.1
         params_list.append((nu, T))
