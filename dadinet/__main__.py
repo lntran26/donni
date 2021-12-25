@@ -9,6 +9,7 @@ model_name, model_func = zip(*getmembers(models, isfunction))
 dem_dict = dict(zip(model_name, model_func))
 
 
+# run_ methods for importing methods from other modules
 def run_generate_data(args):
     '''Method to generate data given inputs from the
     generate_data subcommand'''
@@ -35,7 +36,16 @@ def run_train(args):
     train subcommand'''
 
     from dadinet.train import train
-    ...
+
+    # # Load training data and parse into input and corresponding labels
+    # data_dict = pickle.load(open(data_dir, 'rb'))
+
+    # run_train
+
+    # save separate model for each parameter in the data
+    index = i+1 if mapie else 'all'
+    pickle.dump(param_predictor, open(
+        f'{mlpr_dir}/param_{index}_predictor', 'wb'), 2)
 
 
 def run_predict(args):
@@ -53,11 +63,35 @@ def run_plot(args):
     ...
 
 
-def run_tune(args):
-    '''Method to use hyperband for parameter tuning'''
+# def run_tune(args):
+#     '''Method to use hyperband for parameter tuning'''
 
-    from dadinet.tune import tune
-    ...
+#     from dadinet.tune import tune
+#     ...
+
+
+# helper methods for custom type checks and parsing
+def _pos_int(input_int):
+    """
+    Check positive integer
+    """
+
+    if int(input_int) < 0:
+        raise argparse.ArgumentTypeError(f"{input_int} is not a positive int")
+    return int(input_int)
+
+
+def _tuple_of_pos_int(input_str):
+    """
+    Custom type check for hidden layer sizes input from command line.
+    Convert comma-separated string input to tuples of pos int.
+    """
+
+    single_tup_int = map(int, input_str.split(','))
+    if any(layer_size < 1 for layer_size in single_tup_int):
+        raise argparse.ArgumentTypeError(
+            f"invalid tuple_of_pos_int value: '{input_str}'")
+    return tuple(single_tup_int)
 
 
 def dadi_ml_parser():
@@ -79,7 +113,7 @@ def dadi_ml_parser():
                                       choices=model_name,
                                       required=True,
                                       help="Name of dadi demographic model",)
-    # model will dictate params_list, func, and logs
+    # --model will dictate params_list, func, and logs
     generate_data_parser.add_argument('--n_samples', type=_pos_int,
                                       required=True,
                                       help="How many FS to generate",)
@@ -98,17 +132,16 @@ def dadi_ml_parser():
                                       help="Factor to multiply FS with",
                                       default=1)
     generate_data_parser.add_argument('--normalize', action='store_true',
-                                      help="Whether to normalize FS when \
+                                      help="Whether to normalize FS when\
                                            theta > 1",
                                       default=True)
     generate_data_parser.add_argument('--sampling', action='store_true',
-                                      help="Whether to sample FS when \
+                                      help="Whether to sample FS when\
                                           theta > 1",
                                       default=True)
     generate_data_parser.add_argument('--bootstrap', action='store_true',
-                                      help="Whether to generate bootstrap \
-                                           FS data",
-                                      default=False)
+                                      help="Whether to generate bootstrap\
+                                           FS data")
     generate_data_parser.add_argument('--n_bstr', type=_pos_int,
                                       help="Number of bootstrap FS to generate\
                                          for each FS (if bootstrap)",
@@ -120,14 +153,26 @@ def dadi_ml_parser():
     train_parser = subparsers.add_parser(
         "train", help='Train MLPR with frequency spectra data')
     train_parser.set_defaults(func=run_train)
-    train_parser.add_argument("model_dir")
-    train_parser.add_argument("data_dir")
-    # add flags for specifying different mlpr hyperparam
-    # train_parser.add_argument("--epochs", type=int, default=10)
+    train_parser.add_argument("--data_dir", type=str,
+                              required=True,
+                              help="Input training data path")
+    train_parser.add_argument("--mlpr_dir", type=str,
+                              required=True,
+                              help="Path to save output trained MLPR")
+    train_parser.add_argument("--sklearn", action='store_true',
+                              help="Whether to train multioutput sklearn MLPR\
+                                   instead of mapie single-output MLPRs")
+    # flags for specifying different mlpr hyperparams
+    train_parser.add_argument('-hls',
+                              '--hidden_layer_sizes',
+                              metavar='TUPLE OF POSITIVE INT',
+                              type=_tuple_of_pos_int,
+                              help='Use commas to separate layers',
+                              default=(100,))
 
     # subcommand for predict
     predict_parser = subparsers.add_parser(
-        "predict", help='Use trained MLPR to predict demographic parameters \
+        "predict", help='Use trained MLPR to predict demographic parameterss\
             from frequency spectra data')
     predict_parser.set_defaults(func=run_predict)
     # need to handle dir for multiple models for mapie
@@ -135,6 +180,8 @@ def dadi_ml_parser():
     predict_parser.add_argument("model_dir")
     # predict_parser.add_argument("output_dir")
     # predict_parser.add_argument("text_dir")
+
+    # need to have stat flags for getting scores and prediction intervals
     # predict_parser.add_argument("--evaluate", dest='reference_dir')
 
     # subcommand for plot
@@ -143,21 +190,13 @@ def dadi_ml_parser():
     plot_parser.set_defaults(func=run_plot)
     plot_parser.add_argument("data_dir")
 
-    # subcommand for tune
-    tune_parser = subparsers.add_parser(
-        "tune", help='MLPR hyperparam tuning with hyperband')
-    tune_parser.set_defaults(func=run_tune)
-    tune_parser.add_argument("data_dir")
+    # # subcommand for tune
+    # tune_parser = subparsers.add_parser(
+    #     "tune", help='MLPR hyperparam tuning with hyperband')
+    # tune_parser.set_defaults(func=run_tune)
+    # tune_parser.add_argument("data_dir")
 
     return parser
-
-
-def _pos_int(input_int):
-    """
-    Check positive int."""
-    if int(input_int) < 0:
-        raise argparse.ArgumentTypeError(f"{input_int} is not a positive int")
-    return int(input_int)
 
 
 def main(arg_list=None):
@@ -165,9 +204,3 @@ def main(arg_list=None):
     parser = dadi_ml_parser()
     args = parser.parse_args(arg_list)
     args.func(args)
-
-
-# if __name__ == "__main__":
-#     # this will be commented out in the final code
-#     # since main() will be accessed from the command line
-#     main()
