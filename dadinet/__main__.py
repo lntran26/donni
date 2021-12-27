@@ -28,22 +28,44 @@ def run_generate_data(args):
                        args.bootstrap, args.n_bstr, args.n_cpu)
 
     # save data to output dir
-    pickle.dump(data, open(args.outdir, 'wb'), 2)
+    pickle.dump(data, open(args.outfile, 'wb'), 2)
 
 
 def run_train(args):
     '''Method to train MLPR given inputs from the
     train subcommand'''
 
-    from dadinet.train import train
+    from dadinet.train import prep_data, tune, report, get_best_specs, train
 
-    # # Load training data and parse into input and corresponding labels
-    # data_dict = pickle.load(open(data_dir, 'rb'))
+    # Load training data and parse into input and corresponding labels
+    data = pickle.load(open(args.data_file, 'rb'))
+    # prep data
+    X, y = prep_data(data, mapie=args.sklearn)
+    # process input from command line into a dictionary of params
+    param_dict = {}
+    for arg in vars(args):
+        if arg not in ['data_file', 'mlpr_dir', 'sklearn', 'tune', 'max_iter',
+                       'eta', 'cv'] and getattr(args, arg) is not None:
+            param_dict[arg] = getattr(args, arg)
 
-    # run_train
+    # check if running tune then fed to train or train directly
+    if args.tune:
+        # take the arg dict as list values, else check if len=1, then get value in list
+        # args.alpha len = 1 if not tune, len = 2 or more if tune
+        # if len 2 implement distribution, if more leave as list of discrete val
+        all_results = tune(X, y, param_dist, args.max_iter, args.eta, args.cv)
+        # if tune is on, also output search result file
+        pickle.dump(all_results, open(f'{mlpr_dir}/tune_results_raw', 'wb'), 2)
+        # also output printed result
+        with open(f'{mlpr_dir}/tune_results.txt', 'wt') as fh:
+            for i, model in enumerate(all_results):
+                fh.write(f'Model {i+1}:')
+                for j, each_band in enumerate(model):
+                    fh.write(f'Band {j+1}:')
+                    report(all_results[i][j].cv_results_, fh.name, n_top=5)
 
     # save separate model for each parameter in the data
-    index = i+1 if mapie else 'all'
+    index = 'all' if args.sklearn else i+1
     pickle.dump(param_predictor, open(
         f'{mlpr_dir}/param_{index}_predictor', 'wb'), 2)
 
@@ -94,6 +116,14 @@ def _tuple_of_pos_int(input_str):
     return tuple(single_tup_int)
 
 
+def _int_2(input_int):
+    """
+    Check if input is an integer >= 2."""
+    if int(input_int) < 2:
+        raise argparse.ArgumentTypeError("input must be >= 2")
+    return int(input_int)
+
+
 def dadi_ml_parser():
     """Get command-line arguments"""
 
@@ -109,8 +139,7 @@ def dadi_ml_parser():
         help='Generate frequency spectra datasets')
     generate_data_parser.set_defaults(func=run_generate_data)
 
-    generate_data_parser.add_argument('--model', type=str,
-                                      choices=model_name,
+    generate_data_parser.add_argument('--model', type=str, choices=model_name,
                                       required=True,
                                       help="Name of dadi demographic model",)
     # --model will dictate params_list, func, and logs
@@ -118,11 +147,9 @@ def dadi_ml_parser():
                                       required=True,
                                       help="How many FS to generate",)
     generate_data_parser.add_argument('--sample_sizes', type=_pos_int,
-                                      nargs='+', action='store',
-                                      dest='sample_sizes',
-                                      required=True,
+                                      nargs='+', required=True,
                                       help="Sample sizes of populations",)
-    generate_data_parser.add_argument('--outdir',
+    generate_data_parser.add_argument('--outfile',
                                       type=str, required=True,
                                       help="Path to save generated data")
     generate_data_parser.add_argument('--grids', type=_pos_int,
@@ -133,12 +160,10 @@ def dadi_ml_parser():
                                       default=1)
     generate_data_parser.add_argument('--normalize', action='store_true',
                                       help="Whether to normalize FS when\
-                                           theta > 1",
-                                      default=True)
+                                           theta > 1", default=True)
     generate_data_parser.add_argument('--sampling', action='store_true',
                                       help="Whether to sample FS when\
-                                          theta > 1",
-                                      default=True)
+                                          theta > 1", default=True)
     generate_data_parser.add_argument('--bootstrap', action='store_true',
                                       help="Whether to generate bootstrap\
                                            FS data")
@@ -153,26 +178,55 @@ def dadi_ml_parser():
     train_parser = subparsers.add_parser(
         "train", help='Train MLPR with frequency spectra data')
     train_parser.set_defaults(func=run_train)
-    train_parser.add_argument("--data_dir", type=str,
-                              required=True,
-                              help="Input training data path")
-    train_parser.add_argument("--mlpr_dir", type=str,
-                              required=True,
-                              help="Path to save output trained MLPR")
-    train_parser.add_argument("--sklearn", action='store_true',
+    train_parser.add_argument("--data_file", type=str, required=True,
+                              help="Path to input training data")
+    train_parser.add_argument("--mlpr_dir", type=str, required=True,
+                              help="Path to save output trained MLPR(s)")
+    # print best scores after outputing the mlpr model
+    train_parser.add_argument("--sklearn", action='store_false',
                               help="Whether to train multioutput sklearn MLPR\
                                    instead of mapie single-output MLPRs")
+    train_parser.add_argument("--tune", action='store_true',
+                              help="Whether to try a range of hyperparameters\
+                                   to find the best performing MLPRs")
+
+    train_parser.add_argument('--max_iter', type=_int_2,
+                              help='maximum iterations, default None=243')
+    train_parser.add_argument('--eta', type=_int_2,
+                              help='halving factor, default None=3')
+    train_parser.add_argument('--cv', type=_int_2,
+                              help='k-fold cross validation, default None=10')
+
+    # train_parser.add_argument("--hyperparam", type=str, required=True,
+    #                           help="Path to dictionary of MLPR hyperparam")
     # flags for specifying different mlpr hyperparams
-    train_parser.add_argument('-hls',
-                              '--hidden_layer_sizes',
-                              metavar='TUPLE OF POSITIVE INT',
-                              type=_tuple_of_pos_int,
-                              help='Use commas to separate layers',
-                              default=(100,))
+    train_parser.add_argument('--hidden_layer_sizes',
+                              metavar='TUPLE OF POSITIVE INT', nargs='*',
+                              type=_tuple_of_pos_int, default=[(64,)],
+                              help='Use commas to separate layers')
+    train_parser.add_argument('--activation', nargs='*', metavar='NAME',
+                              choices=['identity', 'logistic', 'tanh', 'relu'],
+                              help='options: identity, logistic, tanh, relu',
+                              default=['relu'])
+    train_parser.add_argument('--solver', nargs='*', metavar='NAME',
+                              choices=['lbfgs', 'adam'], default=['adam'],
+                              help='options: lbfgs, adam')  # excluded sgd
+    train_parser.add_argument('--alpha', nargs='*', type=float,
+                              help='L2 penalty regularization param')
+    train_parser.add_argument('--tol', nargs='*', type=float,
+                              help='tolerance for optimization')
+    train_parser.add_argument('--early_stopping', nargs='*', type=bool,
+                              help='Whether to use early stopping')
+    train_parser.add_argument('--beta1', nargs='*', type=float,
+                              help='Exp decay rate of 1st moment in adam')
+    train_parser.add_argument('--beta2', nargs='*', type=float,
+                              help='Exp decay rate of 2nd moment in adam')
+    train_parser.add_argument('--n_iter_no_change', nargs='*', type=int,
+                              help='Max epochs to not meet tol improvement')
 
     # subcommand for predict
     predict_parser = subparsers.add_parser(
-        "predict", help='Use trained MLPR to predict demographic parameterss\
+        "predict", help='Use trained MLPR to predict demographic parameters\
             from frequency spectra data')
     predict_parser.set_defaults(func=run_predict)
     # need to handle dir for multiple models for mapie
