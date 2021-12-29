@@ -8,6 +8,7 @@ from sklearn.neural_network import MLPRegressor
 from mapie.regression import MapieRegressor
 from sklearn.experimental import enable_halving_search_cv
 from sklearn.model_selection import HalvingRandomSearchCV
+from sklearn.model_selection import cross_val_score
 
 
 def prep_data(data: dict, mapie=True):
@@ -37,7 +38,14 @@ def prep_data(data: dict, mapie=True):
     return X_input, y_label_unpack
 
 
-def tune(X_input, y_label, param_dist, max_iter=81, eta=3, cv=10):
+def make_distribution(lower, upper):
+    '''Helper method for making a distribution for float value
+    hyperparameters from two values'''
+    from sklearn.utils.fixes import loguniform
+    return loguniform(lower, upper)
+
+
+def tune(X_input, y_label, param_dist, max_iter=81, eta=3, cv=5):
     '''
     Method for searching over many MLPR hyperparameters
     with successive halving randomized search and hyperband
@@ -153,3 +161,14 @@ def train(X_input, y_label, mlpr_specs, mapie=True) -> list:
         mlpr_list.append(param_predictor)
 
     return mlpr_list
+
+
+def get_cv_score(mlpr_list, X_input, y_label, file_name, cv=5):
+    '''Helper method for getting cross-validation score
+    on training set after the mlpr is trained'''
+    for i, (y_param, mlpr) in enumerate(zip(y_label, mlpr_list)):
+        index = 'all' if len(mlpr_list) == 1 else i+1
+        print(f'\nCV scores of best MLPR for param {index}:', file=file_name)
+        param_score = cross_val_score(mlpr, X_input, y_param, cv=cv, n_jobs=-1)
+        for j, score in enumerate(param_score):
+            print(f'[CV {j+1}/{cv}] score: {score}', file=file_name)
