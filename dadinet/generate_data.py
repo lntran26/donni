@@ -16,9 +16,9 @@ def worker_func(args: tuple):
     return func_ex(p, ns, pts_l)
 
 
-def generate_fs(func, params_list, logs: list[bool], theta: int, ns, pts_l,
+def generate_fs(func, params_list, logs, theta, ns, pts_l,
                 norm=True, sampling=True, bootstrap=False, n_bstr=200,
-                ncpu=None) -> dict:
+                ncpu=None):
     '''
     Parallelized generation of a dataset of multiple fs based on an input 
     demographic model and a list of several demographic parameters
