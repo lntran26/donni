@@ -3,7 +3,11 @@ import argparse
 import pickle
 from inspect import getmembers, isfunction
 import dadinet.dadi_dem_models as models
-from dadinet.train import *
+from dadinet.generate_data import generate_fs
+from dadinet.train import prep_data, make_distribution, tune, report,\
+    get_best_specs, train, get_cv_score
+from dadinet.predict import predict
+from dadinet.plot import plot
 
 # get demographic model names and functions from dadi_dem_models
 model_name, model_func = zip(*getmembers(models, isfunction))
@@ -15,7 +19,6 @@ def run_generate_data(args):
     '''Method to generate data given inputs from the
     generate_data subcommand'''
 
-    from dadinet.generate_data import generate_fs
     # get dem function from input model name
     func = dem_dict[args.model]
 
@@ -61,18 +64,18 @@ def run_train(args):
                            args.max_iter, args.eta, args.cv)
         # output full tuning result file
         pickle.dump(all_results, open(
-            f'{mlpr_dir}/tune_results_full', 'wb'), 2)
+            f'{args.mlpr_dir}/tune_results_full', 'wb'), 2)
         # output abbreviated printed result
-        with open(f'{mlpr_dir}/tune_results_brief.txt', 'wt') as fh:
+        with open(f'{args.mlpr_dir}/tune_results_brief.txt', 'wt') as fh:
             for i, model in enumerate(all_results):
                 fh.write(f'MLPR for param {i+1}:')
-                for j, each_band in enumerate(model):
+                for j, _ in enumerate(model):
                     fh.write(f'Band {j+1}:')
                     report(all_results[i][j].cv_results_, fh.name)
         # get train hyperparam from best mlpr from tuning
         train_param_dict, scores = get_best_specs(all_results)
         # print best scores after outputing the mlpr model
-        with open(f'{mlpr_dir}/tune_results_brief.txt', 'a') as fh:
+        with open(f'{args.mlpr_dir}/tune_results_brief.txt', 'a') as fh:
             for i, score in enumerate(scores):
                 fh.write(f'\nCV score of best MLPR for param {i+1}: {score}')
 
@@ -89,9 +92,9 @@ def run_train(args):
     for i, mlpr in trained:
         index = i+1 if args.mapie else 'all'
         pickle.dump(mlpr, open(
-            f'{mlpr_dir}/param_{index}_predictor', 'wb'), 2)
+            f'{args.mlpr_dir}/param_{index}_predictor', 'wb'), 2)
     # output cv score of trained mlpr on training set
-    with open(f'{mlpr_dir}/training_score.txt', 'wt') as fh:
+    with open(f'{args.mlpr_dir}/training_score.txt', 'wt') as fh:
         get_cv_score(trained, X_input, y_label, fh.name, cv=args.cv)
 
 
@@ -99,22 +102,13 @@ def run_predict(args):
     '''Method to get prediction given inputs from the
     predict subcommand'''
 
-    from dadinet.predict import predict
     ...
 
 
 def run_plot(args):
     '''Method to plot outputs'''
 
-    from dadinet.plot import plot
     ...
-
-
-# def run_tune(args):
-#     '''Method to use hyperband for parameter tuning'''
-
-#     from dadinet.tune import tune
-#     ...
 
 
 # helper methods for custom type checks and parsing
