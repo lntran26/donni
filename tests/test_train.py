@@ -4,9 +4,10 @@ import pickle
 import math
 from sklearn.experimental import enable_halving_search_cv  # noqa
 from sklearn.model_selection import HalvingRandomSearchCV
-from sklearn.utils.fixes import loguniform
-from dadinet.train import prep_data, tune  # , report,\
-#    get_best_specs, train, get_cv_score
+# from sklearn.utils.fixes import loguniform
+from scipy.stats import randint, loguniform
+from dadinet.train import prep_data, tune, get_best_specs
+# train
 
 
 def test_exists():
@@ -45,6 +46,7 @@ def test_prep_data():
 
 def run_tune(data_file, param_dist, max_iter=243, eta=3, cv=5):
     """ Template method for testing tune() method """
+
     data = pickle.load(open(f'{data_file}', 'rb'))
     X, y = prep_data(data)
     all_results = tune(X, y, param_dist, max_iter, eta, cv)
@@ -61,27 +63,44 @@ def run_tune(data_file, param_dist, max_iter=243, eta=3, cv=5):
 
 
 def test_run_tune1():
-    ''' Test tuning with two_epoch'''
+    ''' Test tuning with two_epoch '''
     data = 'test_data/two_epoch_500'
-    param_dist = {'hidden_layer_sizes': [(64,), (64, 64), (128,)],
+    param_dist = {'hidden_layer_sizes': [(64,), (64, 64)],
                   'activation': ['tanh', 'relu'],
                   'solver': ['lbfgs', 'adam'],
                   'alpha': loguniform(1e-4, 1e0),
-                  'tol': loguniform(1e-4, 1e-2),
                   'early_stopping': [False, True]}
-    run_tune(data, param_dist)
+    run_tune(data, param_dist, max_iter=27)
 
 
 def test_run_tune2():
     ''' Test tuning with split_mig'''
-    data = 'test_data/split_mig_1500'
-    param_dist = {'hidden_layer_sizes': [(64,), (64, 64), (128,)],
+    data = 'test_data/split_mig_100_subset'
+    param_dist = {'hidden_layer_sizes': [(randint.rvs(50, 100, 1),),
+                                         (randint.rvs(50, 100, 1),
+                                          randint.rvs(50, 100, 1))],
                   'activation': ['tanh', 'relu'],
                   'solver': ['lbfgs', 'adam'],
-                  'alpha': loguniform(1e-4, 1e0),
-                  'tol': loguniform(1e-4, 1e-2),
                   'early_stopping': [False, True]}
-    run_tune(data, param_dist)
+    run_tune(data, param_dist, max_iter=25, eta=5)
+
+
+def test_get_best_specs():
+    ''' Test get_best_specs() method '''
+
+    for data_file in ['two_epoch_500', 'split_mig_1500']:
+        # this data is tune based on mapie regressor, so 1 mlpr/param
+        tune_results = pickle.load(
+            open(f'test_data/{data_file}_tune_results_full', 'rb'))
+        specs, scores = get_best_specs(tune_results)
+        # test that specs is a list of dictionary
+        assert isinstance(specs, list)
+        assert all(isinstance(spec, dict) for spec in specs)
+        # test that scores is a list of float scores
+        assert isinstance(scores, list)
+        assert all(isinstance(score, float) for score in scores)
+        # test that specs and scores have the same length
+        assert len(specs) == len(scores)
 
 
 def run_train():
