@@ -2,9 +2,10 @@
 import argparse
 import pickle
 from inspect import getmembers, isfunction
+from scipy.stats._distn_infrastructure import rv_frozen as distribution
 import dadinet.dadi_dem_models as models
 from dadinet.generate_data import generate_fs
-from dadinet.train import prep_data, make_distribution, tune, report,\
+from dadinet.train import prep_data, tune, report,\
     get_best_specs, train, get_cv_score
 from dadinet.predict import predict
 from dadinet.plot import plot
@@ -43,22 +44,26 @@ def run_train(args):
     data = pickle.load(open(args.data_file, 'rb'))
     # parse data into input and corresponding labels
     X_input, y_label = prep_data(data, mapie=args.mapie)
-    # process input from command line into a dictionary of params
-    param_dict = {}
-    for arg in vars(args):
-        if arg not in ['data_file', 'mlpr_dir', 'mapie', 'tune', 'max_iter',
-                       'eta', 'cv'] and getattr(args, arg) is not None:
-            param_dict[arg] = getattr(args, arg)
+
+    # process input from command line into a dictionary of hyperparams
+    if args.hyperparam is not None:
+        param_dict = pickle.load(open(args.hyperparam, 'rb'))
+    else:
+        param_dict = {}
+        for arg in vars(args):
+            if arg not in ['data_file', 'mlpr_dir', 'mapie', 'tune', 'max_iter',
+                           'eta', 'cv', 'hyperparam'] and getattr(args, arg) is not None:
+                param_dict[arg] = getattr(args, arg)
 
     if args.tune:
-        # further process hyperparams that are floats: alpha, tol, beta1, beta2
-        # if len=2 implement distribution, else leave as a list of discrete val
-        for arg in ['alpha', 'tol', 'beta1', 'beta2']:
-            arg_value = param_dict[arg]
-            if len(arg_value) == 2:
-                update_arg_value = make_distribution(
-                    arg_value[0], arg_value[1])
-                param_dict[arg] = update_arg_value
+        # # further process hyperparams that are floats: alpha, tol, beta1, beta2
+        # # if len=2 implement distribution, else leave as a list of discrete val
+        # for arg in ['alpha', 'tol', 'beta1', 'beta2']:
+        #     arg_value = param_dict[arg]
+        #     if len(arg_value) == 2:
+        #         update_arg_value = make_distribution(
+        #             arg_value[0], arg_value[1])
+        #         param_dict[arg] = update_arg_value
         # run tuning
         all_results = tune(X_input, y_label, param_dict,
                            args.max_iter, args.eta, args.cv)
@@ -80,10 +85,16 @@ def run_train(args):
                 fh.write(f'\nCV score of best MLPR for param {i+1}: {score}')
 
     else:  # train directly without tuning first
-        # get only the first value in list for each hyperparam
         train_param_dict = {}
         for key, value in param_dict.items():
-            train_param_dict[key] = value[0]
+            # handling potentially incorrect input for tune instead of train
+            if isinstance(value, list):  # if input is a list
+                # get only the first value in list for each hyperparam
+                train_param_dict[key] = value[0]
+            elif isinstance(value, distribution):
+                pass  # ignore if input is a scipy distribution
+            else:  # get expected input value as a single input
+                train_param_dict[key] = value
 
     # train with best hyperparams from tuning or with input if not tuning
     trained = train(X_input, y_label, train_param_dict, mapie=args.mapie)
@@ -215,9 +226,12 @@ def dadi_ml_parser():
     train_parser.add_argument('--cv', type=_int_2,
                               help='k-fold cross validation, default None=5')
 
-    # train_parser.add_argument("--hyperparam", type=str, required=True,
-    #                           help="Path to dictionary of MLPR hyperparam")
-    # flags for specifying different mlpr hyperparams
+    # optional input for a pickled dict file instead of setting params manually
+    # with flags
+    # if provided will be prioritized over input flags
+    train_parser.add_argument("--hyperparam", type=str,
+                              help="Path to dictionary of MLPR hyperparam")
+    # flags for specifying different mlpr hyperparams if not providing dict
     train_parser.add_argument('--hidden_layer_sizes',
                               metavar='TUPLE OF POSITIVE INT', nargs='*',
                               type=_tuple_of_pos_int, default=[(64,)],

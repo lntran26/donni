@@ -38,11 +38,11 @@ def prep_data(data: dict, mapie=True):
     return X_input, y_label_unpack
 
 
-def make_distribution(lower, upper):
-    '''Helper method for making a distribution for float value
-    hyperparameters from two values'''
-    from sklearn.utils.fixes import loguniform
-    return loguniform(lower, upper)
+# def make_distribution(lower, upper):
+#     '''Helper method for making a distribution for float value
+#     hyperparameters from two values'''
+#     from sklearn.utils.fixes import loguniform
+#     return loguniform(lower, upper)
 
 
 def tune(X_input, y_label, param_dist, max_iter=243, eta=3, cv=5):
