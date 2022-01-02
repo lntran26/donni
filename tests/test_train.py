@@ -4,10 +4,9 @@ import pickle
 import math
 from sklearn.experimental import enable_halving_search_cv  # noqa
 from sklearn.model_selection import HalvingRandomSearchCV
-# from sklearn.utils.fixes import loguniform
 from scipy.stats import randint, loguniform
-from dadinet.train import prep_data, tune, get_best_specs
-# train
+from mapie.regression import MapieRegressor
+from dadinet.train import prep_data, tune, get_best_specs, train
 
 
 def test_exists():
@@ -64,6 +63,7 @@ def run_tune(data_file, param_dist, max_iter=243, eta=3, cv=5):
 
 def test_run_tune1():
     ''' Test tuning with two_epoch '''
+
     data = 'test_data/two_epoch_500'
     param_dist = {'hidden_layer_sizes': [(64,), (64, 64)],
                   'activation': ['tanh', 'relu'],
@@ -75,10 +75,18 @@ def test_run_tune1():
 
 def test_run_tune2():
     ''' Test tuning with split_mig'''
+
     data = 'test_data/split_mig_100_subset'
-    param_dist = {'hidden_layer_sizes': [(randint.rvs(50, 100, 1),),
-                                         (randint.rvs(50, 100, 1),
-                                          randint.rvs(50, 100, 1))],
+    param_dist = {'hidden_layer_sizes': [(randint.rvs(50, 100),),
+                                         (randint.rvs(50, 100),
+                                          randint.rvs(50, 100)),
+                                          (randint.rvs(50, 100),
+                                          randint.rvs(50, 100),
+                                          randint.rvs(50, 100)),
+                                          (randint.rvs(50, 100),
+                                          randint.rvs(50, 100),
+                                          randint.rvs(50, 100),
+                                          randint.rvs(50, 100))],
                   'activation': ['tanh', 'relu'],
                   'solver': ['lbfgs', 'adam'],
                   'early_stopping': [False, True]}
@@ -103,19 +111,49 @@ def test_get_best_specs():
         assert len(specs) == len(scores)
 
 
-def run_train():
+def run_train(data_file, mlpr_specs, mapie=True):
     """ Template method for testing train() method """
-    ...
 
+    data = pickle.load(open(f'test_data/{data_file}', 'rb'))
+    X, y = prep_data(data)  # mapie=True by default
+
+    trained_mlpr = train(X, y, mlpr_specs, mapie=mapie)
+
+    # test if trained_mlpr and specs are list of the same length
+    assert isinstance(trained_mlpr, list)
+    assert len(trained_mlpr) == len(mlpr_specs) == len(y)
     # test if output model is a mapie regressor
-
-    # test if output model has the specified specs
-    # # for debugging only
-    # print(mlpr.get_params())
+    assert all(isinstance(mlpr, MapieRegressor) for mlpr in trained_mlpr)
+    # # test if output model has the specified specs
+    # for mlpr, spec in zip(trained_mlpr, specs):
+    #     assert isinstance(mlpr, MapieRegressor)
+    #     assert spec.items() <= mlpr.get_params().items()
+    # this doesn't work for mapie regressor bc the param dict is different
 
     # test if output model make a sensible prediction
 
     # test mapie = False flag to generate regular mlpr with sklearn
+
+
+def test_run_train1():
+    ''' Test train with two_epoch and results from tuning'''
+
+    data = 'two_epoch_500'
+    tune_results = pickle.load(
+        open(f'test_data/{data}_tune_results_full', 'rb'))
+    specs, _ = get_best_specs(tune_results)
+    # note: these tune results are created with mapie=True
+    run_train(data, specs)
+
+
+def test_run_train2():
+    ''' Test train with split_mig and specified hyperparams'''
+
+    data = 'split_mig_100_subset'
+    spec = {'hidden_layer_sizes': (100,),
+            'activation': 'relu', 'solver': 'adam'}
+    specs = [spec, spec, spec, spec]
+    run_train(data, specs)
 
 
 # if __name__ == "__main__":
