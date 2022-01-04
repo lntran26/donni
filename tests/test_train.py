@@ -80,10 +80,10 @@ def test_run_tune2():
     param_dist = {'hidden_layer_sizes': [(randint.rvs(50, 100),),
                                          (randint.rvs(50, 100),
                                           randint.rvs(50, 100)),
-                                          (randint.rvs(50, 100),
+                                         (randint.rvs(50, 100),
                                           randint.rvs(50, 100),
                                           randint.rvs(50, 100)),
-                                          (randint.rvs(50, 100),
+                                         (randint.rvs(50, 100),
                                           randint.rvs(50, 100),
                                           randint.rvs(50, 100),
                                           randint.rvs(50, 100))],
@@ -154,15 +154,3 @@ def test_run_train2():
             'activation': 'relu', 'solver': 'adam'}
     specs = [spec, spec, spec, spec]
     run_train(data, specs)
-
-
-# if __name__ == "__main__":
-
-#     mlpr_param = {'hidden_layer_sizes': (100,),
-#                   'activation': 'relu', 'solver': 'lbfgs',
-#                   'alpha': 1, 'max_iter': 5000}
-#     data = '../tests/test_data/1d_2epoch_100fs_exclude'
-#     ml_model = '../out'
-
-#     # train(mlpr_param, ml_model, data)
-#     train(mlpr_param, ml_model, data, mapie=False)
