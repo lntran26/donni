@@ -1,6 +1,7 @@
 """Command-line interface setup for dadi-ml"""
 import argparse
 import pickle
+import re
 from inspect import getmembers, isfunction
 from scipy.stats._distn_infrastructure import rv_frozen as distribution
 import dadinet.dadi_dem_models as models
@@ -45,26 +46,20 @@ def run_train(args):
     # parse data into input and corresponding labels
     X_input, y_label = prep_data(data, mapie=args.mapie)
 
-    # process input from command line into a dictionary of hyperparams
+    # process input from command line into a dict of hyperparams
     if args.hyperparam is not None:
         param_dict = pickle.load(open(args.hyperparam, 'rb'))
     else:
         param_dict = {}
         for arg in vars(args):
             if arg not in ['data_file', 'mlpr_dir', 'mapie', 'tune', 'max_iter',
-                           'eta', 'cv', 'hyperparam'] and getattr(args, arg) is not None:
+                           'eta', 'cv', 'hyperparam', 'subcommand',
+                           'func'] and getattr(args, arg) is not None:
                 param_dict[arg] = getattr(args, arg)
-
+    # # for debugging
+    # print(f'param_dict: {param_dict}')
     if args.tune:
-        # # further process hyperparams that are floats: alpha, tol, beta1, beta2
-        # # if len=2 implement distribution, else leave as a list of discrete val
-        # for arg in ['alpha', 'tol', 'beta1', 'beta2']:
-        #     arg_value = param_dict[arg]
-        #     if len(arg_value) == 2:
-        #         update_arg_value = make_distribution(
-        #             arg_value[0], arg_value[1])
-        #         param_dict[arg] = update_arg_value
-        # run tuning
+        # run tuning on input param_dict
         all_results = tune(X_input, y_label, param_dict,
                            args.max_iter, args.eta, args.cv)
         # output full tuning result file
@@ -73,18 +68,25 @@ def run_train(args):
         # output abbreviated printed result
         with open(f'{args.mlpr_dir}/tune_results_brief.txt', 'wt') as fh:
             for i, model in enumerate(all_results):
-                fh.write(f'MLPR for param {i+1}:')
+                fh.write(f'MLPR for param {i+1}:'.center(50, '*'))
+                fh.write('\n')
                 for j, _ in enumerate(model):
-                    fh.write(f'Band {j+1}:')
-                    report(all_results[i][j].cv_results_, fh.name)
+                    band = all_results[i][j]
+                    str1 = f'\nBand {j+1}: Fitting {band.n_candidates_} '
+                    str2 = f'candidates for {band.n_resources_} iterations\n'
+                    fh.write(str1 + str2)
+                    report(band.cv_results_, fh)
         # get train hyperparam from best mlpr from tuning
-        train_param_dict, scores = get_best_specs(all_results)
+        # list of 1 if sklearn, list of multiple if mapie
+        train_param_dict_list, scores = get_best_specs(all_results)
         # print best scores after outputing the mlpr model
         with open(f'{args.mlpr_dir}/tune_results_brief.txt', 'a') as fh:
-            for i, score in enumerate(scores):
-                fh.write(f'\nCV score of best MLPR for param {i+1}: {score}')
+            for i, (spec, score) in enumerate(zip(train_param_dict_list,
+                                                  scores)):
+                fh.write(f'CV score of best MLPR for param {i+1}: {score}\n')
+                fh.write(f'Spec of best MLPR for param {i+1}: {spec}\n')
 
-    else:  # train directly without tuning first
+    else:  # process param_dict to train directly without tuning first
         train_param_dict = {}
         for key, value in param_dict.items():
             # handling potentially incorrect input for tune instead of train
@@ -95,18 +97,23 @@ def run_train(args):
                 pass  # ignore if input is a scipy distribution
             else:  # get expected input value as a single input
                 train_param_dict[key] = value
-
+        # make the length of input hyperparam dict equal length of y_label
+        train_param_dict_list = []
+        for _ in range(len(y_label)):
+            train_param_dict_list.append(train_param_dict)
+    # # for debugging
+    # print(f'train_param_dict_list: {train_param_dict_list}')
     # train with best hyperparams from tuning or with input if not tuning
-    trained = train(X_input, y_label, train_param_dict, mapie=args.mapie)
+    trained = train(X_input, y_label, train_param_dict_list, mapie=args.mapie)
 
     # save trained mlpr(s)
-    for i, mlpr in trained:
+    for i, mlpr in enumerate(trained):
         index = i+1 if args.mapie else 'all'
         pickle.dump(mlpr, open(
             f'{args.mlpr_dir}/param_{index}_predictor', 'wb'), 2)
     # output cv score of trained mlpr on training set
     with open(f'{args.mlpr_dir}/training_score.txt', 'wt') as fh:
-        get_cv_score(trained, X_input, y_label, fh.name, cv=args.cv)
+        get_cv_score(trained, X_input, y_label, fh, cv=args.cv)
 
 
 def run_predict(args):
@@ -139,11 +146,13 @@ def _tuple_of_pos_int(input_str):
     Convert comma-separated string input to tuples of pos int.
     """
 
-    single_tup_int = map(int, input_str.split(','))
-    if any(layer_size < 1 for layer_size in single_tup_int):
+    try:
+        for single_tup in re.split(' ', input_str):
+            return tuple(map(int, single_tup.split(',')))
+    except Exception as error:
         raise argparse.ArgumentTypeError(
-            f"invalid tuple_of_pos_int value: '{input_str}'")
-    return tuple(single_tup_int)
+            "Hidden layers must be divided by commas," +
+            " e.g. 'h1,h1 h2,h2,h2'") from error
 
 
 def _int_2(input_int):
@@ -219,12 +228,12 @@ def dadi_ml_parser():
                               help="Whether to try a range of hyperparameters\
                                    to find the best performing MLPRs")
     # hyperband tuning params
-    train_parser.add_argument('--max_iter', type=_int_2,
-                              help='maximum iterations, default None=243')
-    train_parser.add_argument('--eta', type=_int_2,
-                              help='halving factor, default None=3')
-    train_parser.add_argument('--cv', type=_int_2,
-                              help='k-fold cross validation, default None=5')
+    train_parser.add_argument('--max_iter', type=_int_2, default=243,
+                              help='maximum iterations')
+    train_parser.add_argument('--eta', type=_int_2, default=3,
+                              help='halving factor')
+    train_parser.add_argument('--cv', type=_int_2, default=5,
+                              help='k-fold cross validation')
 
     # optional input for a pickled dict file instead of setting params manually
     # with flags
@@ -232,8 +241,11 @@ def dadi_ml_parser():
     train_parser.add_argument("--hyperparam", type=str,
                               help="Path to dictionary of MLPR hyperparam")
     # flags for specifying different mlpr hyperparams if not providing dict
+    # this should be a list of dict, not dict (due to mapie being several mlprs)
+
     train_parser.add_argument('--hidden_layer_sizes',
                               metavar='TUPLE OF POSITIVE INT', nargs='*',
+                              #   action='store', dest='hidden_layer_sizes',
                               type=_tuple_of_pos_int, default=[(64,)],
                               help='Use commas to separate layers')
     train_parser.add_argument('--activation', nargs='*', metavar='NAME',

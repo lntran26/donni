@@ -7,6 +7,7 @@ import random
 import string
 from subprocess import getstatusoutput, getoutput
 import pickle
+import shutil
 
 PRG = 'dadi-ml'
 
@@ -41,7 +42,7 @@ def run_generate_data_sub(args, args_expected):
     outfile = random_string()
     try:
         rv, out = getstatusoutput(
-            f'{PRG} generate_data {" ".join(args)} --outdir {outfile}')
+            f'{PRG} generate_data {" ".join(args)} --outfile {outfile}')
 
         # check that program executed without errors
         assert rv == 0
@@ -88,3 +89,53 @@ def test_run_generate_data_bstr():
     args_expected = {'n_samples': 5,
                      'sample_sizes': [10], 'thetas': 1000}
     run_generate_data_sub(args, args_expected)
+
+
+# test train subcommand
+def run_train_sub(args):
+    """Template method for testing train subcommand"""
+    outdir = random_string()
+    os.mkdir(outdir)
+    try:
+        rv, out = getstatusoutput(
+            f'{PRG} train {" ".join(args)} --mlpr_dir {outdir}')
+
+        # check that program executed without errors
+        assert rv == 0
+        # check that program produces some output file(s)
+        assert len(os.listdir(outdir)) != 0
+        # can expand this later to test correct number of outfiles
+        # for each use case
+
+    finally:  # remove output dir
+        shutil.rmtree(outdir, ignore_errors=True)
+
+
+def test_run_train_sub_1():
+    '''First train test: provide data and run default:
+    Generate mapie MLPRs without tuning, use default hyperparams'''
+
+    args = ['--data_file test_data/two_epoch_500']
+    run_train_sub(args)
+
+
+def test_run_train_sub_2():
+    '''Second train test: provide data and run tuning:
+    Generate mapie MLPRs using tuned hyperparams
+    Require inputing ranges of value to tune from'''
+
+    args = ['--data_file test_data/two_epoch_500', '--tune', '--max_iter 27',
+            '--hidden_layer_sizes 100 50,50 25,25,25,25 100,100 200',
+            '--activation logistic tanh relu', '--solver lbfgs adam']
+    run_train_sub(args)
+
+
+def test_run_train_sub_3():
+    '''Third train test: provide data and run tuning:
+    Generate mapie MLPRs using tuned hyperparams
+    Tuning from pickled dict file'''
+
+    args = ['--data_file test_data/two_epoch_500', '--tune',
+            '--max_iter 25', '--eta 5'
+            '--hyperparam test_data/param_dist']
+    run_train_sub(args)

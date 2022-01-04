@@ -86,20 +86,20 @@ def tune(X_input, y_label, param_dist, max_iter=243, eta=3, cv=5):
     return result_list
 
 
-def report(results, file_name, n_top=3):
+def report(results, file_handle, n_top=3):
     '''Utility function to report best scores'''
 
     for i in range(1, n_top + 1):
         candidates = np.flatnonzero(results["rank_test_score"] == i)
         for candidate in candidates:
-            print("Model with rank: {0}".format(i), file=file_name)
+            print("Model with rank: {0}".format(i), file=file_handle)
             print(
                 "Mean validation score: {0:.3f} (std: {1:.3f})".format(
                     results["mean_test_score"][candidate],
                     results["std_test_score"][candidate],),
-                file=file_name)
-            print("Parameters: {0}".format(results["params"][candidate]),
-                  file=file_name)
+                file=file_handle)
+            print("Parameters: {0}\n".format(results["params"][candidate]),
+                  file=file_handle)
 
 
 def get_best_specs(result_list):
@@ -163,12 +163,12 @@ def train(X_input, y_label, mlpr_specs, mapie=True) -> list:
     return mlpr_list
 
 
-def get_cv_score(mlpr_list, X_input, y_label, file_name, cv=5):
+def get_cv_score(mlpr_list, X_input, y_label, file_handle, cv=5):
     '''Helper method for getting cross-validation score
     on training set after the mlpr is trained'''
     for i, (y_param, mlpr) in enumerate(zip(y_label, mlpr_list)):
         index = 'all' if len(mlpr_list) == 1 else i+1
-        print(f'\nCV scores of best MLPR for param {index}:', file=file_name)
+        print(f'\nCV scores of best MLPR for param {index}:', file=file_handle)
         param_score = cross_val_score(mlpr, X_input, y_param, cv=cv, n_jobs=-1)
         for j, score in enumerate(param_score):
-            print(f'[CV {j+1}/{cv}] score: {score}', file=file_name)
+            print(f'[CV {j+1}/] score: {score}', file=file_handle)
