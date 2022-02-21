@@ -19,7 +19,7 @@ def test_exists():
 def test_prep_data():
     """ Test prep_data() method """
 
-    for data_file in ['two_epoch_500', 'split_mig_1500']:
+    for data_file in ['two_epoch_500', 'split_mig_100_subset']:
         data = pickle.load(open(f'test_data/{data_file}', 'rb'))
         X, y = prep_data(data)
         # test that X has the correct n_samples
