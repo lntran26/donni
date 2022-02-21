@@ -11,10 +11,13 @@ setup(
         "dadi == 2.1.1",
         "scikit-learn == 1.0.1",
         "mapie == 0.3.1",
+        "pytest",
+        "pylint",
         "flake8",
         "mypy",
-        "pytest",
-        "pylint"
-    ],
+        "pytest-pylint",
+        "pytest-flake8",
+        "pytest-mypy"
+        ],
     entry_points={"console_scripts": ["dadi-ml=dadinet.__main__:main"]},
 )
