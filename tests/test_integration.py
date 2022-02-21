@@ -97,7 +97,7 @@ def run_train_sub(args):
     outdir = random_string()
     os.mkdir(outdir)
     try:
-        rv, out = getstatusoutput(
+        rv, _ = getstatusoutput(
             f'{PRG} train {" ".join(args)} --mlpr_dir {outdir}')
 
         # check that program executed without errors
@@ -136,6 +136,6 @@ def test_run_train_sub_3():
     Tuning from pickled dict file'''
 
     args = ['--data_file test_data/two_epoch_500', '--tune',
-            '--max_iter 25', '--eta 5'
+            '--max_iter 25', '--eta 5',
             '--hyperparam test_data/param_dist']
     run_train_sub(args)
