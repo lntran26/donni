@@ -29,8 +29,8 @@ def run_generate_data(args):
 
     # generate data
     data = generate_fs(dadi_func, params_list, logs,
-                       args.theta, args.sample_sizes,
-                       args.grids, args.normalize, args.sampling,
+                       args.theta, args.sample_sizes, args.grids,
+                       args.normalize, args.sampling, args.folded,
                        args.bootstrap, args.n_bstr, args.n_cpu)
 
     # save data to output dir
@@ -203,6 +203,9 @@ def dadi_ml_parser():
     generate_data_parser.add_argument('--sampling', action='store_true',
                                       help="Whether to sample FS when\
                                           theta > 1", default=True)
+    generate_data_parser.add_argument('--folded', action="store_true",
+                                      help="Whether to fold FS",
+                                      default=False)
     generate_data_parser.add_argument('--bootstrap', action='store_true',
                                       help="Whether to generate bootstrap\
                                            FS data")

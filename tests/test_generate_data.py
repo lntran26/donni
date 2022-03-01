@@ -15,13 +15,14 @@ def test_exists():
     assert os.path.isfile(PRG)
 
 
-def run(model, sample_size, theta, n_samples, norm=True, sampling=True):
+def run(model, sample_size, theta, n_samples,
+        norm=True, sampling=True, folded=False):
     '''Template method for testing different models, sample sizes, thetas'''
 
     grids = [40, 50, 60]
     dem, dem_params, p_logs = model(n_samples)
     data = generate_fs(dem, dem_params, p_logs, theta,
-                       sample_size, grids, norm, sampling)
+                       sample_size, grids, norm, sampling, folded)
 
     # check that output dataset format is a dict
     assert isinstance(data, dict)
@@ -38,6 +39,11 @@ def run(model, sample_size, theta, n_samples, norm=True, sampling=True):
 
     # check that all FS have the correct population sample size for each pop
     for fs in all_fs:
+        # also check for folded while iterating
+        if folded:
+            assert fs.folded
+            arr = np.array(fs).flatten()
+            assert arr[arr.size//2 + 1] == 0
         for i, pop_size in enumerate(fs.shape):
             assert pop_size == sample_size[i] + 1
 
@@ -71,6 +77,12 @@ def test_run_two_epoch_non_norm():
     run(models.two_epoch, [20], 10000, 5, sampling=False, norm=False)
 
 
+def test_run_two_epoch_folded():
+    '''Generate folded FS for the two_epoch model'''
+
+    run(models.two_epoch, [20], 1, 5, folded=True)
+
+
 def test_run_growth():
     '''Generate 20 FS datasets for the growth model
     with one population sample size 80 and theta 1000'''
@@ -89,6 +101,12 @@ def test_run_split_mig_non_norm():
     '''Generate non-normalized FS for the split_mig model'''
 
     run(models.split_mig, [10, 10], 1000, 2, sampling=False, norm=False)
+
+
+def test_run_split_mig_folded():
+    '''Generate folded FS for the split_mig model'''
+
+    run(models.split_mig, [20, 20], 1000, 5, folded=True)
 
 
 def test_run_IM():

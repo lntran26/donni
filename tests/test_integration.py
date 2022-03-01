@@ -81,6 +81,16 @@ def test_run_generate_data_sub_2():
     run_generate_data_sub(args, args_expected)
 
 
+def test_run_generate_data_sub_folded():
+    '''Third generate_data test for folded flag'''
+
+    args = ['--model split_mig', '--n_samples 10',
+            '--sample_sizes 20 20', '--folded']
+    args_expected = {'n_samples': 10, 'sample_sizes': [20, 20],
+                     'thetas': 1, 'folded': True}
+    run_generate_data_sub(args, args_expected)
+
+
 def test_run_generate_data_bstr():
     '''Generate bootstrap data test'''
 

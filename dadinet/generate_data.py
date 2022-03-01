@@ -17,8 +17,8 @@ def worker_func(args: tuple):
 
 
 def generate_fs(func, params_list, logs, theta, ns, pts_l,
-                norm=True, sampling=True, bootstrap=False, n_bstr=200,
-                ncpu=None):
+                norm=True, sampling=True, folded=False,
+                bootstrap=False, n_bstr=200, ncpu=None):
     '''
     Parallelized generation of a dataset of multiple fs based on an input 
     demographic model and a list of several demographic parameters
@@ -30,6 +30,7 @@ def generate_fs(func, params_list, logs, theta, ns, pts_l,
         ns: population sample size(s)
         pts_l: dadi extrapolation grid values
         norm: whether to sample from and normalize the fs
+        folded: whether to fold the fs
         bootstrap: whether to generate bootstrap data
         n_bstr: number of bootstrap fs per original fs
         n_cpu: integer num of CPUs to use for generating data
@@ -70,6 +71,9 @@ def generate_fs(func, params_list, logs, theta, ns, pts_l,
             # normalization step
             if norm:
                 fs_tostore = fs_tostore/fs_tostore.sum()
+            # fold fs
+            if folded:
+                fs_tostore = fs_tostore.fold()
             data_dict[params] = fs_tostore
 
     return data_dict
