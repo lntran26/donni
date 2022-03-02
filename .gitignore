@@ -7,3 +7,4 @@ out
 build/*
 dadi_ml.egg-info/*
 dist/*
+*split_mig_1500
