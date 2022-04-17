@@ -54,10 +54,14 @@ def run(model, sample_size, theta, n_samples,
 
     elif not sampling:  # non-normalized and not sampling
         # get a random fs params set in the list
-        test_p = random.choice(dem_params)
+        test_p = random.choice(list(data.keys()))
         test_p_logs = [10**test_p[i] if p_logs[i] else test_p[i]
                        for i in range(len(p_logs))]
+        if (len(test_p_logs) < len(test_p)):  # add misid param
+            test_p_logs.append(test_p[-1])
         # make expected fs with dadi
+        if not folded:
+            dem = dadi.Numerics.make_anc_state_misid_func(dem)
         func_ex = dadi.Numerics.make_extrap_func(dem)
         expected_fs = theta*func_ex(test_p_logs, sample_size, grids)
         # check that expected fs is the same

@@ -4,6 +4,7 @@ Method for generating dadi-simulated fs datasets
 import sys
 from multiprocessing import Pool
 import dadi
+import random
 
 
 def worker_func(args: tuple):
@@ -11,7 +12,9 @@ def worker_func(args: tuple):
     Helper function for generate_fs() to perform parallelization with Pool
     '''
 
-    (p, func, ns, pts_l) = args
+    (p, func, ns, pts_l, folded) = args
+    if not folded:
+        func = dadi.Numerics.make_anc_state_misid_func(func)
     func_ex = dadi.Numerics.make_extrap_func(func)
     return func_ex(p, ns, pts_l)
 
@@ -37,15 +40,29 @@ def generate_fs(func, params_list, logs, theta, ns, pts_l,
             (None means using all)
     Output: dataset dictionary with format params:fs
     '''
+    # if not folded:
+    #     func = dadi.Numerics.make_anc_state_misid_func(func)
 
-    arg_list = [([10**p[i] if logs[i] else p[i] for i in range(len(logs))],
-                 func, ns, pts_l) for p in params_list]
+    arg_list = []
+    new_params_list = []
+    for p in params_list:
+        delog_p = [10**p[i] if logs[i] else p[i] for i in range(len(logs))]
+        if not folded:
+            misid = random.random() / 4 # range 0 to .25
+            delog_p.append(misid)
+            new_p = list(p)
+            new_p.append(misid)
+            new_params_list.append(new_p)
+        arg_list.append((delog_p, func, ns, pts_l, folded))
+    if not folded:
+        params_list = new_params_list
 
     with Pool(processes=ncpu) as pool:
         fs_list = pool.map(worker_func, arg_list)
 
     data_dict = {}
     for params, fs in zip(params_list, fs_list):
+        params = tuple(params)
         # assign zeros to masked entries of fs
         fs.flat[0] = 0
         fs.flat[-1] = 0

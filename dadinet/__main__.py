@@ -10,6 +10,7 @@ from dadinet.train import prep_data, tune, report,\
     get_best_specs, train, get_cv_score
 from dadinet.predict import predict
 from dadinet.plot import plot
+import sys, os, dadi
 
 # get demographic model names and functions from dadi_dem_models
 model_name, model_func = zip(*getmembers(models, isfunction))
@@ -111,6 +112,7 @@ def run_train(args):
         index = i+1 if args.mapie else 'all'
         pickle.dump(mlpr, open(
             f'{args.mlpr_dir}/param_{index}_predictor', 'wb'), 2)
+        # note that naming convention might need to be '001' to solve sorting issue below
     # output cv score of trained mlpr on training set
     with open(f'{args.mlpr_dir}/training_score.txt', 'wt') as fh:
         get_cv_score(trained, X_input, y_label, fh, cv=args.cv)
@@ -120,13 +122,57 @@ def run_predict(args):
     '''Method to get prediction given inputs from the
     predict subcommand'''
 
-    ...
+    if args.output_prefix:
+        output_stream = open(args.output_prefix, 'w')
+    else:
+        output_stream = sys.stdout
+
+    mlpr_list = []
+    mapie = True
+    # assumes that files are sorted (works for up to 9 params)
+    for filename in os.listdir(args.mlpr_dir):
+        if filename.startswith("param") and filename.endswith("predictor"):
+            mlpr = pickle.load(open(os.path.join(args.mlpr_dir, filename), 'rb'))
+            mlpr_list.append(mlpr)
+            if filename == "param_all_predictor":
+                mapie = False # this is the sklearn case
+                break
+        else:
+            continue
+    # open input Spectrum from file
+    fs = dadi.Spectrum.from_file(args.input_fs)
+    # need to get logs to de-log prediction
+    func = dem_dict[args.model]
+    _, _, logs = func(0)
+    pred = predict(mlpr_list, fs, logs, mapie=mapie)
+    # write out prediction in one line
+    print(*pred, sep='\t', file=output_stream)
+    if args.output_prefix:
+        output_stream.close()
 
 
 def run_plot(args):
     '''Method to plot outputs'''
 
-    ...
+    mlpr_list = []
+    mapie = True
+    # assumes that files are sorted (works for up to 9 params)
+    for filename in os.listdir(args.mlpr_dir):
+        if filename.startswith("param") and filename.endswith("predictor"):
+            mlpr = pickle.load(open(os.path.join(args.mlpr_dir, filename), 'rb'))
+            mlpr_list.append(mlpr)
+            if filename == "param_all_predictor":
+                mapie = False # this is the sklearn case
+                break
+        else:
+            continue
+    test_dict = pickle.load(open(args.test_dict, 'rb'))
+    # need to get logs for accurate plotting
+    func = dem_dict[args.model]
+    _, _, logs = func(0)
+
+    plot(mlpr_list, test_dict, args.results_prefix, logs, \
+        mapie=mapie, coverage=args.coverage, theta=args.theta)
 
 
 # helper methods for custom type checks and parsing
@@ -278,9 +324,18 @@ def dadi_ml_parser():
     predict_parser.set_defaults(func=run_predict)
     # need to handle dir for multiple models for mapie
     # single dir for sklearn models
-    predict_parser.add_argument("model_dir")
-    # predict_parser.add_argument("output_dir")
-    # predict_parser.add_argument("text_dir")
+    predict_parser.add_argument("--mlpr_dir", type=str, required=True,
+                              help="Path to trained MLPR(s)")
+    predict_parser.add_argument("--input_fs", type=str, required=True,
+                              help="Path to Spectrum file for generating prediction")
+    predict_parser.add_argument('--model', type=str, choices=model_name,
+                              required=True,
+                              help="Name of dadi demographic model")
+
+    # optional
+    predict_parser.add_argument("--output_prefix", type=str,
+                              help="Optional output file to write out results\
+                                   (default stdout)")
 
     # need to have stat flags for getting scores and prediction intervals
     # predict_parser.add_argument("--evaluate", dest='reference_dir')
@@ -289,7 +344,23 @@ def dadi_ml_parser():
     plot_parser = subparsers.add_parser(
         "plot", help='Plot prediction results and statistics')
     plot_parser.set_defaults(func=run_plot)
-    plot_parser.add_argument("data_dir")
+
+    plot_parser.add_argument("--mlpr_dir", type=str, required=True,
+                              help="Path to trained MLPR(s)")
+    plot_parser.add_argument("--test_dict", type=str, required=True,
+                              help="Path to test data dictionary file")
+    plot_parser.add_argument("--results_prefix", type=str, required=True,
+                              help="Path to save output plots")
+    plot_parser.add_argument('--model', type=str, choices=model_name,
+                              required=True,
+                              help="Name of dadi demographic model")
+    
+    # optional
+    plot_parser.add_argument('--coverage', action='store_true', default=False,
+                              help="Generate coverage plot (used with mapie)")
+    plot_parser.add_argument('--theta', type=_pos_int,
+                              help="Theta used to generate test_dict",
+                              default=None)
 
     # # subcommand for tune
     # tune_parser = subparsers.add_parser(
