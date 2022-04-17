@@ -130,7 +130,7 @@ def run_predict(args):
     mlpr_list = []
     mapie = True
     # assumes that files are sorted (works for up to 9 params)
-    for filename in os.listdir(args.mlpr_dir):
+    for filename in sorted(os.listdir(args.mlpr_dir)):
         if filename.startswith("param") and filename.endswith("predictor"):
             mlpr = pickle.load(open(os.path.join(args.mlpr_dir, filename), 'rb'))
             mlpr_list.append(mlpr)
@@ -159,6 +159,7 @@ def run_plot(args):
     # assumes that files are sorted (works for up to 9 params)
     for filename in os.listdir(args.mlpr_dir):
         if filename.startswith("param") and filename.endswith("predictor"):
+            print(filename)
             mlpr = pickle.load(open(os.path.join(args.mlpr_dir, filename), 'rb'))
             mlpr_list.append(mlpr)
             if filename == "param_all_predictor":
