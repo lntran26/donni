@@ -8,6 +8,7 @@ from sklearn.metrics import r2_score
 from scipy import stats
 import matplotlib.pyplot as plt
 
+
 def get_r2(y_true, y_pred):
     score = r2_score(y_true, y_pred)
     score_by_param = r2_score(y_true, y_pred, multioutput='raw_values')
@@ -18,6 +19,7 @@ def get_rho(y_true, y_pred):
     """stats.spearmanr returns two values: correlation and p-value
     Here we only want the correlation value"""
     return stats.spearmanr(y_true, y_pred)[0]
+
 
 def plot_accuracy_single(x, y, size=[8, 2, 20], x_label="true",
                          y_label="predict", log=False,
@@ -85,7 +87,8 @@ def plot_accuracy_single(x, y, size=[8, 2, 20], x_label="true",
                  horizontalalignment='center', verticalalignment='center',
                  fontsize=size[2], transform=ax.transAxes)
     if title != None:
-        ax.set_title(title, fontsize=size[2],fontweight='bold')
+        ax.set_title(title, fontsize=size[2], fontweight='bold')
+
 
 def plot_coverage(cov_scores, alpha, results_prefix, theta=None):
     expected = [100*(1 - a) for a in alpha]
@@ -120,6 +123,7 @@ def plot_coverage(cov_scores, alpha, results_prefix, theta=None):
     plt.savefig(f'{results_prefix}_coverage')
     plt.clf()
 
+
 def plot(models: list, test_data, results_prefix, logs, mapie=True, coverage=False, theta=None):
     # unpack test_data dict
     X_test = [np.array(fs).flatten() for fs in test_data.values()]
@@ -135,12 +139,12 @@ def plot(models: list, test_data, results_prefix, logs, mapie=True, coverage=Fal
     if mapie:
         all_coverage = []
         c = None
-        if len(logs) == 2: # assumption for now
+        if len(logs) == 2:  # assumption for now
             T_true = y_test_unpack[1]
             nu_true = y_test_unpack[0]
             nu_true_delog = [10**nu for nu in nu_true]
             c = [T/nu for T, nu in zip(T_true, nu_true_delog)]
-        for model_i,model in enumerate(models):
+        for model_i, model in enumerate(models):
             true = y_test_unpack[model_i]
             if coverage:
                 pred, pis = model.predict(X_test, alpha=alpha)
@@ -162,18 +166,18 @@ def plot(models: list, test_data, results_prefix, logs, mapie=True, coverage=Fal
                 true_delog = [10**p_true for p_true in true]
                 pred_delog = [10**p_pred for p_pred in pred]
                 plot_accuracy_single(true_delog, pred_delog, size=[6, 2, 20],
-                                    log=True, r2=r2, rho=rho, title=title, c=c)
+                                     log=True, r2=r2, rho=rho, title=title, c=c)
             else:
                 true = [p_true for p_true in true]
                 pred = [p_pred for p_pred in pred]
                 plot_accuracy_single(true, pred, size=[6, 2, 20], log=False,
-                                    r2=r2, rho=rho, title=title, c=c)
+                                     r2=r2, rho=rho, title=title, c=c)
             plt.savefig(f'{results_prefix}_param_{model_i + 1}_accuracy')
             plt.clf()
 
         if coverage:
             # plot coverage
             plot_coverage(all_coverage, alpha, results_prefix)
-                
-    else: # TODO: implement sklearn version
+
+    else:  # TODO: implement sklearn version
         return

@@ -6,6 +6,7 @@ import dadi
 import sys
 import os
 
+
 def predict(models: list, input_fs, logs, mapie=True):
     '''
     models: list of single mlpr object if sklearn,
@@ -21,7 +22,8 @@ def predict(models: list, input_fs, logs, mapie=True):
         pred_list = []
         for model in models:
             pred_list.append(model.predict(input_x)[0])
-    else: # don't know if this works yet
+    else:  # don't know if this works yet
         pred_list = models[0].predict([input_x])
-    pred_list = [10**pred_list[i] if logs[i] else pred_list[i] for i in range(len(logs))]
+    pred_list = [10**pred_list[i] if logs[i] else pred_list[i]
+                 for i in range(len(logs))]
     return pred_list
