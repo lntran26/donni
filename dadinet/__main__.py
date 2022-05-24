@@ -2,7 +2,11 @@
 import argparse
 import pickle
 import re
+import sys
+import os
 from inspect import getmembers, isfunction
+import numpy as np
+import dadi
 from scipy.stats._distn_infrastructure import rv_frozen as distribution
 import dadinet.dadi_dem_models as models
 from dadinet.generate_data import generate_fs
@@ -10,7 +14,7 @@ from dadinet.train import prep_data, tune, report,\
     get_best_specs, train, get_cv_score
 from dadinet.predict import predict
 from dadinet.plot import plot
-import sys, os, dadi
+
 
 # get demographic model names and functions from dadi_dem_models
 model_name, model_func = zip(*getmembers(models, isfunction))
@@ -31,11 +35,34 @@ def run_generate_data(args):
     # generate data
     data = generate_fs(dadi_func, params_list, logs,
                        args.theta, args.sample_sizes, args.grids,
-                       args.normalize, args.sampling, args.folded,
+                       args.non_normalize, args.no_sampling, args.folded,
                        args.bootstrap, args.n_bstr, args.n_cpu)
 
     # save data to output dir
     pickle.dump(data, open(args.outfile, 'wb'), 2)
+
+    # check fs quality
+    if args.no_fs_qual_check:
+        pass
+    else:
+        keys = list(data.keys())
+        neg_fs = 0
+        nan_fs = 0
+        inf_fs = 0
+
+        for key in keys:
+            fs = data[key]
+            if np.any(fs < 0):
+                neg_fs += 1
+            if np.any(np.isnan(fs)):
+                nan_fs += 1
+            if np.any(np.isposinf(fs)):
+                inf_fs += 1
+
+        print(f'Quality check for {args.outfile}:')
+        print(f'Number of FS with at least one negative entry: {neg_fs}')
+        print(f'Number of FS with at least one NaN entry: {nan_fs}')
+        print(f'Number of FS with at least one pos inf entry: {inf_fs}\n')
 
 
 def run_train(args):
@@ -53,9 +80,9 @@ def run_train(args):
     else:
         param_dict = {}
         for arg in vars(args):
-            if arg not in ['data_file', 'mlpr_dir', 'mapie', 'tune', 'max_iter',
-                           'eta', 'cv', 'hyperparam', 'subcommand',
-                           'func'] and getattr(args, arg) is not None:
+            if arg not in ['data_file', 'mlpr_dir', 'mapie', 'tune',
+                           'max_iter', 'subcommand', 'func', 'hyperparam',
+                           'eta', 'cv'] and getattr(args, arg) is not None:
                 param_dict[arg] = getattr(args, arg)
     # # for debugging
     # print(f'param_dict: {param_dict}')
@@ -111,8 +138,10 @@ def run_train(args):
     for i, mlpr in enumerate(trained):
         index = i+1 if args.mapie else 'all'
         pickle.dump(mlpr, open(
-            f'{args.mlpr_dir}/param_{index}_predictor', 'wb'), 2)
-        # note that naming convention might need to be '001' to solve sorting issue below
+            f'{args.mlpr_dir}/param_{index:02d}_predictor', 'wb'), 2)
+        # changed naming convension to '01' for now
+        # note that naming convention might need to be '001'
+        # to solve sorting issue below
     # output cv score of trained mlpr on training set
     with open(f'{args.mlpr_dir}/training_score.txt', 'wt') as fh:
         get_cv_score(trained, X_input, y_label, fh, cv=args.cv)
@@ -132,10 +161,11 @@ def run_predict(args):
     # assumes that files are sorted (works for up to 9 params)
     for filename in sorted(os.listdir(args.mlpr_dir)):
         if filename.startswith("param") and filename.endswith("predictor"):
-            mlpr = pickle.load(open(os.path.join(args.mlpr_dir, filename), 'rb'))
+            mlpr = pickle.load(
+                open(os.path.join(args.mlpr_dir, filename), 'rb'))
             mlpr_list.append(mlpr)
             if filename == "param_all_predictor":
-                mapie = False # this is the sklearn case
+                mapie = False  # this is the sklearn case
                 break
         else:
             continue
@@ -157,13 +187,14 @@ def run_plot(args):
     mlpr_list = []
     mapie = True
     # assumes that files are sorted (works for up to 9 params)
-    for filename in os.listdir(args.mlpr_dir):
+    for filename in sorted(os.listdir(args.mlpr_dir)):
         if filename.startswith("param") and filename.endswith("predictor"):
-            print(filename)
-            mlpr = pickle.load(open(os.path.join(args.mlpr_dir, filename), 'rb'))
+            # print(filename)
+            mlpr = pickle.load(
+                open(os.path.join(args.mlpr_dir, filename), 'rb'))
             mlpr_list.append(mlpr)
             if filename == "param_all_predictor":
-                mapie = False # this is the sklearn case
+                mapie = False  # this is the sklearn case
                 break
         else:
             continue
@@ -172,8 +203,8 @@ def run_plot(args):
     func = dem_dict[args.model]
     _, _, logs = func(0)
 
-    plot(mlpr_list, test_dict, args.results_prefix, logs, \
-        mapie=mapie, coverage=args.coverage, theta=args.theta)
+    plot(mlpr_list, test_dict, args.results_prefix, logs, mapie=mapie,
+         coverage=args.coverage, theta=args.theta, params=args.params)
 
 
 # helper methods for custom type checks and parsing
@@ -244,15 +275,12 @@ def dadi_ml_parser():
     generate_data_parser.add_argument('--theta', type=_pos_int,
                                       help="Factor to multiply FS with",
                                       default=1)
-    generate_data_parser.add_argument('--normalize', action='store_true',
-                                      help="Whether to normalize FS when\
-                                           theta > 1", default=True)
-    generate_data_parser.add_argument('--sampling', action='store_true',
-                                      help="Whether to sample FS when\
-                                          theta > 1", default=True)
+    generate_data_parser.add_argument('--non_normalize', action='store_false',
+                                      help="Don't normalize FS")
+    generate_data_parser.add_argument('--no_sampling', action='store_false',
+                                      help="Don't sample FS when theta > 1")
     generate_data_parser.add_argument('--folded', action="store_true",
-                                      help="Whether to fold FS",
-                                      default=False)
+                                      help="Whether to fold FS")
     generate_data_parser.add_argument('--bootstrap', action='store_true',
                                       help="Whether to generate bootstrap\
                                            FS data")
@@ -262,6 +290,8 @@ def dadi_ml_parser():
                                       default=200)
     generate_data_parser.add_argument('--n_cpu', type=_pos_int,
                                       help="Number of CPUs to use")
+    generate_data_parser.add_argument('--no_fs_qual_check', action='store_true',
+                                      help="Turn off default FS quality check")
 
     # subcommand for train
     train_parser = subparsers.add_parser(
@@ -290,8 +320,8 @@ def dadi_ml_parser():
     # if provided will be prioritized over input flags
     train_parser.add_argument("--hyperparam", type=str,
                               help="Path to dictionary of MLPR hyperparam")
-    # flags for specifying different mlpr hyperparams if not providing dict
-    # this should be a list of dict, not dict (due to mapie being several mlprs)
+    # flags for specifying mlpr hyperparams if not providing dict
+    # this should be a list of dict, not dict (mapie uses several mlprs)
 
     train_parser.add_argument('--hidden_layer_sizes',
                               metavar='TUPLE OF POSITIVE INT', nargs='*',
@@ -326,16 +356,16 @@ def dadi_ml_parser():
     # need to handle dir for multiple models for mapie
     # single dir for sklearn models
     predict_parser.add_argument("--mlpr_dir", type=str, required=True,
-                              help="Path to trained MLPR(s)")
+                                help="Path to trained MLPR(s)")
     predict_parser.add_argument("--input_fs", type=str, required=True,
-                              help="Path to Spectrum file for generating prediction")
+                                help="Path to FS file for generating prediction")
     predict_parser.add_argument('--model', type=str, choices=model_name,
-                              required=True,
-                              help="Name of dadi demographic model")
+                                required=True,
+                                help="Name of dadi demographic model")
 
     # optional
     predict_parser.add_argument("--output_prefix", type=str,
-                              help="Optional output file to write out results\
+                                help="Optional output file to write out results\
                                    (default stdout)")
 
     # need to have stat flags for getting scores and prediction intervals
@@ -347,27 +377,23 @@ def dadi_ml_parser():
     plot_parser.set_defaults(func=run_plot)
 
     plot_parser.add_argument("--mlpr_dir", type=str, required=True,
-                              help="Path to trained MLPR(s)")
+                             help="Path to trained MLPR(s)")
     plot_parser.add_argument("--test_dict", type=str, required=True,
-                              help="Path to test data dictionary file")
+                             help="Path to test data dictionary file")
     plot_parser.add_argument("--results_prefix", type=str, required=True,
-                              help="Path to save output plots")
+                             help="Path to save output plots")
     plot_parser.add_argument('--model', type=str, choices=model_name,
-                              required=True,
-                              help="Name of dadi demographic model")
-    
+                             required=True,
+                             help="Name of dadi demographic model")
+
     # optional
     plot_parser.add_argument('--coverage', action='store_true', default=False,
-                              help="Generate coverage plot (used with mapie)")
+                             help="Generate coverage plot (used with mapie)")
     plot_parser.add_argument('--theta', type=_pos_int,
-                              help="Theta used to generate test_dict",
-                              default=None)
-
-    # # subcommand for tune
-    # tune_parser = subparsers.add_parser(
-    #     "tune", help='MLPR hyperparam tuning with hyperband')
-    # tune_parser.set_defaults(func=run_tune)
-    # tune_parser.add_argument("data_dir")
+                             help="Theta used to generate test_dict",
+                             default=None)
+    plot_parser.add_argument('--params', nargs='*',
+                             help='param names in order, e.g. nu T misid')
 
     return parser
 
