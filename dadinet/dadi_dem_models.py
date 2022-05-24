@@ -2,6 +2,9 @@
 supported with mlpr prediction"""
 import random
 import dadi
+from dadi import Numerics, PhiManip, Integration, Spectrum
+import numpy as np
+import dadinet.portik_models_3d as portik_3d
 
 
 def two_epoch(n_samples):
@@ -74,4 +77,156 @@ def IM(n_samples):
         m12 = random.random() * 9 + 1
         m21 = random.random() * 9 + 1
         params_list.append((s, nu1, nu2, T, m12, m21))
+    return func, params_list, logs
+
+
+def _OutOfAfrica(params, ns, pts):
+    '''Custom dadi demographic model function not included in API'''
+    nuAf, nuB, nuEu0, nuEu, nuAs0, nuAs, \
+        mAfB, mAfEu, mAfAs, mEuAs, \
+        TAf, TB, TEuAs = params
+    xx = Numerics.default_grid(pts)
+
+    phi = PhiManip.phi_1D(xx)
+    phi = Integration.one_pop(phi, xx, TAf, nu=nuAf)
+
+    phi = PhiManip.phi_1D_to_2D(xx, phi)
+    phi = Integration.two_pops(
+        phi, xx, TB, nu1=nuAf, nu2=nuB, m12=mAfB, m21=mAfB)
+
+    phi = PhiManip.phi_2D_to_3D_split_2(xx, phi)
+
+    def nuEu_func(t): return nuEu0 * (nuEu/nuEu0) ** (t/TEuAs)
+    def nuAs_func(t): return nuAs0 * (nuAs/nuAs0) ** (t/TEuAs)
+    phi = Integration.three_pops(phi, xx, TEuAs, nu1=nuAf, nu2=nuEu_func,
+                                 nu3=nuAs_func, m12=mAfEu, m13=mAfAs, m21=mAfEu,
+                                 m23=mEuAs, m31=mAfAs, m32=mEuAs)
+
+    fs = Spectrum.from_phi(phi, ns, (xx, xx, xx))
+    return fs
+
+
+def _param_range(param_type):
+    ''' Helper function to generate random parameter values
+    within biologically realistic range for each type of dem param.
+    Input: param_type is a string corresponding to range_dict key'''
+    range_dict = {'size': (4, -2),
+                  'time': (1.9, 0.1),
+                  'mig': (9, 1),
+                  's': (0.98, 0.01)}
+    a, b = range_dict[param_type]
+
+    return random.random() * a + b
+
+
+def OutOfAfrica(n_samples):
+    '''Specifications for 3D Out of Africa model'''
+    # load custom demographic model from helper function
+    func = _OutOfAfrica
+
+    # specify param in log scale
+    log_options = [True, False]
+    rep_time = [6, 7]
+    logs = list(np.repeat(log_options, rep_time))
+
+    # generate params
+    params_list = []
+
+    while len(params_list) < n_samples:
+        # pick random values in specified range
+        p = []
+        for _ in range(6):  # get 6 size params
+            p.append(_param_range('size'))
+        for _ in range(4):  # get 4 migration rate params
+            p.append(_param_range('mig'))
+        for _ in range(3):  # get 3 event time params
+            p.append(_param_range('time'))
+
+        # save param values as a tuple
+        params_list.append(tuple(p))
+    return func, params_list, logs
+
+
+def split_sym_mig_adjacent_var1(n_samples):
+    '''Specifications for a Portik 3D model'''
+    # load custom demographic model from helper function
+    func = portik_3d.split_sym_mig_adjacent_var1
+
+    # specify param in log scale
+    log_options = [True, False]
+    rep_time = [4, 5]
+    logs = list(np.repeat(log_options, rep_time))
+
+    # generate params
+    params_list = []
+
+    while len(params_list) < n_samples:
+        # pick random values in specified range
+        p = []
+        for _ in range(4):  # get 4 size params
+            p.append(_param_range('size'))
+        for _ in range(3):  # get 3 migration rate params
+            p.append(_param_range('mig'))
+        for _ in range(2):  # get 2 event time params
+            p.append(_param_range('time'))
+
+        # save param values as a tuple
+        params_list.append(tuple(p))
+    return func, params_list, logs
+
+
+def split_sym_mig_adjacent_var1_modified(n_samples):
+    '''Specifications for a Portik 3D model
+    Modified to make all migration values 0'''
+    # load custom demographic model from helper function
+    func = portik_3d.split_sym_mig_adjacent_var1
+
+    # specify param in log scale
+    log_options = [True, False]
+    rep_time = [4, 5]
+    logs = list(np.repeat(log_options, rep_time))
+
+    # generate params
+    params_list = []
+
+    while len(params_list) < n_samples:
+        # pick random values in specified range
+        p = []
+        for _ in range(4):  # get 4 size params
+            p.append(_param_range('size'))
+        for _ in range(3):  # get 3 migration rate params
+            p.append(0)
+        for _ in range(2):  # get 2 event time params
+            p.append(_param_range('time'))
+
+        # save param values as a tuple
+        params_list.append(tuple(p))
+    return func, params_list, logs
+
+
+def OutOfAfrica_no_mig(n_samples):
+    '''Specifications for 3D Out of Africa model without migration'''
+    # load custom demographic model from helper function
+    func = _OutOfAfrica
+
+    # specify param in log scale
+    log_options = [True, False]
+    rep_time = [6, 7]
+    logs = list(np.repeat(log_options, rep_time))
+
+    # generate params
+    params_list = []
+
+    while len(params_list) < n_samples:
+        # pick random values in specified range
+        p = []
+        for _ in range(6):  # get 6 size params
+            p.append(_param_range('size'))
+        for _ in range(4):  # get 4 migration rate params
+            p.append(0)
+        for _ in range(3):  # get 3 event time params
+            p.append(_param_range('time'))
+
+        # save param values as a tuple
+        params_list.append(tuple(p))
     return func, params_list, logs
