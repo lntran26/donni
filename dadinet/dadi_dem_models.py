@@ -1,9 +1,9 @@
 """Specifications for each dadi demographic models
 supported with mlpr prediction"""
 import random
+import numpy as np
 import dadi
 from dadi import Numerics, PhiManip, Integration, Spectrum
-import numpy as np
 import dadinet.portik_models_3d as portik_3d
 
 
@@ -99,8 +99,8 @@ def _OutOfAfrica(params, ns, pts):
     def nuEu_func(t): return nuEu0 * (nuEu/nuEu0) ** (t/TEuAs)
     def nuAs_func(t): return nuAs0 * (nuAs/nuAs0) ** (t/TEuAs)
     phi = Integration.three_pops(phi, xx, TEuAs, nu1=nuAf, nu2=nuEu_func,
-                                 nu3=nuAs_func, m12=mAfEu, m13=mAfAs, m21=mAfEu,
-                                 m23=mEuAs, m31=mAfAs, m32=mEuAs)
+                                 nu3=nuAs_func, m12=mAfEu, m13=mAfAs,
+                                 m21=mAfEu, m23=mEuAs, m31=mAfAs, m32=mEuAs)
 
     fs = Spectrum.from_phi(phi, ns, (xx, xx, xx))
     return fs

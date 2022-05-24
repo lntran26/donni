@@ -2,9 +2,9 @@
 Method for generating dadi-simulated fs datasets
 '''
 import sys
+import random
 from multiprocessing import Pool
 import dadi
-import random
 
 
 def worker_func(args: tuple):
@@ -23,7 +23,7 @@ def generate_fs(func, params_list, logs, theta, ns, pts_l,
                 norm=True, sampling=True, folded=False,
                 bootstrap=False, n_bstr=200, ncpu=None):
     '''
-    Parallelized generation of a dataset of multiple fs based on an input 
+    Parallelized generation of a dataset of multiple fs based on an input
     demographic model and a list of several demographic parameters
     Inputs:
         func: dadi demographic model
@@ -40,15 +40,13 @@ def generate_fs(func, params_list, logs, theta, ns, pts_l,
             (None means using all)
     Output: dataset dictionary with format params:fs
     '''
-    # if not folded:
-    #     func = dadi.Numerics.make_anc_state_misid_func(func)
 
     arg_list = []
     new_params_list = []
     for p in params_list:
         delog_p = [10**p[i] if logs[i] else p[i] for i in range(len(logs))]
         if not folded:
-            misid = random.random() / 4 # range 0 to .25
+            misid = random.random() / 4  # range 0 to .25
             delog_p.append(misid)
             new_p = list(p)
             new_p.append(misid)
