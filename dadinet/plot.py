@@ -90,7 +90,7 @@ def plot_accuracy_single(x, y, size=[8, 2, 20], x_label="true",
         ax.set_title(title, fontsize=size[2], fontweight='bold')
 
 
-def plot_coverage(cov_scores, alpha, results_prefix, theta=None):
+def plot_coverage(cov_scores, alpha, results_prefix, theta=None, params=None):
     expected = [100*(1 - a) for a in alpha]
     observed = []
     for cov_score in cov_scores:
@@ -109,8 +109,9 @@ def plot_coverage(cov_scores, alpha, results_prefix, theta=None):
     ax.set_ylabel("observed", fontsize=12, fontweight='bold')
 
     for i in range(len(cov_scores)):
+        label = params[i] if params is not None else 'param '+str(i+1)
         ax.plot(expected, observed[i],
-                label='param '+str(i+1), marker='o', linewidth=2)
+                label=label, marker='o', linewidth=2)
     ax.plot(expected, expected, label='match', linewidth=2, color="black")
 
     plt.xticks(np.arange(min(expected), max(expected)+5, 10))
@@ -118,13 +119,13 @@ def plot_coverage(cov_scores, alpha, results_prefix, theta=None):
     plt.xlim([0, 100])
     plt.ylim([0, 100])
 
-    ax.legend()
+    ax.legend(loc='upper left', fontsize=8)
 
     plt.savefig(f'{results_prefix}_coverage')
     plt.clf()
 
 
-def plot(models: list, test_data, results_prefix, logs, mapie=True, coverage=False, theta=None):
+def plot(models: list, test_data, results_prefix, logs, mapie=True, coverage=False, theta=None, params=None):
     # unpack test_data dict
     X_test = [np.array(fs).flatten() for fs in test_data.values()]
     y_test = list(test_data.keys())
@@ -158,7 +159,10 @@ def plot(models: list, test_data, results_prefix, logs, mapie=True, coverage=Fal
             # get scores for normal pred versions (logged)
             r2 = get_r2(true, pred)[0]
             rho = get_rho(true, pred)
-            title = f'param {model_i + 1}'
+            if params is None:
+                title = f'param {model_i + 1}'
+            else:
+                title = f'{params[model_i]}'
             if theta:
                 title += f' theta {theta}'
             if model_i < len(logs) - 1 and logs[model_i]:
@@ -172,12 +176,12 @@ def plot(models: list, test_data, results_prefix, logs, mapie=True, coverage=Fal
                 pred = [p_pred for p_pred in pred]
                 plot_accuracy_single(true, pred, size=[6, 2, 20], log=False,
                                      r2=r2, rho=rho, title=title, c=c)
-            plt.savefig(f'{results_prefix}_param_{model_i + 1}_accuracy')
+            plt.savefig(f'{results_prefix}_param_{model_i + 1:02d}_accuracy')
             plt.clf()
 
         if coverage:
             # plot coverage
-            plot_coverage(all_coverage, alpha, results_prefix)
+            plot_coverage(all_coverage, alpha, results_prefix, theta, params)
 
     else:  # TODO: implement sklearn version
         return
