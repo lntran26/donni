@@ -1,14 +1,12 @@
 """
 Module for training and tuning MLPR with dadi-simulated data
 """
-import pickle
 import math
 import numpy as np
 from sklearn.neural_network import MLPRegressor
-from mapie.regression import MapieRegressor
 from sklearn.experimental import enable_halving_search_cv  # noqa
-from sklearn.model_selection import HalvingRandomSearchCV
-from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import HalvingRandomSearchCV, cross_val_score
+from mapie.regression import MapieRegressor
 
 
 def prep_data(data: dict, mapie=True):
@@ -52,9 +50,9 @@ def tune(X_input, y_label, param_dist, max_iter=243, eta=3, cv=5):
     Input:
         X_input: list of fs data sets from _prep_data()
         y_label: list of list of unpacked param labels from _prep_data()
-        param_dist: param distribution dictionary specifying values of 
+        param_dist: param distribution dictionary specifying values of
             hyperparams to search over
-        max_iter: maximum iterations (lbfgs) or epochs (adam) allowed 
+        max_iter: maximum iterations (lbfgs) or epochs (adam) allowed
             per candidate, ideally a power of eta, e.g. 81 = 3^4
         eta: the halving parameter (factor)
         cv: k-fold of stratified cross validation
