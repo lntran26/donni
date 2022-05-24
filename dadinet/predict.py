@@ -1,10 +1,5 @@
 '''Module for using trained MLPR to make demographic param predictions'''
-from sklearn.neural_network import MLPRegressor
-from mapie.regression import MapieRegressor
 import numpy as np
-import dadi
-import sys
-import os
 
 
 def predict(models: list, input_fs, logs, mapie=True):
@@ -17,6 +12,7 @@ def predict(models: list, input_fs, logs, mapie=True):
         individual params
     if not mapie, should be list of length 1
     '''
+
     input_x = [np.array(input_fs).flatten()]
     if mapie:
         pred_list = []
