@@ -1,15 +1,14 @@
 """Module for using trained MLPR to plot many demographic param predictions"""
-from sklearn.neural_network import MLPRegressor
-from mapie.regression import MapieRegressor
-from mapie.metrics import regression_coverage_score
 import numpy as np
-import dadi
+from mapie.metrics import regression_coverage_score
 from sklearn.metrics import r2_score
 from scipy import stats
 import matplotlib.pyplot as plt
 
 
 def get_r2(y_true, y_pred):
+    """Method to get R2 score for prediction"""
+
     score = r2_score(y_true, y_pred)
     score_by_param = r2_score(y_true, y_pred, multioutput='raw_values')
     return score, score_by_param
@@ -18,6 +17,7 @@ def get_r2(y_true, y_pred):
 def get_rho(y_true, y_pred):
     """stats.spearmanr returns two values: correlation and p-value
     Here we only want the correlation value"""
+
     return stats.spearmanr(y_true, y_pred)[0]
 
 
@@ -74,29 +74,31 @@ def plot_accuracy_single(x, y, size=[8, 2, 20], x_label="true",
     plt.axline((0, 0), (1, 1), linewidth=size[1])
 
     # plot scores if specified
-    if r2 != None:
+    if r2 is not None:
         plt.text(0.4, 0.9, "\n\n" + r'$R^{2}$: ' + str(round(r2, 4)),
                  horizontalalignment='center', verticalalignment='center',
                  fontsize=size[2], transform=ax.transAxes)
-    if rho != None:
+    if rho is not None:
         plt.text(0.4, 0.9, "ρ: " + str(round(rho, 4)),
                  horizontalalignment='center', verticalalignment='center',
                  fontsize=size[2], transform=ax.transAxes)
-    if msle != None:
+    if msle is not None:
         plt.text(0.4, 0.9, "\n\n\n\nMSLE: " + str(round(msle, 4)),
                  horizontalalignment='center', verticalalignment='center',
                  fontsize=size[2], transform=ax.transAxes)
-    if title != None:
+    if title is not None:
         ax.set_title(title, fontsize=size[2], fontweight='bold')
 
 
 def plot_coverage(cov_scores, alpha, results_prefix, theta=None, params=None):
+    """Helper method to plot coverage plot"""
+
     expected = [100*(1 - a) for a in alpha]
     observed = []
     for cov_score in cov_scores:
         observed.append([s*100 for s in cov_score])
 
-    fig = plt.figure()
+    plt.figure()
     ax = plt.gca()
     ax.set_aspect('equal', 'box')
     font = {'weight': 'bold', 'size': 12}
@@ -125,7 +127,10 @@ def plot_coverage(cov_scores, alpha, results_prefix, theta=None, params=None):
     plt.clf()
 
 
-def plot(models: list, test_data, results_prefix, logs, mapie=True, coverage=False, theta=None, params=None):
+def plot(models: list, test_data, results_prefix, logs, mapie=True,
+         coverage=False, theta=None, params=None):
+    """Main method to plot both accuracy and coverage plots"""
+
     # unpack test_data dict
     X_test = [np.array(fs).flatten() for fs in test_data.values()]
     y_test = list(test_data.keys())
@@ -170,11 +175,11 @@ def plot(models: list, test_data, results_prefix, logs, mapie=True, coverage=Fal
                 true_delog = [10**p_true for p_true in true]
                 pred_delog = [10**p_pred for p_pred in pred]
                 plot_accuracy_single(true_delog, pred_delog, size=[6, 2, 20],
-                                     log=True, r2=r2, rho=rho, title=title, c=c)
+                                     log=True, r2=r2, rho=rho,
+                                     title=title, c=c)
             else:
-                true = [p_true for p_true in true]
-                pred = [p_pred for p_pred in pred]
-                plot_accuracy_single(true, pred, size=[6, 2, 20], log=False,
+                plot_accuracy_single(list(true), list(pred),
+                                     size=[6, 2, 20], log=False,
                                      r2=r2, rho=rho, title=title, c=c)
             plt.savefig(f'{results_prefix}_param_{model_i + 1:02d}_accuracy')
             plt.clf()
