@@ -147,14 +147,8 @@ def run_train(args):
         get_cv_score(trained, X_input, y_label, fh, cv=args.cv)
 
 
-def run_predict(args):
-    '''Method to get prediction given inputs from the
-    predict subcommand'''
-
-    if args.output_prefix:
-        output_stream = open(args.output_prefix, 'w')
-    else:
-        output_stream = sys.stdout
+def _load_trained_mlpr(args):
+    """Helper method to read in trained MLPR models for predict and plot"""
 
     mlpr_list = []
     mapie = True
@@ -169,12 +163,28 @@ def run_predict(args):
                 break
         else:
             continue
-    # open input Spectrum from file
-    fs = dadi.Spectrum.from_file(args.input_fs)
     # need to get logs to de-log prediction
     func = dem_dict[args.model]
     _, _, logs = func(0)
+
+    return mlpr_list, mapie, logs
+
+
+def run_predict(args):
+    '''Method to get prediction given inputs from the
+    predict subcommand'''
+
+    # load trained MLPRs and demographic model logs
+    mlpr_list, mapie, logs = _load_trained_mlpr(args)
+    # open input FS from file
+    fs = dadi.Spectrum.from_file(args.input_fs)
+    # infer params using input FS
     pred = predict(mlpr_list, fs, logs, mapie=mapie)
+    # write output
+    if args.output_prefix:
+        output_stream = open(args.output_prefix, 'w')
+    else:
+        output_stream = sys.stdout
     # write out prediction in one line
     print(*pred, sep='\t', file=output_stream)
     if args.output_prefix:
@@ -184,25 +194,11 @@ def run_predict(args):
 def run_plot(args):
     '''Method to plot outputs'''
 
-    mlpr_list = []
-    mapie = True
-    # assumes that files are sorted (works for up to 9 params)
-    for filename in sorted(os.listdir(args.mlpr_dir)):
-        if filename.startswith("param") and filename.endswith("predictor"):
-            # print(filename)
-            mlpr = pickle.load(
-                open(os.path.join(args.mlpr_dir, filename), 'rb'))
-            mlpr_list.append(mlpr)
-            if filename == "param_all_predictor":
-                mapie = False  # this is the sklearn case
-                break
-        else:
-            continue
+    # load trained MLPRs and demographic model logs
+    mlpr_list, mapie, logs = _load_trained_mlpr(args)
+    # load test fs set
     test_dict = pickle.load(open(args.test_dict, 'rb'))
-    # need to get logs for accurate plotting
-    func = dem_dict[args.model]
-    _, _, logs = func(0)
-
+    # plot results
     plot(mlpr_list, test_dict, args.results_prefix, logs, mapie=mapie,
          coverage=args.coverage, theta=args.theta, params=args.params)
 
@@ -236,6 +232,7 @@ def _tuple_of_pos_int(input_str):
 def _int_2(input_int):
     """
     Check if input is an integer >= 2."""
+
     if int(input_int) < 2:
         raise argparse.ArgumentTypeError("input must be >= 2")
     return int(input_int)
@@ -290,7 +287,8 @@ def dadi_ml_parser():
                                       default=200)
     generate_data_parser.add_argument('--n_cpu', type=_pos_int,
                                       help="Number of CPUs to use")
-    generate_data_parser.add_argument('--no_fs_qual_check', action='store_true',
+    generate_data_parser.add_argument('--no_fs_qual_check',
+                                      action='store_true',
                                       help="Turn off default FS quality check")
 
     # subcommand for train
@@ -358,7 +356,8 @@ def dadi_ml_parser():
     predict_parser.add_argument("--mlpr_dir", type=str, required=True,
                                 help="Path to trained MLPR(s)")
     predict_parser.add_argument("--input_fs", type=str, required=True,
-                                help="Path to FS file for generating prediction")
+                                help="Path to FS file for generating\
+                                     prediction")
     predict_parser.add_argument('--model', type=str, choices=model_name,
                                 required=True,
                                 help="Name of dadi demographic model")
@@ -400,6 +399,7 @@ def dadi_ml_parser():
 
 def main(arg_list=None):
     """Main program"""
+
     parser = dadi_ml_parser()
     args = parser.parse_args(arg_list)
     args.func(args)
