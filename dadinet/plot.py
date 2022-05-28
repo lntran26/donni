@@ -21,6 +21,26 @@ def get_rho(y_true, y_pred):
     return stats.spearmanr(y_true, y_pred)[0]
 
 
+def sort_by_param(y_true, y_pred):
+    '''
+    Sort the predictions by multioutput sklearn mlpr into lists of
+    true vs predict values by each param used in the model.
+    Returns: param_true and param_pred are each a list of lists,
+    each sublist contains true or pred values for one param
+    '''
+    param_true, param_pred = [], []
+    n = 0
+    while n < len(y_true[0]):
+        param_list_true, param_list_pred = [], []
+        for true, pred in zip(y_true, y_pred):
+            param_list_true.append(true[n])
+            param_list_pred.append(pred[n])
+        param_true.append(param_list_true)
+        param_pred.append(param_list_pred)
+        n += 1
+    return param_true, param_pred
+
+
 def plot_accuracy_single(x, y, size=[8, 2, 20], x_label="true",
                          y_label="predict", log=False,
                          r2=None, msle=None, rho=None, c=None, title=None):
@@ -127,31 +147,32 @@ def plot_coverage(cov_scores, alpha, results_prefix, theta=None, params=None):
     plt.clf()
 
 
-def plot(models: list, test_data, results_prefix, logs, mapie=True,
+def plot(models: list, X_test, y_test, results_prefix, logs, mapie=True,
          coverage=False, theta=None, params=None):
     """Main method to plot both accuracy and coverage plots"""
 
-    # unpack test_data dict
-    X_test = [np.array(fs).flatten() for fs in test_data.values()]
-    y_test = list(test_data.keys())
+    # # unpack test_data dict
+    # X_test = [np.array(fs).flatten() for fs in test_data.values()]
+    # y_test = list(test_data.keys())
+
+    # # parse labels into single list for each param (required for mapie)
+    # y_test_unpack = list(zip(*y_test)) if mapie else [y_test]
 
     # some set alpha
     alpha = [.05, .1, .2, .5, .7, .85]
 
-    # parse labels into single list for each param (required for mapie)
-    y_test_unpack = list(zip(*y_test)) if mapie else [y_test]
     # make prediction with trained mlpr models
     c = None
     if mapie:
         all_coverage = []
         c = None
         if len(logs) == 2:  # assumption for now
-            T_true = y_test_unpack[1]
-            nu_true = y_test_unpack[0]
+            T_true = y_test[1]
+            nu_true = y_test[0]
             nu_true_delog = [10**nu for nu in nu_true]
             c = [T/nu for T, nu in zip(T_true, nu_true_delog)]
         for model_i, model in enumerate(models):
-            true = y_test_unpack[model_i]
+            true = y_test[model_i]
             if coverage:
                 pred, pis = model.predict(X_test, alpha=alpha)
                 coverage_scores = [
@@ -188,5 +209,43 @@ def plot(models: list, test_data, results_prefix, logs, mapie=True,
             # plot coverage
             plot_coverage(all_coverage, alpha, results_prefix, theta, params)
 
-    else:  # TODO: implement sklearn version
-        return
+    else:  # implement sklearn version
+        # for sklearn multioutput, models is a list of one mlpr
+        model = models[0]
+        # and true is a list of one list containing all dem param tuples
+        true = y_test[0]
+        # get predictions from trained multioutput model
+        pred = model.predict(X_test)
+        # have to sort true and pred by param to plot results by param
+        param_true, param_pred = sort_by_param(true, pred)
+
+        # get scores for normal pred versions (logged)
+        r2_all = get_r2(true, pred)[1]
+        rho = get_rho(true, pred)
+
+        for i, _ in enumerate(param_true):
+            # handling log-scale data
+            if i < len(logs) - 1 and logs[i]:  # misid is not included in log
+                # convert log-scale values back to regular scale
+                plot_p_true = [10**p_true for p_true in param_true[i]]
+                plot_p_pred = [10**p_pred for p_pred in param_pred[i]]
+                log = True
+            else:  # leave as is if values not in log scale
+                plot_p_true = param_true[i]
+                plot_p_pred = param_pred[i]
+                log = False
+            # handling scores
+            r2 = r2_all[i]
+            rho = get_rho(plot_p_true, plot_p_pred)
+            # set title
+            if params is None:
+                title = f'param {i + 1}'
+            else:
+                title = f'{params[i]}'
+            if theta:
+                title += f' theta {theta}'
+            # plot a single subplot
+            plot_accuracy_single(plot_p_true, plot_p_pred, size=[6, 2, 20],
+                                 log=log, r2=r2, rho=rho, title=title)
+            plt.savefig(f'{results_prefix}_param_{i + 1:02d}_accuracy')
+            plt.clf()

@@ -72,7 +72,7 @@ def run_train(args):
     # Load training data
     data = pickle.load(open(args.data_file, 'rb'))
     # parse data into input and corresponding labels
-    X_input, y_label = prep_data(data, mapie=args.mapie)
+    X_input, y_label = prep_data(data, mapie=args.multioutput)
 
     # process input from command line into a dict of hyperparams
     if args.hyperparam is not None:
@@ -80,7 +80,7 @@ def run_train(args):
     else:
         param_dict = {}
         for arg in vars(args):
-            if arg not in ['data_file', 'mlpr_dir', 'mapie', 'tune',
+            if arg not in ['data_file', 'mlpr_dir', 'multioutput', 'tune',
                            'max_iter', 'subcommand', 'func', 'hyperparam',
                            'eta', 'cv'] and getattr(args, arg) is not None:
                 param_dict[arg] = getattr(args, arg)
@@ -132,16 +132,14 @@ def run_train(args):
     # # for debugging
     # print(f'train_param_dict_list: {train_param_dict_list}')
     # train with best hyperparams from tuning or with input if not tuning
-    trained = train(X_input, y_label, train_param_dict_list, mapie=args.mapie)
+    trained = train(X_input, y_label, train_param_dict_list,
+                    mapie=args.multioutput)
 
     # save trained mlpr(s)
     for i, mlpr in enumerate(trained):
-        index = i+1 if args.mapie else 'all'
+        index = f'{i+1:02d}' if args.multioutput else 'all'
         pickle.dump(mlpr, open(
-            f'{args.mlpr_dir}/param_{index:02d}_predictor', 'wb'), 2)
-        # changed naming convension to '01' for now
-        # note that naming convention might need to be '001'
-        # to solve sorting issue below
+            f'{args.mlpr_dir}/param_{index}_predictor', 'wb'), 2)
     # output cv score of trained mlpr on training set
     with open(f'{args.mlpr_dir}/training_score.txt', 'wt') as fh:
         get_cv_score(trained, X_input, y_label, fh, cv=args.cv)
@@ -152,7 +150,6 @@ def _load_trained_mlpr(args):
 
     mlpr_list = []
     mapie = True
-    # assumes that files are sorted (works for up to 9 params)
     for filename in sorted(os.listdir(args.mlpr_dir)):
         if filename.startswith("param") and filename.endswith("predictor"):
             mlpr = pickle.load(
@@ -198,8 +195,12 @@ def run_plot(args):
     mlpr_list, mapie, logs = _load_trained_mlpr(args)
     # load test fs set
     test_dict = pickle.load(open(args.test_dict, 'rb'))
+
+    # parse data into test FS and corresponding labels
+    X_test, y_test = prep_data(test_dict, mapie=mapie)
+
     # plot results
-    plot(mlpr_list, test_dict, args.results_prefix, logs, mapie=mapie,
+    plot(mlpr_list, X_test, y_test, args.results_prefix, logs, mapie=mapie,
          coverage=args.coverage, theta=args.theta, params=args.params)
 
 
@@ -299,9 +300,9 @@ def dadi_ml_parser():
                               help="Path to input training data")
     train_parser.add_argument("--mlpr_dir", type=str, required=True,
                               help="Path to save output trained MLPR(s)")
-    train_parser.add_argument("--mapie", action='store_true', default=True,
-                              help="Whether to train multioutput sklearn MLPR\
-                                   or mapie single-output MLPRs")
+    train_parser.add_argument("--multioutput", action='store_false',
+                              help="Train multioutput sklearn MLPR instead of\
+                                  default mapie single-output MLPRs")
     train_parser.add_argument("--tune", action='store_true',
                               help="Whether to try a range of hyperparameters\
                                    to find the best performing MLPRs")
