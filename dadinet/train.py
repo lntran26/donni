@@ -17,7 +17,7 @@ def prep_data(data: dict, mapie=True):
             y_label_unpack as a list of list, where each inner list
             is the label of one single demographic param if mapie,
             If mapie=False, y_label_unpack will be a list of one list,
-            with the one inner list containing tuples of all dem params.
+            with this one inner list containing tuples of all dem params.
     '''
 
     # require dict to be ordered (Python 3.7+)
