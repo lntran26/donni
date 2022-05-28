@@ -230,3 +230,7 @@ def OutOfAfrica_no_mig(n_samples):
         # save param values as a tuple
         params_list.append(tuple(p))
     return func, params_list, logs
+
+
+def null(n_samples):
+    return None, [], [False]
