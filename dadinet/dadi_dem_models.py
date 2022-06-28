@@ -84,7 +84,7 @@ def _OutOfAfrica(params, ns, pts):
     '''Custom dadi demographic model function not included in API'''
     nuAf, nuB, nuEu0, nuEu, nuAs0, nuAs, \
         mAfB, mAfEu, mAfAs, mEuAs, \
-        TAf, TB, TEuAs = params
+        TAf, TB, TEuAs, Tsum = params  # include Tsum
     xx = Numerics.default_grid(pts)
 
     phi = PhiManip.phi_1D(xx)
@@ -126,7 +126,7 @@ def OutOfAfrica(n_samples):
 
     # specify param in log scale
     log_options = [True, False]
-    rep_time = [6, 7]
+    rep_time = [6, 8]  # include T_sum
     logs = list(np.repeat(log_options, rep_time))
 
     # generate params
@@ -139,9 +139,13 @@ def OutOfAfrica(n_samples):
             p.append(_param_range('size'))
         for _ in range(4):  # get 4 migration rate params
             p.append(_param_range('mig'))
-        for _ in range(3):  # get 3 event time params
-            p.append(_param_range('time'))
-
+        # for _ in range(3):  # get 3 event time params
+        #     p.append(_param_range('time'))
+        # sample t_sum from time param range, then divide into 3 p's
+        t_sum = _param_range('time')
+        p += list(np.random.dirichlet(np.ones(3))*t_sum)
+        # also include t_sum
+        p.append(t_sum)
         # save param values as a tuple
         params_list.append(tuple(p))
     return func, params_list, logs
@@ -233,4 +237,73 @@ def OutOfAfrica_no_mig(n_samples):
 
 
 def null(n_samples):
+    """Dummy function to plot dem model with just Tsum"""
     return None, [], [False]
+
+
+def three_epoch(n_samples):
+    '''Specifications for 1D three_epoch model'''
+    # designate dadi demographic model
+    func = dadi.Demographics1D.three_epoch
+    # specify param in log scale
+    logs = [True, True, False, False]
+    # generate params
+    params_list = []
+    while len(params_list) < n_samples:
+        # pick random values in specified range
+        p = []
+        for _ in range(2):  # get 2 size params
+            p.append(_param_range('size'))
+        for _ in range(2):  # get 2 event time params
+            p.append(_param_range('time'))
+        # save param values as a tuple
+        params_list.append(tuple(p))
+    return func, params_list, logs
+
+
+def _three_epoch(params, ns, pts):
+    """
+    params = (nuB,nuF,TB,TF,Tsum)
+    ns = (n1,)
+
+    nuB: Ratio of bottleneck population size to ancient pop size
+    nuF: Ratio of contemporary to ancient pop size
+    TB: Length of bottleneck (in units of 2*Na generations)
+    TF: Time since bottleneck recovery (in units of 2*Na generations)
+
+    n1: Number of samples in resulting Spectrum
+    pts: Number of grid points to use in integration.
+    """
+    nuB, nuF, TB, TF, Tsum = params
+
+    xx = Numerics.default_grid(pts)
+    phi = PhiManip.phi_1D(xx)
+
+    phi = Integration.one_pop(phi, xx, TB, nuB)
+    phi = Integration.one_pop(phi, xx, TF, nuF)
+
+    fs = Spectrum.from_phi(phi, ns, (xx,))
+    return fs
+
+
+def three_epoch_restricted(n_samples):
+    '''Specifications for 1D three_epoch model
+    with T_sum range restricted to 0.1 to 2'''
+    # designate dadi demographic model
+    func = _three_epoch
+    # specify param in log scale
+    logs = [True, True, False, False, False]
+    # generate params
+    params_list = []
+    while len(params_list) < n_samples:
+        # pick random values in specified range
+        p = []
+        for _ in range(2):  # get 2 size params
+            p.append(_param_range('size'))
+        t_sum = _param_range('time')
+        p += list(np.random.dirichlet(np.ones(2))*t_sum)
+        # also include t_sum
+        p.append(t_sum)
+        # save param values as a tuple
+        params_list.append(tuple(p))
+    return func, params_list, logs
