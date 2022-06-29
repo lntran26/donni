@@ -151,6 +151,39 @@ def OutOfAfrica(n_samples):
     return func, params_list, logs
 
 
+def OutOfAfrica_no_mig(n_samples):
+    '''Specifications for 3D Out of Africa model without migration
+    with T sum restricted to be in biologically relevant range'''
+    # load custom demographic model from helper function
+    func = _OutOfAfrica
+
+    # specify param in log scale
+    log_options = [True, False]
+    rep_time = [6, 8]  # include T_sum
+    logs = list(np.repeat(log_options, rep_time))
+
+    # generate params
+    params_list = []
+
+    while len(params_list) < n_samples:
+        # pick random values in specified range
+        p = []
+        for _ in range(6):  # get 6 size params
+            p.append(_param_range('size'))
+        for _ in range(4):  # get 4 migration rate params
+            p.append(0)
+        # for _ in range(3):  # get 3 event time params
+        #     p.append(_param_range('time'))
+        # sample t_sum from time param range, then divide into 3 p's
+        t_sum = _param_range('time')
+        p += list(np.random.dirichlet(np.ones(3))*t_sum)
+        # also include t_sum
+        p.append(t_sum)
+        # save param values as a tuple
+        params_list.append(tuple(p))
+    return func, params_list, logs
+
+
 def split_sym_mig_adjacent_var1(n_samples):
     '''Specifications for a Portik 3D model'''
     # load custom demographic model from helper function
@@ -201,34 +234,6 @@ def split_sym_mig_adjacent_var1_modified(n_samples):
         for _ in range(3):  # get 3 migration rate params
             p.append(0)
         for _ in range(2):  # get 2 event time params
-            p.append(_param_range('time'))
-
-        # save param values as a tuple
-        params_list.append(tuple(p))
-    return func, params_list, logs
-
-
-def OutOfAfrica_no_mig(n_samples):
-    '''Specifications for 3D Out of Africa model without migration'''
-    # load custom demographic model from helper function
-    func = _OutOfAfrica
-
-    # specify param in log scale
-    log_options = [True, False]
-    rep_time = [6, 7]
-    logs = list(np.repeat(log_options, rep_time))
-
-    # generate params
-    params_list = []
-
-    while len(params_list) < n_samples:
-        # pick random values in specified range
-        p = []
-        for _ in range(6):  # get 6 size params
-            p.append(_param_range('size'))
-        for _ in range(4):  # get 4 migration rate params
-            p.append(0)
-        for _ in range(3):  # get 3 event time params
             p.append(_param_range('time'))
 
         # save param values as a tuple
