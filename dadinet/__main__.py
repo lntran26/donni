@@ -12,7 +12,7 @@ import dadinet.dadi_dem_models as models
 from dadinet.generate_data import generate_fs
 from dadinet.train import prep_data, tune, report,\
     get_best_specs, train, get_cv_score
-from dadinet.predict import predict
+from dadinet.predict import predict, prep_fs_for_ml
 from dadinet.plot import plot
 
 
@@ -193,11 +193,18 @@ def run_plot(args):
 
     # load trained MLPRs and demographic model logs
     mlpr_list, mapie, logs = _load_trained_mlpr(args)
+
     # load test fs set
     test_dict = pickle.load(open(args.test_dict, 'rb'))
 
+    # prepare fs in test_dict for ml prediction:
+    # check that fs is normalized and masked entries set to 0
+    prep_test_dict = {}
+    for params_key in test_dict:
+        prep_test_dict[params_key] = prep_fs_for_ml(test_dict[params_key])
+
     # parse data into test FS and corresponding labels
-    X_test, y_test = prep_data(test_dict, mapie=mapie)
+    X_test, y_test = prep_data(prep_test_dict, mapie=mapie)
 
     # plot results
     plot(mlpr_list, X_test, y_test, args.results_prefix, logs, mapie=mapie,
