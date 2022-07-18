@@ -1,0 +1,16 @@
+name: dadi-ml
+channels:
+  - conda-forge
+dependencies:
+  - python=3.9
+  - scikit-learn=1.0.2
+  - mapie=0.3.1
+  - dadi
+  - matplotlib
+  - numpy
+  - scipy
+  - nlopt
+  - pip
+  - pip:
+    - git+https://github.com/xin-huang/dadi-cli
+    - .
