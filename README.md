@@ -12,8 +12,7 @@ $ cd dadi-ml/
 ```
 
 ### Set up your python environment to run the dadi-ml pipeline
-We recommend you start by creating a new `conda` environment. This can be done using the command below, which will
-create a new `conda` env called `dadi-ml`.
+We recommend you start by creating a new `conda` environment. This can be done using the command below, which will create a new `conda` env called `dadi-ml` and installed the required packages to this env. The env can the be activated for each subsequent use.
 
 ```console
 $ conda env create -f environment.yml
