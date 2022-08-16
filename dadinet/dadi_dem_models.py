@@ -113,7 +113,9 @@ def _param_range(param_type):
     range_dict = {'size': (4, -2),
                   'time': (1.9, 0.1),
                   'mig': (9, 1),
-                  's': (0.98, 0.01)}
+                  's': (0.98, 0.01),
+                  'size_btn': (2, -2),  # bottleneck
+                  'size_rcv': (2, 0)}  # recovery
     a, b = range_dict[param_type]
 
     return random.random() * a + b
@@ -305,6 +307,32 @@ def three_epoch_restricted(n_samples):
         p = []
         for _ in range(2):  # get 2 size params
             p.append(_param_range('size'))
+        t_sum = _param_range('time')
+        p += list(np.random.dirichlet(np.ones(2))*t_sum)
+        # also include t_sum
+        p.append(t_sum)
+        # save param values as a tuple
+        params_list.append(tuple(p))
+    return func, params_list, logs
+
+
+def three_epoch_restricted_size(n_samples):
+    '''Specifications for 1D three_epoch model
+    with T_sum range restricted to 0.1 to 2
+    and nuB as bottleneck and nuF as recovery'''
+    # designate dadi demographic model
+    func = _three_epoch
+    # specify param in log scale
+    logs = [True, True, False, False, False]
+    # generate params
+    params_list = []
+    while len(params_list) < n_samples:
+        # pick random values in specified range
+        p = []
+        # for _ in range(2):  # get 2 size params
+        #     p.append(_param_range('size'))
+        p.append(_param_range('size_btn'))
+        p.append(_param_range('size_rcv'))
         t_sum = _param_range('time')
         p += list(np.random.dirichlet(np.ones(2))*t_sum)
         # also include t_sum
