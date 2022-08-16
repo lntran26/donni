@@ -68,6 +68,8 @@ def run_generate_data(args):
 def run_train(args):
     '''Method to train MLPR given inputs from the
     train subcommand'''
+    # TO DO: update complex if-else trees to handle tune v. train
+    # and using hyperparam vs hyperparam_list more efficiently
 
     # Load training data
     data = pickle.load(open(args.data_file, 'rb'))
@@ -78,16 +80,19 @@ def run_train(args):
     if args.hyperparam is not None:
         param_dict = pickle.load(open(args.hyperparam, 'rb'))
     else:
+        # if hyperparam dict is not provided then use individual default
+        # hyperparam arg to create one
         param_dict = {}
+        excluded_args = ['data_file', 'mlpr_dir', 'multioutput', 'tune',
+                         'max_iter', 'subcommand', 'func', 'hyperparam',
+                         'eta', 'cv', 'hyperparam_list']
         for arg in vars(args):
-            if arg not in ['data_file', 'mlpr_dir', 'multioutput', 'tune',
-                           'max_iter', 'subcommand', 'func', 'hyperparam',
-                           'eta', 'cv'] and getattr(args, arg) is not None:
+            if arg not in excluded_args and getattr(args, arg) is not None:
                 param_dict[arg] = getattr(args, arg)
     # # for debugging
     # print(f'param_dict: {param_dict}')
     if args.tune:
-        # run tuning on input param_dict
+        # run tuning using input param_dict
         all_results = tune(X_input, y_label, param_dict,
                            args.max_iter, args.eta, args.cv)
         # output full tuning result file
@@ -107,30 +112,52 @@ def run_train(args):
         # get train hyperparam from best mlpr from tuning
         # list of 1 if sklearn, list of multiple if mapie
         train_param_dict_list, scores = get_best_specs(all_results)
+        # output train_param_dict_list, which is the list of tuned hyperparam
+        # dicts that will be input into train() for training
+        pickle.dump(train_param_dict_list, open(
+            f'{args.mlpr_dir}/tuned_hyperparam_dict_list', 'wb'), 2)
         # print best scores after outputing the mlpr model
         with open(f'{args.mlpr_dir}/tune_results_brief.txt', 'a') as fh:
             for i, (spec, score) in enumerate(zip(train_param_dict_list,
                                                   scores)):
                 fh.write(f'CV score of best MLPR for param {i+1}: {score}\n')
                 fh.write(f'Spec of best MLPR for param {i+1}: {spec}\n')
+        print("Finish tuning\n")
 
-    else:  # process param_dict to train directly without tuning first
-        train_param_dict = {}
-        for key, value in param_dict.items():
-            # handling potentially incorrect input for tune instead of train
-            if isinstance(value, list):  # if input is a list
-                # get only the first value in list for each hyperparam
-                train_param_dict[key] = value[0]
-            elif isinstance(value, distribution):
-                pass  # ignore if input is a scipy distribution
-            else:  # get expected input value as a single input
-                train_param_dict[key] = value
-        # make the length of input hyperparam dict equal length of y_label
-        train_param_dict_list = []
-        for _ in range(len(y_label)):
-            train_param_dict_list.append(train_param_dict)
+    else:
+        # alternatively, train directly without tuning first.
+        # This will train with either hyperparam or hyperparam_list if provided.
+        # If neither is provided, hyperparam will be generated using the default
+        # options for each hyperparam from the command line.
+
+        # prioritizing reading hyperparam_list over hyperparam if provided
+        if args.hyperparam_list is not None and args.multioutput:
+            # hyperparam_list only works for mapie, not sklearn multioutput
+            # args.multioutput is true if using mapie
+            train_param_dict_list = pickle.load(
+                open(args.hyperparam_list, 'rb'))
+        else:
+            # only process hyperparam input into a list
+            # if hyperparam_list is not provided
+            train_param_dict = {}
+            for key, value in param_dict.items():
+                # handling potentially incorrect input for tune instead of train
+                if isinstance(value, list):  # if input is a list
+                    # get only the first value in list for each hyperparam
+                    train_param_dict[key] = value[0]
+                elif isinstance(value, distribution):
+                    pass  # ignore if input is a scipy distribution
+                else:  # get expected input value as a single input
+                    train_param_dict[key] = value
+            # append one hyperparam dict for each demographic param/ MLPR
+            # by making the length of hyperparam dict equal length of y_label
+            train_param_dict_list = []
+            for _ in range(len(y_label)):
+                train_param_dict_list.append(train_param_dict)
     # # for debugging
-    # print(f'train_param_dict_list: {train_param_dict_list}')
+    # print(f'train_param_dict_list: {train_param_dict_list}\n')
+
+    print("Start training\n")
     # train with best hyperparams from tuning or with input if not tuning
     trained = train(X_input, y_label, train_param_dict_list,
                     mapie=args.multioutput)
@@ -163,6 +190,11 @@ def _load_trained_mlpr(args):
     # need to get logs to de-log prediction
     func = dem_dict[args.model]
     _, _, logs = func(0)
+    # this way of getting logs misses one log value for misid,
+    # which is currently added only in after running generate_data
+    # module helper function
+    # check hot fix in plot.py line #228
+    # and line #208 below in run_predict()
 
     return mlpr_list, mapie, logs
 
@@ -170,13 +202,21 @@ def _load_trained_mlpr(args):
 def run_predict(args):
     '''Method to get prediction given inputs from the
     predict subcommand'''
+    # TO-DO: implement function for getting prediction interval
+    # TO-DO: currently printed results are numerical values in param order,
+    # param names are not printed.
 
     # load trained MLPRs and demographic model logs
     mlpr_list, mapie, logs = _load_trained_mlpr(args)
+    # hot fix to include log value for misid
+    logs.append(False)
+    # check compatibility with predict.py line #43
     # open input FS from file
     fs = dadi.Spectrum.from_file(args.input_fs)
+    # prepare input FS for ML
+    prep_fs = prep_fs_for_ml(fs)
     # infer params using input FS
-    pred = predict(mlpr_list, fs, logs, mapie=mapie)
+    pred = predict(mlpr_list, prep_fs, logs, mapie=mapie)
     # write output
     if args.output_prefix:
         output_stream = open(args.output_prefix, 'w')
@@ -325,9 +365,14 @@ def dadi_ml_parser():
     # with flags
     # if provided will be prioritized over input flags
     train_parser.add_argument("--hyperparam", type=str,
-                              help="Path to dictionary of MLPR hyperparam")
+                              help="Path to pickled dict of MLPR hyperparam")
     # flags for specifying mlpr hyperparams if not providing dict
-    # this should be a list of dict, not dict (mapie uses several mlprs)
+    train_parser.add_argument("--hyperparam_list", type=str,
+                              help="Path to pickled list of dict of hyperparam")
+    # currently: hyperparam expects a single dict, which will be duplicated
+    # in the mapie case by the number of params in the demographic model
+    # hyperparam_list allows different hyperparam dicts for each demographic
+    # param, which is outputed by tuning mapie MLPRs
 
     train_parser.add_argument('--hidden_layer_sizes',
                               metavar='TUPLE OF POSITIVE INT', nargs='*',
