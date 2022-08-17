@@ -8,7 +8,7 @@ from inspect import getmembers, isfunction
 import numpy as np
 import dadi
 from scipy.stats._distn_infrastructure import rv_frozen as distribution
-import dadinet.dadi_dem_models as models
+import dadinet.dadi_dem_models as get_model
 from dadinet.generate_data import generate_fs
 from dadinet.train import prep_data, tune, report,\
     get_best_specs, train, get_cv_score
