@@ -101,6 +101,25 @@ def get_model(model_name, n_samples, model_file=None):
 
     return func, param_lists, logs
 
+def print_built_in_models():
+    """
+    Description:
+        Outputs built-in models in dadi.
+    """
+    print("Built-in 1D demographic models:")
+    for m in oned_models:
+        print(f"- {m}")
+    print()
+
+    print("Built-in 2D demographic models:")
+    for m in twod_models:
+        print(f"- {m}")
+    print()
+
+    print("Built-in demographic models with selection:")
+    for m in sele_models:
+        print(f"- {m}")
+
 def _param_range(param_type):
     ''' Helper function to generate random parameter values
     within biologically realistic range for each type of dem param.
