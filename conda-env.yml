@@ -4,7 +4,6 @@ channels:
   - bioconda
 dependencies:
   - codecov
-  - gcc
   - gfortran
   - matplotlib
   - numpy
@@ -17,5 +16,5 @@ dependencies:
   - mapie=0.3.1
   - scikit-learn=1.0.2
   - pip:
-      - git+https://github.com/lntran26/dadi-ml.git@dem-models-update
+      - git+https://bitbucket.org/gutenkunstlab/dadi@devel
       - .
