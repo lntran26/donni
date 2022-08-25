@@ -7,8 +7,9 @@ dependencies:
   - gfortran
   - matplotlib
   - numpy
+  - nlopt
   - pip
-  - pytest-cov
+  - pytest
   - python==3.8
   - scipy
   - setuptools==58.0.4
