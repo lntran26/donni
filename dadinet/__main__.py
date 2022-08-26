@@ -14,6 +14,7 @@ from dadinet.train import prep_data, tune, report,\
     get_best_specs, train, get_cv_score
 from dadinet.predict import predict, prep_fs_for_ml
 from dadinet.plot import plot
+import lzma
 
 
 # run_ methods for importing methods from other modules
@@ -157,7 +158,7 @@ def run_train(args):
     # save trained mlpr(s)
     for i, mlpr in enumerate(trained):
         index = f'{i+1:02d}' if args.multioutput else 'all'
-        pickle.dump(mlpr, open(
+        pickle.dump(mlpr, lzma.open(
             f'{args.mlpr_dir}/param_{index}_predictor', 'wb'), 2)
     # output cv score of trained mlpr on training set
     with open(f'{args.mlpr_dir}/training_score.txt', 'wt') as fh:
@@ -172,7 +173,7 @@ def _load_trained_mlpr(args):
     for filename in sorted(os.listdir(args.mlpr_dir)):
         if filename.startswith("param") and filename.endswith("predictor"):
             mlpr = pickle.load(
-                open(os.path.join(args.mlpr_dir, filename), 'rb'))
+                lzma.open(os.path.join(args.mlpr_dir, filename), 'rb'))
             mlpr_list.append(mlpr)
             if filename == "param_all_predictor":
                 mapie = False  # this is the sklearn case
