@@ -10,7 +10,9 @@ dependencies:
   - nlopt
   - pip
   - pytest
-  - python==3.8
+  - pytest-cov
+  - flake8
+  - python==3.9.5
   - scipy
   - setuptools==58.0.4
   - snakemake==7.1.1
