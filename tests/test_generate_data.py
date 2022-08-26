@@ -4,7 +4,7 @@ import random
 import numpy as np
 import pytest
 import dadi
-import dadinet.dadi_dem_models as models
+from dadinet.dadi_dem_models import get_model
 from dadinet.generate_data import generate_fs
 
 
@@ -15,12 +15,12 @@ def test_exists():
     assert os.path.isfile(PRG)
 
 
-def run(model, sample_size, theta, n_samples,
+def run(model_name, sample_size, theta, n_samples,
         norm=True, sampling=True, folded=False):
     '''Template method for testing different models, sample sizes, thetas'''
 
     grids = [40, 50, 60]
-    dem, dem_params, p_logs = model(n_samples)
+    dem, dem_params, p_logs = get_model(model_name, n_samples)
     data = generate_fs(dem, dem_params, p_logs, theta,
                        sample_size, grids, norm, sampling, folded)
 
@@ -72,59 +72,59 @@ def test_run_two_epoch():
     '''Generate 10 FS datasets for the two_epoch model
     with one population sample size 160 and theta 1'''
 
-    run(models.two_epoch, [160], 1000, 10)
+    run('two_epoch', [160], 1000, 10)
 
 
 def test_run_two_epoch_non_norm():
     '''Generate non-normalized FS for the two_epoch model'''
 
-    run(models.two_epoch, [20], 10000, 5, sampling=False, norm=False)
+    run('two_epoch', [20], 10000, 5, sampling=False, norm=False)
 
 
 def test_run_two_epoch_folded():
     '''Generate folded FS for the two_epoch model'''
 
-    run(models.two_epoch, [20], 1, 5, folded=True)
+    run('two_epoch', [20], 1, 5, folded=True)
 
 
 def test_run_growth():
     '''Generate 20 FS datasets for the growth model
     with one population sample size 80 and theta 1000'''
 
-    run(models.growth, [80], 1000, 20)
+    run('growth', [80], 1000, 20)
 
 
 def test_run_split_mig():
     '''Generate 5 FS datasets for the split migration model
     with two populations sample sizes 40, 40 and theta 100'''
 
-    run(models.split_mig, [40, 40], 100, 5)
+    run('split_mig', [40, 40], 100, 5)
 
 
 def test_run_split_mig_non_norm():
     '''Generate non-normalized FS for the split_mig model'''
 
-    run(models.split_mig, [10, 10], 1000, 2, sampling=False, norm=False)
+    run('split_mig', [10, 10], 1000, 2, sampling=False, norm=False)
 
 
 def test_run_split_mig_folded():
     '''Generate folded FS for the split_mig model'''
 
-    run(models.split_mig, [20, 20], 1000, 5, folded=True)
+    run('split_mig', [20, 20], 1000, 5, folded=True)
 
 
 def test_run_IM():
     '''Generate 3 FS datasets for the IM model
     with two populations sample sizes 20, 20 and theta 10000'''
 
-    run(models.IM, [20, 20], 10000, 3)
+    run('IM', [20, 20], 10000, 3)
 
 
-def run_bootstrap(model, sample_size, theta, n_samples, n_bstr):
+def run_bootstrap(model_name, sample_size, theta, n_samples, n_bstr):
     '''Template method for testing generating bootstrap data'''
 
     grids = [40, 50, 60]
-    dem, dem_params, p_logs = model(n_samples)
+    dem, dem_params, p_logs = get_model(model_name, n_samples)
     data = generate_fs(dem, dem_params, p_logs, theta, sample_size,
                        grids, bootstrap=True, n_bstr=n_bstr)
 
@@ -154,7 +154,7 @@ def test_run_bstr_theta_1():
     '''Test raising SystemExit exception when trying to
     generate bootstrap data with theta = 1'''
     grids = [40, 50, 60]
-    dem, dem_params, p_logs = models.two_epoch(5)
+    dem, dem_params, p_logs = get_model('two_epoch', 5)
     with pytest.raises(SystemExit):
         generate_fs(dem, dem_params, p_logs, 1, [
                     20], grids, bootstrap=True, n_bstr=10)
@@ -164,11 +164,11 @@ def test_run_two_epoch_bstr():
     '''Generate 10 bootstrap datasets (theta=1000) for 5 FS datasets
     of the two_epoch model with one population sample size 20'''
 
-    run_bootstrap(models.two_epoch, [20], 1000, 5, 10)
+    run_bootstrap('two_epoch', [20], 1000, 5, 10)
 
 
 def test_run_split_mig_bstr():
     '''Generate 5 bootstrap datasets (theta=100) for 3 FS datasets
     of the split_mig model with two population sample sizes 20, 20'''
 
-    run_bootstrap(models.split_mig, [20, 20], 100, 3, 5)
+    run_bootstrap('split_mig', [20, 20], 100, 3, 5)

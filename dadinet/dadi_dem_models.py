@@ -1,342 +1,134 @@
-"""Specifications for each dadi demographic models
-supported with mlpr prediction"""
+import dadi
+import dadi.DFE as DFE
+import sys
+import os
+import importlib
+from inspect import getmembers, isfunction
 import random
 import numpy as np
-import dadi
-from dadi import Numerics, PhiManip, Integration, Spectrum
-import dadinet.portik_models_3d as portik_3d
 
+duplicated_models = ["snm", "bottlegrowth"]
+duplicated_sele_models = [
+    "IM",
+    "IM_pre",
+    "IM_pre_single_gamma",
+    "IM_single_gamma",
+    "split_asym_mig",
+    "split_asym_mig_single_gamma",
+    "split_mig",
+    "three_epoch",
+    "two_epoch",
+    "split_mig_single_gamma",
+]
+oned_models = [m[0] for m in getmembers(dadi.Demographics1D, isfunction)]
+twod_models = [m[0] for m in getmembers(dadi.Demographics2D, isfunction)]
+sele_models = [m[0] for m in getmembers(DFE.DemogSelModels, isfunction)]
 
-def two_epoch(n_samples):
-    '''Specifications for 1D two_epoch model'''
-    # designate dadi demographic model
-    func = dadi.Demographics1D.two_epoch
-    # specify param in log scale
-    logs = [True, False]
-    # generate params
-    params_list = []
-    while len(params_list) < n_samples:
-        # pick random values in specified range
-        # nu range: 0.01-100 --> log10 nu range: -2 to 2
-        # T range: 0.1-2
-        nu = random.random() * 4 - 2
-        T = random.random() * 1.9 + 0.1
-        params_list.append((nu, T))
-    return func, params_list, logs
+for m in duplicated_models:
+    oned_models.remove(m)
+for m in duplicated_models:
+    twod_models.remove(m)
+for m in duplicated_sele_models:
+    sele_models.remove(m)
 
+def get_model(model_name, n_samples, model_file=None):
+    """
+    Description:
+        Obtains a demographic model, its parameters.
 
-def growth(n_samples):
-    '''Specifications for 1D growth model'''
-    # designate dadi demographic model
-    func = dadi.Demographics1D.growth
-    # specify param in log scale
-    logs = [True, False]
-    # generate params
-    params_list = []
-    while len(params_list) < n_samples:
-        # pick random values in specified range
-        # nu range: 0.01-100; T range: 0.1-2
-        nu = random.random() * 4 - 2
-        T = random.random() * 1.9 + 0.1
-        params_list.append((nu, T))
-    return func, params_list, logs
+    Arguments:
+        model_name str: Name of the demographic model.
+        model_file str: Path and Name of the file containing customized models.
 
+    Returns:
+        func function: Demographic model for modeling.
+        params list: List of parameters.
+        logs list: List of True/False to denote if a parameter is in log-scale
+    """
+    model_name0 = model_name
+    if model_file != None:
+        # If the user has the model folder in their PATH
+        try:
+            func = getattr(importlib.import_module(model_file), model_name)
+        # If the user does not have the model folder in their PATH we add it
+        # This currently can mess with the User's PATH while running dadi-cli
+        except:
+            model_file = os.path.abspath(model_file)
+            model_path = os.path.dirname(model_file)
+            model_file = os.path.basename(model_file)
+            model_file = os.path.splitext(model_file)[0]
+            sys.path.append(model_path)
+            func = getattr(importlib.import_module(model_file), model_name)
+    elif model_name in oned_models:
+        func = getattr(dadi.Demographics1D, model_name)
+    elif model_name in twod_models:
+        func = getattr(dadi.Demographics2D, model_name)
+    else:
+        raise ValueError(f"Cannot find model: {model_name}.")
 
-def split_mig(n_samples):
-    '''Specifications for 2D split migration model'''
-    # designate dadi demographic model
-    func = dadi.Demographics2D.split_mig
-    # specify param in log scale
-    logs = [True, True, False, False]
-    # generate params
-    params_list = []
-    while len(params_list) < n_samples:
-        # pick random values in specified range
-        nu1 = random.random() * 4 - 2
-        nu2 = random.random() * 4 - 2
-        T = random.random() * 1.9 + 0.1
-        m = random.random() * 9 + 1
-        params_list.append((nu1, nu2, T, m))
-    return func, params_list, logs
+    # Generate parameter and log values.
+    # Think about possibly breaking this off
+    # into a new function to fetch parameter and log values.
+    try:
+        param_names = func.__param_names__
+        param_lists = [[] for ele in range(n_samples)]
+        logs = ["nu" in ele for ele in param_names]
+        for i in range(n_samples):
+            T_fraction_list = np.random.dirichlet(np.ones(sum(["T" in ele for ele in param_names])))
+            T_fraction_index = 0
+            t_sum = _param_range("T")
+            for param_name in param_names:
+                # Can probably build upon later for DFE parameters
+                if "nu" in param_name:
+                    param_type = "nu"
+                    param_lists[i].append(_param_range(param_type))
+                elif "T" in param_name:
+                    param_type = "T"
+                    param_lists[i].append(t_sum*T_fraction_list[T_fraction_index])
+                    T_fraction_index+=1
+                else:
+                    param_type = param_name[:1]
+                    param_lists[i].append(_param_range(param_type))
 
+    except:
+        raise ValueError(
+            f'Demographic model needs a .__param_names__ attribute!\nAdd one by adding the line '
+            + model_name0
+            + '.__param_name__ = [LIST_OF_PARAMS]\nReplacing LIST_OF_PARAMS with the names of the parameters as strings.\n'
+            + 'For parameter naming:\n\tSize changes should start with "nu".\n\tTimes should start with "T".'
+            + '\n\tMigration rates should start with "m".\n\tPopulation splits should start with "s".'
+        )
 
-def IM(n_samples):
-    '''Specifications for 2D IM model'''
-    # designate dadi demographic model
-    func = dadi.Demographics2D.IM
-    # specify param in log scale
-    logs = [False, True, True, False, False, False]
-    # generate params
-    params_list = []
-    while len(params_list) < n_samples:
-        # pick random values in specified range
-        s = random.random() * 0.98 + 0.01
-        nu1 = random.random() * 4 - 2
-        nu2 = random.random() * 4 - 2
-        T = random.random() * 1.9 + 0.1
-        m12 = random.random() * 9 + 1
-        m21 = random.random() * 9 + 1
-        params_list.append((s, nu1, nu2, T, m12, m21))
-    return func, params_list, logs
+    return func, param_lists, logs
 
+def print_built_in_models():
+    """
+    Description:
+        Outputs built-in models in dadi.
+    """
+    print("Built-in 1D demographic models:")
+    for m in oned_models:
+        print(f"- {m}")
+    print()
 
-def _OutOfAfrica(params, ns, pts):
-    '''Custom dadi demographic model function not included in API'''
-    nuAf, nuB, nuEu0, nuEu, nuAs0, nuAs, \
-        mAfB, mAfEu, mAfAs, mEuAs, \
-        TAf, TB, TEuAs, Tsum = params  # include Tsum
-    xx = Numerics.default_grid(pts)
+    print("Built-in 2D demographic models:")
+    for m in twod_models:
+        print(f"- {m}")
+    print()
 
-    phi = PhiManip.phi_1D(xx)
-    phi = Integration.one_pop(phi, xx, TAf, nu=nuAf)
-
-    phi = PhiManip.phi_1D_to_2D(xx, phi)
-    phi = Integration.two_pops(
-        phi, xx, TB, nu1=nuAf, nu2=nuB, m12=mAfB, m21=mAfB)
-
-    phi = PhiManip.phi_2D_to_3D_split_2(xx, phi)
-
-    def nuEu_func(t): return nuEu0 * (nuEu/nuEu0) ** (t/TEuAs)
-    def nuAs_func(t): return nuAs0 * (nuAs/nuAs0) ** (t/TEuAs)
-    phi = Integration.three_pops(phi, xx, TEuAs, nu1=nuAf, nu2=nuEu_func,
-                                 nu3=nuAs_func, m12=mAfEu, m13=mAfAs,
-                                 m21=mAfEu, m23=mEuAs, m31=mAfAs, m32=mEuAs)
-
-    fs = Spectrum.from_phi(phi, ns, (xx, xx, xx))
-    return fs
-
+    print("Built-in demographic models with selection:")
+    for m in sele_models:
+        print(f"- {m}")
 
 def _param_range(param_type):
     ''' Helper function to generate random parameter values
     within biologically realistic range for each type of dem param.
     Input: param_type is a string corresponding to range_dict key'''
-    range_dict = {'size': (4, -2),
-                  'time': (1.9, 0.1),
-                  'mig': (9, 1),
-                  's': (0.98, 0.01),
-                  'size_btn': (2, -2),  # bottleneck
-                  'size_rcv': (2, 0)}  # recovery
+    range_dict = {"nu": (4, -2),
+                  "T": (1.9, 0.1),
+                  "m": (9, 1),
+                  "s": (0.98, 0.01)}
     a, b = range_dict[param_type]
 
     return random.random() * a + b
 
-
-def OutOfAfrica(n_samples):
-    '''Specifications for 3D Out of Africa model'''
-    # load custom demographic model from helper function
-    func = _OutOfAfrica
-
-    # specify param in log scale
-    log_options = [True, False]
-    rep_time = [6, 8]  # include T_sum
-    logs = list(np.repeat(log_options, rep_time))
-
-    # generate params
-    params_list = []
-
-    while len(params_list) < n_samples:
-        # pick random values in specified range
-        p = []
-        for _ in range(6):  # get 6 size params
-            p.append(_param_range('size'))
-        for _ in range(4):  # get 4 migration rate params
-            p.append(_param_range('mig'))
-        # for _ in range(3):  # get 3 event time params
-        #     p.append(_param_range('time'))
-        # sample t_sum from time param range, then divide into 3 p's
-        t_sum = _param_range('time')
-        p += list(np.random.dirichlet(np.ones(3))*t_sum)
-        # also include t_sum
-        p.append(t_sum)
-        # save param values as a tuple
-        params_list.append(tuple(p))
-    return func, params_list, logs
-
-
-def OutOfAfrica_no_mig(n_samples):
-    '''Specifications for 3D Out of Africa model without migration
-    with T sum restricted to be in biologically relevant range'''
-    # load custom demographic model from helper function
-    func = _OutOfAfrica
-
-    # specify param in log scale
-    log_options = [True, False]
-    rep_time = [6, 8]  # include T_sum
-    logs = list(np.repeat(log_options, rep_time))
-
-    # generate params
-    params_list = []
-
-    while len(params_list) < n_samples:
-        # pick random values in specified range
-        p = []
-        for _ in range(6):  # get 6 size params
-            p.append(_param_range('size'))
-        for _ in range(4):  # get 4 migration rate params
-            p.append(0)
-        # for _ in range(3):  # get 3 event time params
-        #     p.append(_param_range('time'))
-        # sample t_sum from time param range, then divide into 3 p's
-        t_sum = _param_range('time')
-        p += list(np.random.dirichlet(np.ones(3))*t_sum)
-        # also include t_sum
-        p.append(t_sum)
-        # save param values as a tuple
-        params_list.append(tuple(p))
-    return func, params_list, logs
-
-
-def split_sym_mig_adjacent_var1(n_samples):
-    '''Specifications for a Portik 3D model'''
-    # load custom demographic model from helper function
-    func = portik_3d.split_sym_mig_adjacent_var1
-
-    # specify param in log scale
-    log_options = [True, False]
-    rep_time = [4, 5]
-    logs = list(np.repeat(log_options, rep_time))
-
-    # generate params
-    params_list = []
-
-    while len(params_list) < n_samples:
-        # pick random values in specified range
-        p = []
-        for _ in range(4):  # get 4 size params
-            p.append(_param_range('size'))
-        for _ in range(3):  # get 3 migration rate params
-            p.append(_param_range('mig'))
-        for _ in range(2):  # get 2 event time params
-            p.append(_param_range('time'))
-
-        # save param values as a tuple
-        params_list.append(tuple(p))
-    return func, params_list, logs
-
-
-def split_sym_mig_adjacent_var1_modified(n_samples):
-    '''Specifications for a Portik 3D model
-    Modified to make all migration values 0'''
-    # load custom demographic model from helper function
-    func = portik_3d.split_sym_mig_adjacent_var1
-
-    # specify param in log scale
-    log_options = [True, False]
-    rep_time = [4, 5]
-    logs = list(np.repeat(log_options, rep_time))
-
-    # generate params
-    params_list = []
-
-    while len(params_list) < n_samples:
-        # pick random values in specified range
-        p = []
-        for _ in range(4):  # get 4 size params
-            p.append(_param_range('size'))
-        for _ in range(3):  # get 3 migration rate params
-            p.append(0)
-        for _ in range(2):  # get 2 event time params
-            p.append(_param_range('time'))
-
-        # save param values as a tuple
-        params_list.append(tuple(p))
-    return func, params_list, logs
-
-
-def null(n_samples):
-    """Dummy function to plot dem model with just Tsum"""
-    return None, [], [False]
-
-
-def three_epoch(n_samples):
-    '''Specifications for 1D three_epoch model'''
-    # designate dadi demographic model
-    func = dadi.Demographics1D.three_epoch
-    # specify param in log scale
-    logs = [True, True, False, False]
-    # generate params
-    params_list = []
-    while len(params_list) < n_samples:
-        # pick random values in specified range
-        p = []
-        for _ in range(2):  # get 2 size params
-            p.append(_param_range('size'))
-        for _ in range(2):  # get 2 event time params
-            p.append(_param_range('time'))
-        # save param values as a tuple
-        params_list.append(tuple(p))
-    return func, params_list, logs
-
-
-def _three_epoch(params, ns, pts):
-    """
-    params = (nuB,nuF,TB,TF,Tsum)
-    ns = (n1,)
-
-    nuB: Ratio of bottleneck population size to ancient pop size
-    nuF: Ratio of contemporary to ancient pop size
-    TB: Length of bottleneck (in units of 2*Na generations)
-    TF: Time since bottleneck recovery (in units of 2*Na generations)
-
-    n1: Number of samples in resulting Spectrum
-    pts: Number of grid points to use in integration.
-    """
-    nuB, nuF, TB, TF, Tsum = params
-
-    xx = Numerics.default_grid(pts)
-    phi = PhiManip.phi_1D(xx)
-
-    phi = Integration.one_pop(phi, xx, TB, nuB)
-    phi = Integration.one_pop(phi, xx, TF, nuF)
-
-    fs = Spectrum.from_phi(phi, ns, (xx,))
-    return fs
-
-
-def three_epoch_restricted(n_samples):
-    '''Specifications for 1D three_epoch model
-    with T_sum range restricted to 0.1 to 2'''
-    # designate dadi demographic model
-    func = _three_epoch
-    # specify param in log scale
-    logs = [True, True, False, False, False]
-    # generate params
-    params_list = []
-    while len(params_list) < n_samples:
-        # pick random values in specified range
-        p = []
-        for _ in range(2):  # get 2 size params
-            p.append(_param_range('size'))
-        t_sum = _param_range('time')
-        p += list(np.random.dirichlet(np.ones(2))*t_sum)
-        # also include t_sum
-        p.append(t_sum)
-        # save param values as a tuple
-        params_list.append(tuple(p))
-    return func, params_list, logs
-
-
-def three_epoch_restricted_size(n_samples):
-    '''Specifications for 1D three_epoch model
-    with T_sum range restricted to 0.1 to 2
-    and nuB as bottleneck and nuF as recovery'''
-    # designate dadi demographic model
-    func = _three_epoch
-    # specify param in log scale
-    logs = [True, True, False, False, False]
-    # generate params
-    params_list = []
-    while len(params_list) < n_samples:
-        # pick random values in specified range
-        p = []
-        # for _ in range(2):  # get 2 size params
-        #     p.append(_param_range('size'))
-        p.append(_param_range('size_btn'))
-        p.append(_param_range('size_rcv'))
-        t_sum = _param_range('time')
-        p += list(np.random.dirichlet(np.ones(2))*t_sum)
-        # also include t_sum
-        p.append(t_sum)
-        # save param values as a tuple
-        params_list.append(tuple(p))
-    return func, params_list, logs

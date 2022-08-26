@@ -8,7 +8,7 @@ from inspect import getmembers, isfunction
 import numpy as np
 import dadi
 from scipy.stats._distn_infrastructure import rv_frozen as distribution
-import dadinet.dadi_dem_models as models
+from dadinet.dadi_dem_models import get_model
 from dadinet.generate_data import generate_fs
 from dadinet.train import prep_data, tune, report,\
     get_best_specs, train, get_cv_score
@@ -16,21 +16,13 @@ from dadinet.predict import predict, prep_fs_for_ml
 from dadinet.plot import plot
 
 
-# get demographic model names and functions from dadi_dem_models
-model_name, model_func = zip(*getmembers(models, isfunction))
-dem_dict = dict(zip(model_name, model_func))
-
-
 # run_ methods for importing methods from other modules
 def run_generate_data(args):
     '''Method to generate data given inputs from the
     generate_data subcommand'''
 
-    # get dem function from input model name
-    func = dem_dict[args.model]
-
-    # get params specifications for model
-    dadi_func, params_list, logs = func(args.n_samples)
+    # get dem function and params specifications for model
+    dadi_func, params_list, logs = get_model(args.model, args.n_samples)
 
     # generate data
     data = generate_fs(dadi_func, params_list, logs,
@@ -188,8 +180,7 @@ def _load_trained_mlpr(args):
         else:
             continue
     # need to get logs to de-log prediction
-    func = dem_dict[args.model]
-    _, _, logs = func(0)
+    func, _, logs = model(args.model, 0)
     # this way of getting logs misses one log value for misid,
     # which is currently added only in after running generate_data
     # module helper function
@@ -301,7 +292,7 @@ def dadi_ml_parser():
         help='Generate frequency spectra datasets')
     generate_data_parser.set_defaults(func=run_generate_data)
 
-    generate_data_parser.add_argument('--model', type=str, choices=model_name,
+    generate_data_parser.add_argument('--model', type=str,
                                       required=True,
                                       help="Name of dadi demographic model",)
     # --model will dictate params_list, func, and logs
@@ -411,7 +402,7 @@ def dadi_ml_parser():
     predict_parser.add_argument("--input_fs", type=str, required=True,
                                 help="Path to FS file for generating\
                                      prediction")
-    predict_parser.add_argument('--model', type=str, choices=model_name,
+    predict_parser.add_argument('--model', type=str,
                                 required=True,
                                 help="Name of dadi demographic model")
 
@@ -434,7 +425,7 @@ def dadi_ml_parser():
                              help="Path to test data dictionary file")
     plot_parser.add_argument("--results_prefix", type=str, required=True,
                              help="Path to save output plots")
-    plot_parser.add_argument('--model', type=str, choices=model_name,
+    plot_parser.add_argument('--model', type=str,
                              required=True,
                              help="Name of dadi demographic model")
 
