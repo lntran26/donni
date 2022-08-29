@@ -90,7 +90,7 @@ def run_train(args):
                            args.max_iter, args.eta, args.cv)
         # output full tuning result file
         pickle.dump(all_results, open(
-            f'{args.mlpr_dir}/tune_results_full', 'wb'), 2)
+            f'{args.mlpr_dir}/tune_results_full', 'wb'))
         # output abbreviated printed result
         with open(f'{args.mlpr_dir}/tune_results_brief.txt', 'wt') as fh:
             for i, model in enumerate(all_results):
