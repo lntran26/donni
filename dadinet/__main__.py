@@ -296,7 +296,6 @@ def dadi_ml_parser():
                                       required=True,
                                       help="Name of dadi demographic model",)
     generate_data_parser.add_argument('--model-file', type=str,
-                                      required=True,
                                       help="Name of file containing custom dadi demographic model(s)",)
     # --model will dictate params_list, func, and logs
     generate_data_parser.add_argument('--n_samples', type=_pos_int,
