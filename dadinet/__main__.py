@@ -44,12 +44,13 @@ def run_generate_data(args):
 
         for key in keys:
             fs = data[key]
-            if np.any(fs < 0):
-                neg_fs += 1
-            if np.any(np.isnan(fs)):
-                nan_fs += 1
-            if np.any(np.isposinf(fs)):
-                inf_fs += 1
+            if not args.bootstrap:
+                if np.any(fs < 0):
+                    neg_fs += 1
+                if np.any(np.isnan(fs)):
+                    nan_fs += 1
+                if np.any(np.isposinf(fs)):
+                    inf_fs += 1
 
         print(f'Quality check for {args.outfile}:')
         print(f'Number of FS with at least one negative entry: {neg_fs}')
