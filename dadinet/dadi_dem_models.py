@@ -94,7 +94,7 @@ def get_model(model_name, n_samples, model_file=None):
         raise ValueError(
             f'Demographic model needs a .__param_names__ attribute!\nAdd one by adding the line '
             + model_name0
-            + '.__param_name__ = [LIST_OF_PARAMS]\nReplacing LIST_OF_PARAMS with the names of the parameters as strings.\n'
+            + '.__param_names__ = [LIST_OF_PARAMS]\nReplacing LIST_OF_PARAMS with the names of the parameters as strings.\n'
             + 'For parameter naming:\n\tSize changes should start with "nu".\n\tTimes should start with "T".'
             + '\n\tMigration rates should start with "m".\n\tPopulation splits should start with "s".'
         )
