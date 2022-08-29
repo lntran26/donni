@@ -90,7 +90,7 @@ def run_train(args):
                            args.max_iter, args.eta, args.cv)
         # output full tuning result file
         pickle.dump(all_results, open(
-            f'{args.mlpr_dir}/tune_results_full', 'wb'))
+            f'{args.mlpr_dir}/tune_results_full', 'wb'), 2)
         # output abbreviated printed result
         with open(f'{args.mlpr_dir}/tune_results_brief.txt', 'wt') as fh:
             for i, model in enumerate(all_results):
@@ -159,7 +159,7 @@ def run_train(args):
     for i, mlpr in enumerate(trained):
         index = f'{i+1:02d}' if args.multioutput else 'all'
         pickle.dump(mlpr, lzma.open(
-            f'{args.mlpr_dir}/param_{index}_predictor', 'wb'), 2)
+            f'{args.mlpr_dir}/param_{index}_predictor', 'wb'))
     # output cv score of trained mlpr on training set
     with open(f'{args.mlpr_dir}/training_score.txt', 'wt') as fh:
         get_cv_score(trained, X_input, y_label, fh, cv=args.cv)
