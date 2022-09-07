@@ -181,7 +181,7 @@ def _load_trained_mlpr(args):
         else:
             continue
     # need to get logs to de-log prediction
-    func, _, logs = model(args.model, 0)
+    func, _, logs = get_model(args.model, 0)
     # this way of getting logs misses one log value for misid,
     # which is currently added only in after running generate_data
     # module helper function
