@@ -99,7 +99,7 @@ def get_model(model_name, n_samples, model_file=None):
             + '\n\tMigration rates should start with "m".\n\tPopulation splits should start with "s".'
         )
 
-    return func, param_lists, logs
+    return func, param_lists, logs, param_names
 
 def print_built_in_models():
     """

@@ -22,7 +22,7 @@ def run_generate_data(args):
     generate_data subcommand'''
 
     # get dem function and params specifications for model
-    dadi_func, params_list, logs = get_model(args.model, args.n_samples, args.model_file)
+    dadi_func, params_list, logs, param_names = get_model(args.model, args.n_samples, args.model_file)
 
     # generate data
     data = generate_fs(dadi_func, params_list, logs,
@@ -181,7 +181,7 @@ def _load_trained_mlpr(args):
         else:
             continue
     # need to get logs to de-log prediction
-    func, _, logs = get_model(args.model, 0)
+    func, _, logs, param_names = get_model(args.model, 0)
     # this way of getting logs misses one log value for misid,
     # which is currently added only in after running generate_data
     # module helper function
