@@ -22,7 +22,7 @@ def run_generate_data(args):
     generate_data subcommand'''
 
     # get dem function and params specifications for model
-    dadi_func, params_list, logs = get_model(args.model, args.n_samples, args.model_file)
+    dadi_func, params_list, logs, _ = get_model(args.model, args.n_samples, args.model_file)
 
     # generate data
     data = generate_fs(dadi_func, params_list, logs,
@@ -181,7 +181,7 @@ def _load_trained_mlpr(args):
         else:
             continue
     # need to get logs to de-log prediction
-    func, _, logs = model(args.model, 0)
+    func, _, logs, _ = get_model(args.model, 0)
     # this way of getting logs misses one log value for misid,
     # which is currently added only in after running generate_data
     # module helper function
@@ -200,22 +200,33 @@ def run_predict(args):
 
     # load trained MLPRs and demographic model logs
     mlpr_list, mapie, logs = _load_trained_mlpr(args)
-    # hot fix to include log value for misid
-    logs.append(False)
-    # check compatibility with predict.py line #43
+    # get param names
+    _, _, _, params = get_model(args.model, 0)
     # open input FS from file
     fs = dadi.Spectrum.from_file(args.input_fs)
-    # prepare input FS for ML
-    prep_fs = prep_fs_for_ml(fs)
+    # misid case
+    if not fs.folded:
+        logs.append(False)
+        params.append("misid")
     # infer params using input FS
-    pred = predict(mlpr_list, prep_fs, logs, mapie=mapie)
+    pred, pis = predict(mlpr_list, fs, logs, mapie=mapie, cis=args.cis)
     # write output
     if args.output_prefix:
         output_stream = open(args.output_prefix, 'w')
     else:
         output_stream = sys.stdout
-    # write out prediction in one line
+    print(*params, sep='\t\t\t', file=output_stream)
     print(*pred, sep='\t', file=output_stream)
+    print(file=output_stream)
+    print("CIs:\t", end="", file=output_stream)
+    for ci in sorted(args.cis):
+        print(f"|----------{ci}----------|", end='\t', file=output_stream)
+    print()
+    for i,param in enumerate(params):
+        print(f"{param}:\t", end="", file=output_stream)
+        for pi in pis[i]:
+            print(f"[{pi[0]:10.6f}, {pi[1]:10.6f}]", end="\t", file=output_stream)
+        print()
     if args.output_prefix:
         output_stream.close()
 
@@ -410,6 +421,10 @@ def dadi_ml_parser():
                                 help="Name of dadi demographic model")
 
     # optional
+    predict_parser.add_argument("--cis", type=_pos_int,
+                                nargs='+', default=[95],
+                                help="Optional list of confidence intervals for\
+                                    prediction, e.g., [80 90 95]; default [95]")
     predict_parser.add_argument("--output_prefix", type=str,
                                 help="Optional output file to write out results\
                                    (default stdout)")
