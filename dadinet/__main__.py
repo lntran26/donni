@@ -181,7 +181,7 @@ def _load_trained_mlpr(args):
         else:
             continue
     # need to get logs to de-log prediction
-    func, _, logs, _ = get_model(args.model, 0)
+    func, _, logs = model(args.model, 0)
     # this way of getting logs misses one log value for misid,
     # which is currently added only in after running generate_data
     # module helper function
@@ -200,8 +200,9 @@ def run_predict(args):
 
     # load trained MLPRs and demographic model logs
     mlpr_list, mapie, logs = _load_trained_mlpr(args)
-    # get param names
-    _, _, _, params = get_model(args.model, 0)
+    # hot fix to include log value for misid
+    logs.append(False)
+    # check compatibility with predict.py line #43
     # open input FS from file
     fs = dadi.Spectrum.from_file(args.input_fs)
     # misid case
