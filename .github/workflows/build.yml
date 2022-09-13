@@ -21,7 +21,7 @@ jobs:
       with:
         environment-name: dadi-ml
         activate-environment: dadi-ml
-        environment-file: conda-env.yml
+        environment-file: environment.yml
     - name: Test with pytest
       run: |
         cd tests
