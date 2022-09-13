@@ -8,6 +8,7 @@ import string
 from subprocess import getstatusoutput, getoutput
 import pickle
 import shutil
+import pytest
 
 PRG = 'dadi-ml'
 
@@ -60,7 +61,7 @@ def run_generate_data_sub(args, args_expected):
         if os.path.isfile(outfile):
             os.remove(outfile)
 
-
+@pytest.mark.skip()
 def test_run_generate_data_sub_1():
     '''First generate_data test'''
 
@@ -70,7 +71,7 @@ def test_run_generate_data_sub_1():
                      'sample_sizes': [10], 'thetas': 1000}
     run_generate_data_sub(args, args_expected)
 
-
+@pytest.mark.skip()
 def test_run_generate_data_sub_2():
     '''Second generate_data test'''
 
@@ -80,7 +81,7 @@ def test_run_generate_data_sub_2():
                      'sample_sizes': [15, 20], 'thetas': 1}
     run_generate_data_sub(args, args_expected)
 
-
+@pytest.mark.skip()
 def test_run_generate_data_sub_folded():
     '''Third generate_data test for folded flag'''
 
@@ -90,7 +91,7 @@ def test_run_generate_data_sub_folded():
                      'thetas': 1, 'folded': True}
     run_generate_data_sub(args, args_expected)
 
-
+@pytest.mark.skip()
 def test_run_generate_data_bstr():
     '''Generate bootstrap data test'''
 
