@@ -20,7 +20,7 @@ def run(model_name, sample_size, theta, n_samples,
     '''Template method for testing different models, sample sizes, thetas'''
 
     grids = [40, 50, 60]
-    dem, dem_params, p_logs = get_model(model_name, n_samples)
+    dem, dem_params, p_logs, param_names = get_model(model_name, n_samples)
     data = generate_fs(dem, dem_params, p_logs, theta,
                        sample_size, grids, norm, sampling, folded)
 
@@ -124,7 +124,7 @@ def run_bootstrap(model_name, sample_size, theta, n_samples, n_bstr):
     '''Template method for testing generating bootstrap data'''
 
     grids = [40, 50, 60]
-    dem, dem_params, p_logs = get_model(model_name, n_samples)
+    dem, dem_params, p_logs, param_names = get_model(model_name, n_samples)
     data = generate_fs(dem, dem_params, p_logs, theta, sample_size,
                        grids, bootstrap=True, n_bstr=n_bstr)
 
@@ -154,7 +154,7 @@ def test_run_bstr_theta_1():
     '''Test raising SystemExit exception when trying to
     generate bootstrap data with theta = 1'''
     grids = [40, 50, 60]
-    dem, dem_params, p_logs = get_model('two_epoch', 5)
+    dem, dem_params, p_logs, param_names = get_model('two_epoch', 5)
     with pytest.raises(SystemExit):
         generate_fs(dem, dem_params, p_logs, 1, [
                     20], grids, bootstrap=True, n_bstr=10)
