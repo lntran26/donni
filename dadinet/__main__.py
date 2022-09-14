@@ -191,17 +191,23 @@ def _load_trained_mlpr(args):
     return mlpr_list, mapie, logs, param_names
 
 
+def _get_cloud_mlpr_dir(args, fs):
+    cloud_prefix = "https://drive.google.com/drive/folders/1TE6i3RsGeXAMaIFYNJDDXkqpjMdYvzqv"
+    return ""
+
+
 def run_predict(args):
     '''Method to get prediction given inputs from the
     predict subcommand'''
 
-    # load trained MLPRs and demographic model logs
-    mlpr_list, mapie, logs, param_names = _load_trained_mlpr(args)
-    # hot fix to include log value for misid
-    logs.append(False)
-    # check compatibility with predict.py line #43
     # open input FS from file
     fs = dadi.Spectrum.from_file(args.input_fs)
+    if args.custom_mlpr_dir:
+        args.mlpr_dir = args.custom_mlpr_dir
+    else:
+        args.mlpr_dir = _get_cloud_mlpr_dir(args.model, fs)
+    # load trained MLPRs and demographic model logs
+    mlpr_list, mapie, logs, param_names = _load_trained_mlpr(args)
     cis = sorted(args.cis)
     # misid case
     if not fs.folded:
@@ -218,8 +224,8 @@ def run_predict(args):
     ci_names = []
     for i,ci in enumerate(args.cis):
         for j,param in enumerate(param_names):
-            ci_names.append(param + "_lb" + str(ci))
-            ci_names.append(param + "_ub" + str(ci))
+            ci_names.append(param + "_lb_" + str(ci))
+            ci_names.append(param + "_ub_" + str(ci))
             pred.append(pis[j][i][0])
             pred.append(pis[j][i][1])
     print_names = param_names + ci_names
@@ -423,8 +429,6 @@ def dadi_ml_parser():
     predict_parser.set_defaults(func=run_predict)
     # need to handle dir for multiple models for mapie
     # single dir for sklearn models
-    predict_parser.add_argument("--mlpr_dir", type=str, required=True,
-                                help="Path to trained MLPR(s)")
     predict_parser.add_argument("--input_fs", type=str, required=True,
                                 help="Path to FS file for generating\
                                      prediction")
@@ -440,6 +444,9 @@ def dadi_ml_parser():
     predict_parser.add_argument("--output_prefix", type=str,
                                 help="Optional output file to write out results\
                                    (default stdout)")
+    predict_parser.add_argument("--custom_mlpr_dir", type=str, default=None,
+                                help="Optional path to trained MLPR(s); if not\
+                                specified, use tuned MLPRs on cloud storage")
 
     # need to have stat flags for getting scores and prediction intervals
     # predict_parser.add_argument("--evaluate", dest='reference_dir')

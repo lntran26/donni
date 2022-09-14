@@ -53,7 +53,7 @@ def predict(models: list, input_fs, logs, mapie=True, cis=[95]):
     else:  # sklearn multioutput case: don't know if this works yet
         pred_list = models[0].predict([input_x])
         pi_list = None
-    # log transformed prediction results
-    # pred_list = [10**pred_list[i] if logs[i] else pred_list[i]
-    #              for i in range(len(logs))]
+        # log transformed prediction results
+        pred_list = [10**pred_list[i] if logs[i] else pred_list[i]
+                     for i in range(len(logs))]
     return pred_list, pi_list
