@@ -43,7 +43,7 @@ def prep_data(data: dict, mapie=True):
 #     return loguniform(lower, upper)
 
 
-def tune(X_input, y_label, param_dist, max_iter=243, eta=3, cv=5):
+def tune(X_input, y_label, param_dist, max_iter=243, eta=3, cv=5, mp=True):
     '''
     Method for searching over many MLPR hyperparameters
     with successive halving randomized search and hyperband
@@ -59,30 +59,65 @@ def tune(X_input, y_label, param_dist, max_iter=243, eta=3, cv=5):
     Output: list of search results for each mlpr model
         Note: len(result_list) = len(y_label)
     '''
-
     s_max = int(math.log(max_iter)/math.log(eta))
     # number of unique executions of Successive Halving (minus one)
 
     result_list = []
-    for param in y_label:
-        mlpr = MLPRegressor()
-        search_list = []
-        # begin Hyperband outer loop
-        for s in reversed(range(s_max+1)):
-            n_iters = int(max_iter*eta**(-s))
-            # begin Successive Halving inner loop implemented by sklearn
-            search = HalvingRandomSearchCV(mlpr, param_dist,
-                                           resource='max_iter', factor=eta,
-                                           max_resources=max_iter,
-                                           min_resources=n_iters, cv=cv,
-                                           refit=False, n_jobs=-1)
-            # note: resource is defined by max_iter rather than n_samples
-            search.fit(X_input, param)
-            search_list.append(search)
-        result_list.append(search_list)
-
+    if mp:
+        for param in y_label:
+            mlpr = MLPRegressor()
+            search_list = []
+            # begin Hyperband outer loop
+            from multiprocessing import Process, Queue
+            n_iter_list = [int(max_iter*eta**(-s)) for s in list(reversed(range(s_max+1)))]
+            print('n_iter_list:',n_iter_list)
+            out_queue = Queue()
+            workers = [
+                Process(
+                    target=_worker_func,
+                    args=(out_queue, X_input, param, mlpr, param_dist, eta, max_iter, n_iters, cv,),
+                )
+                for n_iters in n_iter_list
+            ]
+            for worker in workers:
+                print(worker)
+                worker.start()
+            for ii in range(len(n_iter_list)):
+                print(ii)
+                search_list.append(out_queue.get())
+            for worker in workers:
+                worker.terminate()
+            result_list.append(search_list)
+    else:
+        for param in y_label:
+            mlpr = MLPRegressor()
+            search_list = []
+            # begin Hyperband outer loop
+            for s in reversed(range(s_max+1)):
+                n_iters = int(max_iter*eta**(-s))
+                # begin Successive Halving inner loop implemented by sklearn
+                search = HalvingRandomSearchCV(mlpr, param_dist,
+                                               resource='max_iter', factor=eta,
+                                               max_resources=max_iter,
+                                               min_resources=n_iters, cv=cv,
+                                               refit=False, n_jobs=-1)
+                # note: resource is defined by max_iter rather than n_samples
+                search.fit(X_input, param)
+                search_list.append(search)
+            result_list.append(search_list)
     return result_list
 
+# Worker functions for multiprocessing with tune
+def _worker_func(out_queue, X_input, param, mlpr, param_dist, eta, max_iter, n_iters, cv):
+    # while True:
+    search = HalvingRandomSearchCV(mlpr, param_dist,
+                                   resource='max_iter', factor=eta,
+                                   max_resources=max_iter,
+                                   min_resources=n_iters, cv=cv,
+                                   refit=False, n_jobs=-1)
+    # note: resource is defined by max_iter rather than n_samples
+    search.fit(X_input, param)
+    out_queue.put(search)
 
 def report(results, file_handle, n_top=3):
     '''Utility function to report best scores'''
