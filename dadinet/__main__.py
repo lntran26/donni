@@ -78,7 +78,7 @@ def run_train(args):
         param_dict = {}
         excluded_args = ['data_file', 'mlpr_dir', 'multioutput', 'tune',
                          'max_iter', 'subcommand', 'func', 'hyperparam',
-                         'eta', 'cv', 'hyperparam_list']
+                         'eta', 'cv', 'hyperparam_list', 'mp']
         for arg in vars(args):
             if arg not in excluded_args and getattr(args, arg) is not None:
                 param_dict[arg] = getattr(args, arg)
@@ -87,7 +87,7 @@ def run_train(args):
     if args.tune:
         # run tuning using input param_dict
         all_results = tune(X_input, y_label, param_dict,
-                           args.max_iter, args.eta, args.cv)
+                           args.max_iter, args.eta, args.cv, args.mp)
         # output full tuning result file
         pickle.dump(all_results, open(
             f'{args.mlpr_dir}/tune_results_full', 'wb'), 2)
@@ -147,8 +147,8 @@ def run_train(args):
             train_param_dict_list = []
             for _ in range(len(y_label)):
                 train_param_dict_list.append(train_param_dict)
-    # # for debugging
-    # print(f'train_param_dict_list: {train_param_dict_list}\n')
+    # for debugging
+    print(f'train_param_dict_list: {train_param_dict_list}\n')
 
     print("Start training\n")
     # train with best hyperparams from tuning or with input if not tuning
@@ -181,7 +181,7 @@ def _load_trained_mlpr(args):
         else:
             continue
     # need to get logs to de-log prediction
-    func, _, logs, param_names = get_model(args.model, 0)
+    func, _, logs, param_names = get_model(args.model, 0, args.model_file)
     # this way of getting logs misses one log value for misid,
     # which is currently added only in after running generate_data
     # module helper function
@@ -238,9 +238,17 @@ def run_plot(args):
     # parse data into test FS and corresponding labels
     X_test, y_test = prep_data(prep_test_dict, mapie=mapie)
 
+    # Get param names
+    # Want to do one sample so that
+    # get_model can test custom model file?
+    _, _, _, param_names = get_model(args.model, 0, args.model_file)
+    # Check if misid is a parameter to be added
+    if not args.folded:
+        param_names += ['misid']
+
     # plot results
     plot(mlpr_list, X_test, y_test, args.results_prefix, logs, mapie=mapie,
-         coverage=args.coverage, theta=args.theta, params=args.params)
+         coverage=args.coverage, theta=args.theta, params=param_names)
 
 
 # helper methods for custom type checks and parsing
@@ -296,9 +304,9 @@ def dadi_ml_parser():
     generate_data_parser.add_argument('--model', type=str,
                                       required=True,
                                       help="Name of dadi demographic model",)
-    generate_data_parser.add_argument('--model-file', type=str,
+    generate_data_parser.add_argument('--model_file', type=str,
                                       help="Name of file containing custom dadi demographic model(s)",)
-    # --model will dictate params_list, func, and logs
+    # --model will dictate params_list, func, logs, and param_names
     generate_data_parser.add_argument('--n_samples', type=_pos_int,
                                       required=True,
                                       help="How many FS to generate",)
@@ -354,6 +362,8 @@ def dadi_ml_parser():
                               help='halving factor')
     train_parser.add_argument('--cv', type=_int_2, default=5,
                               help='k-fold cross validation')
+    train_parser.add_argument('--mp', action='store_true',
+                              help='Use multiprocessing for tuning')
 
     # optional input for a pickled dict file instead of setting params manually
     # with flags
@@ -408,6 +418,8 @@ def dadi_ml_parser():
     predict_parser.add_argument('--model', type=str,
                                 required=True,
                                 help="Name of dadi demographic model")
+    predict_parser.add_argument('--model_file', type=str,
+                                help="Name of file containing custom dadi demographic model(s)",)
 
     # optional
     predict_parser.add_argument("--output_prefix", type=str,
@@ -431,6 +443,9 @@ def dadi_ml_parser():
     plot_parser.add_argument('--model', type=str,
                              required=True,
                              help="Name of dadi demographic model")
+    plot_parser.add_argument('--model_file', type=str,
+                             required=True,
+                             help="Name of file containing custom dadi demographic model(s)",)
 
     # optional
     plot_parser.add_argument('--coverage', action='store_true', default=False,
@@ -438,8 +453,8 @@ def dadi_ml_parser():
     plot_parser.add_argument('--theta', type=_pos_int,
                              help="Theta used to generate test_dict",
                              default=None)
-    plot_parser.add_argument('--params', nargs='*',
-                             help='param names in order, e.g. nu T misid')
+    plot_parser.add_argument('--folded', action="store_true",
+                             help="Specify if the test FS is folded")
 
     return parser
 
