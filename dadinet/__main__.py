@@ -87,7 +87,7 @@ def run_train(args):
     if args.tune:
         # run tuning using input param_dict
         all_results = tune(X_input, y_label, param_dict,
-                           args.max_iter, args.eta, args.cv, args.mp)
+                           args.max_iter, args.eta, args.cv)
         # output full tuning result file
         pickle.dump(all_results, open(
             f'{args.mlpr_dir}/tune_results_full', 'wb'), 2)
@@ -362,8 +362,6 @@ def dadi_ml_parser():
                               help='halving factor')
     train_parser.add_argument('--cv', type=_int_2, default=5,
                               help='k-fold cross validation')
-    train_parser.add_argument('--mp', action='store_true',
-                              help='Use multiprocessing for tuning')
 
     # optional input for a pickled dict file instead of setting params manually
     # with flags
