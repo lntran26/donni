@@ -442,7 +442,6 @@ def dadi_ml_parser():
                              required=True,
                              help="Name of dadi demographic model")
     plot_parser.add_argument('--model_file', type=str,
-                             required=True,
                              help="Name of file containing custom dadi demographic model(s)",)
 
     # optional
