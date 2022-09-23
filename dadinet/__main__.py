@@ -210,21 +210,12 @@ def _load_trained_mlpr(args):
     return mlpr_list, mapie, logs, param_names
 
 
-def _get_cloud_mlpr_dir(args, fs):
-    cloud_prefix = "https://drive.google.com/drive/folders/1TE6i3RsGeXAMaIFYNJDDXkqpjMdYvzqv"
-    return ""
-
-
 def run_predict(args):
     '''Method to get prediction given inputs from the
     predict subcommand'''
 
     # open input FS from file
     fs = dadi.Spectrum.from_file(args.input_fs)
-    if args.custom_mlpr_dir:
-        args.mlpr_dir = args.custom_mlpr_dir
-    else:
-        args.mlpr_dir = _get_cloud_mlpr_dir(args.model, fs)
     # load trained MLPRs and demographic model logs
     mlpr_list, mapie, logs, param_names = _load_trained_mlpr(args)
     cis = sorted(args.cis)
@@ -475,21 +466,19 @@ def dadi_ml_parser():
     predict_parser.add_argument('--model', type=str,
                                 required=True,
                                 help="Name of dadi demographic model")
-    predict_parser.add_argument('--model_file', type=str,
-                                help="Name of file containing custom dadi demographic model(s)",)
+    predict_parser.add_argument("--mlpr_dir", type=str, required=True,
+                              help="Path to saved, trained MLPR(s)")
 
     # optional
     predict_parser.add_argument("--cis", type=_pos_int,
                                 nargs='+', default=[95],
                                 help="Optional list of confidence intervals for\
                                     prediction, e.g., [80 90 95]; default [95]")
+    predict_parser.add_argument('--model_file', type=str,
+                                help="Name of file containing custom dadi demographic model(s)",)
     predict_parser.add_argument("--output_prefix", type=str,
                                 help="Optional output file to write out results\
                                    (default stdout)")
-    predict_parser.add_argument("--custom_mlpr_dir", type=str, default=None,
-                                help="Optional path to trained MLPR(s); if not\
-                                specified, use tuned MLPRs on cloud storage")
-
     # need to have stat flags for getting scores and prediction intervals
     # predict_parser.add_argument("--evaluate", dest='reference_dir')
 
