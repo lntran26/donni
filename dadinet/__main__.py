@@ -207,34 +207,54 @@ def _load_trained_mlpr(args):
     # check hot fix in plot.py line #228
     # and line #208 below in run_predict()
 
-    return mlpr_list, mapie, logs
+    return mlpr_list, mapie, logs, param_names
 
 
 def run_predict(args):
     '''Method to get prediction given inputs from the
     predict subcommand'''
-    # TO-DO: implement function for getting prediction interval
-    # TO-DO: currently printed results are numerical values in param order,
-    # param names are not printed.
 
-    # load trained MLPRs and demographic model logs
-    mlpr_list, mapie, logs = _load_trained_mlpr(args)
-    # hot fix to include log value for misid
-    logs.append(False)
-    # check compatibility with predict.py line #43
     # open input FS from file
     fs = dadi.Spectrum.from_file(args.input_fs)
-    # prepare input FS for ML
-    prep_fs = prep_fs_for_ml(fs)
+    # load trained MLPRs and demographic model logs
+    mlpr_list, mapie, logs, param_names = _load_trained_mlpr(args)
+    cis = sorted(args.cis)
+    # misid case
+    if not fs.folded:
+        logs.append(False)
+        param_names.append("misid")
     # infer params using input FS
-    pred = predict(mlpr_list, prep_fs, logs, mapie=mapie)
+    pred, pis = predict(mlpr_list, fs, logs, mapie=mapie, cis=cis)
     # write output
     if args.output_prefix:
         output_stream = open(args.output_prefix, 'w')
     else:
         output_stream = sys.stdout
-    # write out prediction in one line
+
+    ci_names = []
+    for i,ci in enumerate(args.cis):
+        for j,param in enumerate(param_names):
+            ci_names.append(param + "_lb_" + str(ci))
+            ci_names.append(param + "_ub_" + str(ci))
+            pred.append(pis[j][i][0])
+            pred.append(pis[j][i][1])
+    print_names = param_names + ci_names
+    # print parameter names
+    print("# ", end="", file=output_stream)
+    print(*print_names, sep='\t', file=output_stream)
+    # print prediction
     print(*pred, sep='\t', file=output_stream)
+    print(file=output_stream) # newline
+    # print readable confidence intervals
+    print(f"{'# CIs: ':<10}", end="", file=output_stream)
+    for ci in sorted(args.cis):
+        print(f"|----------{ci}----------|", end='\t', file=output_stream)
+    print()
+    for i,param in enumerate(param_names):
+        print(f"{'# ' + param + ': ':<10}", end="", file=output_stream)
+        for pi in pis[i]:
+            print(f"[{pi[0]:10.6f}, {pi[1]:10.6f}]", end="\t", file=output_stream)
+        print()
     if args.output_prefix:
         output_stream.close()
 
@@ -243,7 +263,7 @@ def run_plot(args):
     '''Method to plot outputs'''
 
     # load trained MLPRs and demographic model logs
-    mlpr_list, mapie, logs = _load_trained_mlpr(args)
+    mlpr_list, mapie, logs, _ = _load_trained_mlpr(args)
 
     # load test fs set
     test_dict = pickle.load(open(args.test_dict, 'rb'))
@@ -440,22 +460,25 @@ def dadi_ml_parser():
     predict_parser.set_defaults(func=run_predict)
     # need to handle dir for multiple models for mapie
     # single dir for sklearn models
-    predict_parser.add_argument("--mlpr_dir", type=str, required=True,
-                                help="Path to trained MLPR(s)")
     predict_parser.add_argument("--input_fs", type=str, required=True,
                                 help="Path to FS file for generating\
                                      prediction")
     predict_parser.add_argument('--model', type=str,
                                 required=True,
                                 help="Name of dadi demographic model")
-    predict_parser.add_argument('--model_file', type=str,
-                                help="Name of file containing custom dadi demographic model(s)",)
+    predict_parser.add_argument("--mlpr_dir", type=str, required=True,
+                              help="Path to saved, trained MLPR(s)")
 
     # optional
+    predict_parser.add_argument("--cis", type=_pos_int,
+                                nargs='+', default=[95],
+                                help="Optional list of confidence intervals for\
+                                    prediction, e.g., [80 90 95]; default [95]")
+    predict_parser.add_argument('--model_file', type=str,
+                                help="Name of file containing custom dadi demographic model(s)",)
     predict_parser.add_argument("--output_prefix", type=str,
                                 help="Optional output file to write out results\
                                    (default stdout)")
-
     # need to have stat flags for getting scores and prediction intervals
     # predict_parser.add_argument("--evaluate", dest='reference_dir')
 

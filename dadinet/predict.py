@@ -15,7 +15,7 @@ def prep_fs_for_ml(input_fs):
     return input_fs
 
 
-def predict(models: list, input_fs, logs, mapie=True):
+def predict(models: list, input_fs, logs, mapie=True, cis=[95]):
     '''
     models: list of single mlpr object if sklearn,
         list of multiple mlpr objects if mapie
@@ -25,21 +25,35 @@ def predict(models: list, input_fs, logs, mapie=True):
         individual params
     if not mapie, should be list of length 1
     '''
+    # TODO: check fs shape and project down to exp input size if needed
+
     # get input_fs ready for ml prediction
     input_fs = prep_fs_for_ml(input_fs)
 
     # flatten input_fs and put in a list
     input_x = [np.array(input_fs).flatten()]
 
+    # convert confidence intervals to decimals
+    alpha = [(100 - ci)/ 100 for ci in cis]
+
     # get prediction using trained ml models
     if mapie:
         pred_list = []
-        for model in models:
-            pred_list.append(model.predict(input_x)[0])
+        pi_list = []
+        for i,model in enumerate(models):
+            pred, pis = model.predict(input_x, alpha=alpha)
+            pred = pred[0]  # one sample
+            pis = pis[0]    # one sample
+            if logs[i]:
+                pred = 10 ** pred
+                pis = 10 ** pis
+            pred_list.append(pred)
+            pi_list.append(pis.T)
+
     else:  # sklearn multioutput case: don't know if this works yet
         pred_list = models[0].predict([input_x])
-
-    # log transformed prediction results
-    pred_list = [10**pred_list[i] if logs[i] else pred_list[i]
-                 for i in range(len(logs))]
-    return pred_list
+        pi_list = None
+        # log transformed prediction results
+        pred_list = [10**pred_list[i] if logs[i] else pred_list[i]
+                     for i in range(len(logs))]
+    return pred_list, pi_list
