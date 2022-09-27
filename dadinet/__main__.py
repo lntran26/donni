@@ -249,12 +249,10 @@ def run_predict(args):
     print(f"{'# CIs: ':<10}", end="", file=output_stream)
     for ci in sorted(args.cis):
         print(f"|----------{ci}----------|", end='\t', file=output_stream)
-    print()
     for i,param in enumerate(param_names):
         print(f"{'# ' + param + ': ':<10}", end="", file=output_stream)
         for pi in pis[i]:
             print(f"[{pi[0]:10.6f}, {pi[1]:10.6f}]", end="\t", file=output_stream)
-        print()
     if args.output_prefix:
         output_stream.close()
 
