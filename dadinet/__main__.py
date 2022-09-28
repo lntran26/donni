@@ -78,7 +78,7 @@ def run_train(args):
         param_dict = {}
         excluded_args = ['data_file', 'mlpr_dir', 'multioutput', 'tune',
                          'max_iter', 'subcommand', 'func', 'hyperparam',
-                         'eta', 'cv', 'hyperparam_list', 'mp_process', 'mp_pool', 'mp']
+                         'eta', 'cv', 'hyperparam_list', 'mp']
         for arg in vars(args):
             if arg not in excluded_args and getattr(args, arg) is not None:
                 param_dict[arg] = getattr(args, arg)
@@ -87,7 +87,7 @@ def run_train(args):
     if args.tune:
         # run tuning using input param_dict
         all_results = tune(X_input, y_label, param_dict,
-                           args.max_iter, args.eta, args.cv, args.mp_process, args.mp_pool, args.mp)
+                           args.max_iter, args.eta, args.cv, args.mp)
         # output full tuning result file
         pickle.dump(all_results, open(
             f'{args.mlpr_dir}/tune_results_full', 'wb'), 2)
@@ -356,10 +356,6 @@ def dadi_ml_parser():
                               help="Whether to try a range of hyperparameters\
                                    to find the best performing MLPRs")
     train_parser.add_argument("--mp", action='store_true',
-                              help="Use queue multiprocessing for tuning going param by param")
-    train_parser.add_argument("--mp_process", action='store_true',
-                              help="Use queue multiprocessing for tuning")
-    train_parser.add_argument("--mp_pool", action='store_true',
                               help="Use pooling multiprocessing for tuning")
     # hyperband tuning params
     train_parser.add_argument('--max_iter', type=_int_2, default=243,

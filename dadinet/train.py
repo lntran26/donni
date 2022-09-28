@@ -43,7 +43,7 @@ def prep_data(data: dict, mapie=True):
 #     return loguniform(lower, upper)
 
 
-def tune(X_input, y_label, param_dist, max_iter=243, eta=3, cv=5, mp_process=False, mp_pool=False, mp=False):
+def tune(X_input, y_label, param_dist, max_iter=243, eta=3, cv=5, mp=False):
     '''
     Method for searching over many MLPR hyperparameters
     with successive halving randomized search and hyperband
@@ -87,7 +87,7 @@ def tune(X_input, y_label, param_dist, max_iter=243, eta=3, cv=5, mp_process=Fal
     #         result_list.append(search_list)
 
     # pool mp doing all params and n_iters at once
-    if mp_pool:
+    if mp:
         result_list = []
         search_dict = {}
         args_list = []
@@ -95,14 +95,13 @@ def tune(X_input, y_label, param_dist, max_iter=243, eta=3, cv=5, mp_process=Fal
         for param in y_label:
             param_i = y_label.index(param)
             search_dict[param] = []
-            mlpr = MLPRegressor()
             # begin Hyperband outer loop
             from multiprocessing import Process, Queue, Pool
             n_iter_list = [int(max_iter*eta**(-s)) for s in list(reversed(range(s_max+1)))]
             print('n_iter_list:',n_iter_list)
             
             for ii in range(len(n_iter_list)):
-                args_list.append((X_input, param, mlpr, param_dist, eta, max_iter, n_iter_list[ii], cv,))
+                args_list.append((X_input, param, MLPRegressor(), param_dist, eta, max_iter, n_iter_list[ii], cv,))
         start_time = time.time()
         with Pool(processes=len(n_iter_list)*len(y_label)) as pool:
             res = pool.map(pool_worker_func, args_list)
@@ -111,104 +110,15 @@ def tune(X_input, y_label, param_dist, max_iter=243, eta=3, cv=5, mp_process=Fal
         for param in y_label:
             print('param number ' + str(param_num) + ' finish: '+str(time.time() - start_time) )
             result_list.append(search_dict[param])
-
-    # Process mp doing all params and n_iters at once
-    elif mp_process:
-        result_list = []
-        from multiprocessing import Process, Queue
-        out_queue = Queue()
-        search_dict = {}
-        n_iter_list = [int(max_iter*eta**(-s)) for s in list(reversed(range(s_max+1)))]
-        print('n_iter_list:',n_iter_list)
-        import collections
-        time_dict = collections.defaultdict(int)
-        workers = []
-        for param in y_label:
-            mlpr = MLPRegressor()
-            search_dict[param] = []
-            # begin Hyperband outer loop
-            workers += [
-                Process(
-                    target=process_worker_func,
-                    args=(out_queue, X_input, param, mlpr, param_dist, eta, max_iter, n_iters, cv,),
-                )
-                for n_iters in n_iter_list
-            ]
-        i = 0
-        # Start work
-        for worker in workers:
-            print(worker)
-            # print('param number ' + str(param_num) + ', worker ' + str(i)+ ' start: '+str(time.time()) )
-            time_dict[i] = time.time()
-            worker.start()
-            i+=1
-        print('\n\n')
-        for params in y_label:
-            for ii in range(len(n_iter_list)):
-                # print(ii)
-                search, param = out_queue.get()
-                search_dict[param].append(search)
-                print('param number ' + str(param_num) + ', worker ' + str(ii)+' finish: '+str(time.time() - time_dict[ii]) )
-                # worker = workers[i_based on id or something]
-                # worker.terminate()
-        for worker in workers:
-            worker.terminate()
-        for param in y_label:
-            result_list.append(search_dict[param])
-            param_num += 1
-            print(search_dict[param])
-            print('\n\n')
-
-    elif mp:
-        result_list = []
-        for param in y_label:
-            mlpr = MLPRegressor()
-            search_list = []
-            # begin Hyperband outer loop
-            from multiprocessing import Process, Queue
-            n_iter_list = [int(max_iter*eta**(-s)) for s in list(reversed(range(s_max+1)))]
-            print('n_iter_list:',n_iter_list)
-            out_queue = Queue()
-            workers = [
-                Process(
-                    target=_worker_func,
-                    args=(out_queue, X_input, param, mlpr, param_dist, eta, max_iter, n_iters, cv,),
-                )
-                for n_iters in n_iter_list
-            ]
-            i = 0
-            import collections
-            time_dict = collections.defaultdict(int)
-            # Start work
-            for worker in workers:
-                print(worker)
-                # print('param number ' + str(param_num) + ', worker ' + str(i)+ ' start: '+str(time.time()) )
-                time_dict[i] = time.time()
-                worker.start()
-                i+=1
-            print('\n\n')
-            for ii in range(len(n_iter_list)):
-                # print(ii)
-                search_list.append(out_queue.get())
-                print('param number ' + str(param_num) + ', worker ' + str(ii)+' finish: '+str(time.time() - time_dict[ii]) )
-                # worker = workers[i_based on id or something]
-                # worker.terminate()
-            for worker in workers:
-                worker.terminate()
-            result_list.append(search_list)
-            param_num += 1
-            print('\n\n')
-
     else:
         for param in y_label:
-            mlpr = MLPRegressor()
             search_list = []
             # begin Hyperband outer loop
             for s in reversed(range(s_max+1)):
                 n_iters = int(max_iter*eta**(-s))
                 # begin Successive Halving inner loop implemented by sklearn
                 start = time.time()
-                search = HalvingRandomSearchCV(mlpr, param_dist,
+                search = HalvingRandomSearchCV(MLPRegressor(), param_dist,
                                                resource='max_iter', factor=eta,
                                                max_resources=max_iter,
                                                min_resources=n_iters, cv=cv,
@@ -234,28 +144,6 @@ def pool_worker_func(args):
     search.fit(X_input, param)
     # out_queue.put(search)
     return [search, param]
-
-def process_worker_func(out_queue, X_input, param, mlpr, param_dist, eta, max_iter, n_iters, cv):
-    # while True:
-    search = HalvingRandomSearchCV(mlpr, param_dist,
-                                   resource='max_iter', factor=eta,
-                                   max_resources=max_iter,
-                                   min_resources=n_iters, cv=cv,
-                                   refit=False, n_jobs=-1)
-    # note: resource is defined by max_iter rather than n_samples
-    search.fit(X_input, param)
-    out_queue.put([search, param])
-
-def _worker_func(out_queue, X_input, param, mlpr, param_dist, eta, max_iter, n_iters, cv):
-    # while True:
-    search = HalvingRandomSearchCV(mlpr, param_dist,
-                                   resource='max_iter', factor=eta,
-                                   max_resources=max_iter,
-                                   min_resources=n_iters, cv=cv,
-                                   refit=False, n_jobs=-1)
-    # note: resource is defined by max_iter rather than n_samples
-    search.fit(X_input, param)
-    out_queue.put(search)
 
 def report(results, file_handle, n_top=3):
     '''Utility function to report best scores'''
