@@ -15,7 +15,7 @@ def prep_fs_for_ml(input_fs):
     return input_fs
 
 
-def predict(models: list, input_fs, logs, mapie=True, cis=[95]):
+def predict(models: list, input_fs, logs, mapie=True, pis=[95]):
     '''
     models: list of single mlpr object if sklearn,
         list of multiple mlpr objects if mapie
@@ -34,13 +34,13 @@ def predict(models: list, input_fs, logs, mapie=True, cis=[95]):
     input_x = [np.array(input_fs).flatten()]
 
     # convert confidence intervals to decimals
-    alpha = [(100 - ci)/ 100 for ci in cis]
+    alpha = [(100 - pi) / 100 for pi in pis]
 
     # get prediction using trained ml models
     if mapie:
         pred_list = []
         pi_list = []
-        for i,model in enumerate(models):
+        for i, model in enumerate(models):
             pred, pis = model.predict(input_x, alpha=alpha)
             pred = pred[0]  # one sample
             pis = pis[0]    # one sample

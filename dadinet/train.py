@@ -7,6 +7,7 @@ from sklearn.neural_network import MLPRegressor
 from sklearn.experimental import enable_halving_search_cv  # noqa
 from sklearn.model_selection import HalvingRandomSearchCV, cross_val_score
 from mapie.regression import MapieRegressor
+from multiprocessing import Pool
 
 
 def prep_data(data: dict, mapie=True):
@@ -43,7 +44,22 @@ def prep_data(data: dict, mapie=True):
 #     return loguniform(lower, upper)
 
 
-def tune(X_input, y_label, param_dist, max_iter=243, eta=3, cv=5):
+def _pool_worker_func(args):
+    '''
+    Helper method for tuning() parallelization with Pool
+    '''
+    X_input, param, mlpr, param_dist, eta, max_iter, n_iters, cv = args
+    search = HalvingRandomSearchCV(mlpr, param_dist,
+                                   resource='max_iter', factor=eta,
+                                   max_resources=max_iter,
+                                   min_resources=n_iters, cv=cv,
+                                   refit=False, n_jobs=1)
+    # note: resource is defined by max_iter rather than n_samples
+    search.fit(X_input, param)
+    return [search, param]
+
+
+def tune(X_input, y_label, param_dist, max_iter=243, eta=3, cv=5, mp=True):
     '''
     Method for searching over many MLPR hyperparameters
     with successive halving randomized search and hyperband
@@ -64,22 +80,47 @@ def tune(X_input, y_label, param_dist, max_iter=243, eta=3, cv=5):
     # number of unique executions of Successive Halving (minus one)
 
     result_list = []
-    for param in y_label:
-        mlpr = MLPRegressor()
-        search_list = []
-        # begin Hyperband outer loop
-        for s in reversed(range(s_max+1)):
-            n_iters = int(max_iter*eta**(-s))
-            # begin Successive Halving inner loop implemented by sklearn
-            search = HalvingRandomSearchCV(mlpr, param_dist,
-                                           resource='max_iter', factor=eta,
-                                           max_resources=max_iter,
-                                           min_resources=n_iters, cv=cv,
-                                           refit=False, n_jobs=-1)
-            # note: resource is defined by max_iter rather than n_samples
-            search.fit(X_input, param)
-            search_list.append(search)
-        result_list.append(search_list)
+
+    if mp:
+        # parallelize with Pool
+        search_dict = {}
+        args_list = []
+        for param in y_label:
+            param_i = y_label.index(param)
+            search_dict[param] = []
+            # begin Hyperband outer loop
+            n_iter_list = [int(max_iter*eta**(-s))
+                           for s in list(reversed(range(s_max+1)))]
+            for ii in range(len(n_iter_list)):
+                args_list.append((X_input, param, MLPRegressor(),
+                                  param_dist, eta, max_iter, n_iter_list[ii], cv,))
+
+        with Pool(processes=len(n_iter_list)*len(y_label)) as pool:
+            res = pool.map(_pool_worker_func, args_list)
+            for search, param in res:
+                search_dict[param].append(search)
+
+        for param in y_label:
+            result_list.append(search_dict[param])
+
+    else:
+        # previous version
+        for param in y_label:
+            mlpr = MLPRegressor()
+            search_list = []
+            # begin Hyperband outer loop
+            for s in reversed(range(s_max+1)):
+                n_iters = int(max_iter*eta**(-s))
+                # begin Successive Halving inner loop implemented by sklearn
+                search = HalvingRandomSearchCV(mlpr, param_dist,
+                                               resource='max_iter', factor=eta,
+                                               max_resources=max_iter,
+                                               min_resources=n_iters, cv=cv,
+                                               refit=False, n_jobs=-1)
+                # note: resource is defined by max_iter rather than n_samples
+                search.fit(X_input, param)
+                search_list.append(search)
+            result_list.append(search_list)
 
     return result_list
 

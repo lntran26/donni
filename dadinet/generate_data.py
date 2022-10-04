@@ -5,6 +5,8 @@ import sys
 import random
 from multiprocessing import Pool
 import dadi
+from scipy.stats import loguniform
+import math
 
 
 def worker_func(args: tuple):
@@ -92,3 +94,59 @@ def generate_fs(func, params_list, logs, theta, ns, pts_l,
             data_dict[params] = fs_tostore
 
     return data_dict
+
+
+def _get_subsequent_layer(init_hls: list, n_sub_layer: int):
+    """
+    Helper method for calculating subsequent layer size
+    base on the initial hls list and number of subsequent layers wanted
+    Return: full list of different hidden_layer_size options
+    """
+    # stop recursion condition
+    if n_sub_layer == 0:
+        return init_hls
+
+    # get the last layer size
+    init_layer_size = init_hls[-1][-1]
+    # reduce init layer size to get next layer size
+    next_layer_size = int(init_layer_size / 2)
+    # make new tuple with new layer size and append to init_hls
+    new_hls = list(init_hls[-1])
+    new_hls.append(next_layer_size)
+    init_hls.append(tuple(new_hls))
+
+    return _get_subsequent_layer(init_hls, n_sub_layer - 1)
+
+
+def get_hyperparam_tune_dict(sample_sizes: list):
+    """"
+    Method for generating hyperparam dictionary for tuning
+    based on input data size
+    Return: a dict specifying hyperparam options for tuning
+    """
+    # calculate input layer size
+    n_input = math.prod(sample_sizes)
+
+    # different tiers of sample size to determine hyperparam dict spec
+    if n_input < 100:
+        # for: 10,20,40
+        first_layer_size = int(n_input / 2)
+        hls_list = _get_subsequent_layer([(first_layer_size,)], 1)
+    elif 80 <= n_input <= 100:
+        # for: 80 and 10**2=100
+        first_layer_size = int(n_input / 2)
+        hls_list = _get_subsequent_layer([(first_layer_size,)], 2)
+    elif 100 <= n_input < 200:
+        # for 160
+        hls_list = _get_subsequent_layer([(50,)], 2)
+    else:
+        hls_list = _get_subsequent_layer([(50,)], 2)
+        hls_list += _get_subsequent_layer([(25,)], 2)
+
+    # put together hyperparam dict for tuning
+    tune_dict = {'hidden_layer_sizes': hls_list,
+                 'activation': ['relu'],
+                 'solver': ['lbfgs', 'adam'],
+                 'alpha': loguniform(1e-5, 1e-1),
+                 'learning_rate_init': loguniform(1e-5, 1e-1)}
+    return tune_dict

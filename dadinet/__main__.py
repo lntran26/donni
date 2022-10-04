@@ -9,7 +9,7 @@ import numpy as np
 import dadi
 from scipy.stats._distn_infrastructure import rv_frozen as distribution
 from dadinet.dadi_dem_models import get_model
-from dadinet.generate_data import generate_fs
+from dadinet.generate_data import generate_fs, get_hyperparam_tune_dict
 from dadinet.train import prep_data, tune, report,\
     get_best_specs, train, get_cv_score
 from dadinet.predict import predict, prep_fs_for_ml
@@ -25,52 +25,70 @@ def run_generate_data(args):
     dadi_func, params_list, logs, param_names = get_model(
         args.model, args.n_samples, args.model_file)
 
-    # generate data
-    data = generate_fs(dadi_func, params_list, logs,
-                       args.theta, args.sample_sizes, args.grids,
-                       args.non_normalize, args.no_sampling, args.folded,
-                       args.bootstrap, args.n_bstr, args.n_cpu)
+    if not args.generate_tune_hyperparam_only:
+        # generate data
+        data = generate_fs(dadi_func, params_list, logs,
+                           args.theta, args.sample_sizes, args.grids,
+                           args.non_normalize, args.no_sampling, args.folded,
+                           args.bootstrap, args.n_bstr, args.n_cpu)
 
-    # save data as a dictionary or as individual files
-    if args.save_individual_fs:
-        # make dir to save individual fs and true params to
-        if not os.path.exists(args.outdir):
-            os.makedirs(args.outdir)
-        # process data dict to individual fs and save
-        # index in fs file name matches index in true_log_params list
-        true_log_params = list(data.keys())
-        for i, p in enumerate(true_log_params):
-            fs = data[p]
-            fs.tofile(f"{args.outdir}/fs_{i:03d}")
-        pickle.dump(true_log_params, open(
-            f'{args.outdir}/true_log_params', 'wb'))
-    else:
-        # save data dict as one pickled file
-        pickle.dump(data, open(args.outfile, 'wb'))
+        # save data as a dictionary or as individual files
+        if args.save_individual_fs:
+            # make dir to save individual fs and true params to
+            if not os.path.exists(args.outdir):
+                os.makedirs(args.outdir)
+            # process data dict to individual fs and save
+            # index in fs file name matches index in true_log_params list
+            true_log_params = list(data.keys())
+            for i, p in enumerate(true_log_params):
+                fs = data[p]
+                fs.tofile(f"{args.outdir}/fs_{i:03d}")
+            pickle.dump(true_log_params, open(
+                f'{args.outdir}/true_log_params', 'wb'))
+        else:
+            # save data dict as one pickled file
+            pickle.dump(data, open(args.outfile, 'wb'))
+            # check fs quality
+            # to do: add this option to save individual fs
+            # need to change output location accordingly
+            if not args.no_fs_qual_check:
+                keys = list(data.keys())
+                neg_fs = 0
+                nan_fs = 0
+                inf_fs = 0
+                for key in keys:
+                    fs = data[key]
+                    if not args.bootstrap:
+                        if np.any(fs < 0):
+                            neg_fs += 1
+                        if np.any(np.isnan(fs)):
+                            nan_fs += 1
+                        if np.any(np.isposinf(fs)):
+                            inf_fs += 1
+                with open(f'{args.outfile}_quality.txt', 'a') as fh:
+                    fh.write(f'Quality check for {args.outfile}:\n')
+                    fh.write(
+                        f'Number of FS with at least one negative entry: {neg_fs}\n')
+                    fh.write(
+                        f'Number of FS with at least one NaN entry: {nan_fs}\n')
+                    fh.write(
+                        f'Number of FS with at least one pos inf entry: {inf_fs}\n')
 
-    # check fs quality
-    if args.no_fs_qual_check:
-        pass
-    else:
-        keys = list(data.keys())
-        neg_fs = 0
-        nan_fs = 0
-        inf_fs = 0
+    if args.generate_tune_hyperparam_only or args.generate_tune_hyperparam:
+        tune_dict = get_hyperparam_tune_dict(args.sample_sizes)
+        pickle.dump(tune_dict, open(f'{args.hyperparam_outfile}', 'wb'))
 
-        for key in keys:
-            fs = data[key]
-            if not args.bootstrap:
-                if np.any(fs < 0):
-                    neg_fs += 1
-                if np.any(np.isnan(fs)):
-                    nan_fs += 1
-                if np.any(np.isposinf(fs)):
-                    inf_fs += 1
-
-        print(f'Quality check for {args.outfile}:')
-        print(f'Number of FS with at least one negative entry: {neg_fs}')
-        print(f'Number of FS with at least one NaN entry: {nan_fs}')
-        print(f'Number of FS with at least one pos inf entry: {inf_fs}\n')
+        # output text file for details of hyper param tune dict
+        with open(f'{args.hyperparam_outfile}.txt', 'w') as fh:
+            for hyperparam in tune_dict:
+                if isinstance(tune_dict[hyperparam], distribution):
+                    distribution_name = vars(
+                        tune_dict[hyperparam].dist)["name"]
+                    distribution_vals = vars(tune_dict[hyperparam])["args"]
+                    fh.write(
+                        f'{hyperparam}:{distribution_name}, {distribution_vals}\n')
+                else:
+                    fh.write(f'{hyperparam}: {tune_dict[hyperparam]}\n')
 
 
 def run_train(args):
@@ -218,41 +236,44 @@ def run_predict(args):
     fs = dadi.Spectrum.from_file(args.input_fs)
     # load trained MLPRs and demographic model logs
     mlpr_list, mapie, logs, param_names = _load_trained_mlpr(args)
-    cis = sorted(args.cis)
+    pis_list = sorted(args.pis)
     # misid case
     if not fs.folded:
         logs.append(False)
         param_names.append("misid")
     # infer params using input FS
-    pred, pis = predict(mlpr_list, fs, logs, mapie=mapie, cis=cis)
+    pred, pis = predict(mlpr_list, fs, logs, mapie=mapie, pis=pis_list)
     # write output
     if args.output_prefix:
         output_stream = open(args.output_prefix, 'w')
     else:
         output_stream = sys.stdout
 
-    ci_names = []
-    for i,ci in enumerate(args.cis):
-        for j,param in enumerate(param_names):
-            ci_names.append(param + "_lb_" + str(ci))
-            ci_names.append(param + "_ub_" + str(ci))
+    pi_names = []
+    for i, pi in enumerate(pis_list):
+        for j, param in enumerate(param_names):
+            pi_names.append(param + "_lb_" + str(pi))
+            pi_names.append(param + "_ub_" + str(pi))
             pred.append(pis[j][i][0])
             pred.append(pis[j][i][1])
-    print_names = param_names + ci_names
+    print_names = param_names + pi_names
     # print parameter names
     print("# ", end="", file=output_stream)
     print(*print_names, sep='\t', file=output_stream)
     # print prediction
     print(*pred, sep='\t', file=output_stream)
-    print(file=output_stream) # newline
+    print(file=output_stream)  # newline
     # print readable confidence intervals
-    print(f"{'# CIs: ':<10}", end="", file=output_stream)
-    for ci in sorted(args.cis):
-        print(f"|----------{ci}----------|", end='\t', file=output_stream)
-    for i,param in enumerate(param_names):
+    print(f"{'# PIs: ':<10}", end="", file=output_stream)
+    for pi in pis_list:
+        print(f"|----------{pi}----------|", end='\t', file=output_stream)
+    print(file=output_stream)
+    for i, param in enumerate(param_names):
         print(f"{'# ' + param + ': ':<10}", end="", file=output_stream)
         for pi in pis[i]:
-            print(f"[{pi[0]:10.6f}, {pi[1]:10.6f}]", end="\t", file=output_stream)
+            print(f"[{pi[0]:10.6f}, {pi[1]:10.6f}]",
+                  end="\t", file=output_stream)
+        print(file=output_stream)
     if args.output_prefix:
         output_stream.close()
 
@@ -385,6 +406,18 @@ def dadi_ml_parser():
     generate_data_parser.add_argument('--no_fs_qual_check',
                                       action='store_true',
                                       help="Turn off default FS quality check")
+    generate_data_parser.add_argument('--generate_tune_hyperparam',
+                                      action='store_true',
+                                      help="Generate hyperparam spec for tuning")
+    generate_data_parser.add_argument('--generate_tune_hyperparam_only',
+                                      action='store_true',
+                                      help="Generate hyperparam spec for tuning\
+                                      only without generating any data")
+    generate_data_parser.add_argument('--hyperparam_outfile',
+                                      type=str,
+                                      default="param_dict_tune",
+                                      help="Path to save hyperparam dict\
+                                         for tuning")
 
     # subcommand for train
     train_parser = subparsers.add_parser(
@@ -465,20 +498,19 @@ def dadi_ml_parser():
                                 required=True,
                                 help="Name of dadi demographic model")
     predict_parser.add_argument("--mlpr_dir", type=str, required=True,
-                              help="Path to saved, trained MLPR(s)")
+                                help="Path to saved, trained MLPR(s)")
 
     # optional
-    predict_parser.add_argument("--cis", type=_pos_int,
+    predict_parser.add_argument("--pis", type=_pos_int,
                                 nargs='+', default=[95],
-                                help="Optional list of confidence intervals for\
-                                    prediction, e.g., [80 90 95]; default [95]")
+                                help="Optional list of values for\
+                                    prediction intervals,\
+                                    e.g., [80 90 95]; default [95]")
     predict_parser.add_argument('--model_file', type=str,
                                 help="Name of file containing custom dadi demographic model(s)",)
     predict_parser.add_argument("--output_prefix", type=str,
                                 help="Optional output file to write out results\
                                    (default stdout)")
-    # need to have stat flags for getting scores and prediction intervals
-    # predict_parser.add_argument("--evaluate", dest='reference_dir')
 
     # subcommand for plot
     plot_parser = subparsers.add_parser(
