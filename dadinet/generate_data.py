@@ -7,18 +7,30 @@ from multiprocessing import Pool
 import dadi
 from scipy.stats import loguniform
 import math
+import numpy as np
 
 
 def worker_func(args: tuple):
     '''
     Helper function for generate_fs() to perform parallelization with Pool
     '''
-
+    neg_fs, nan_fs, inf_fs = False, False, False
     (p, func, ns, pts_l, folded) = args
     if not folded:
         func = dadi.Numerics.make_anc_state_misid_func(func)
     func_ex = dadi.Numerics.make_extrap_func(func)
-    return func_ex(p, ns, pts_l)
+    fs = func_ex(p, ns, pts_l)
+    # fs[1] = -1
+    # fs[2] = np.nan
+    # fs[3] = np.inf
+    print(fs)
+    if np.any(fs < 0):
+        neg_fs = True
+    if np.any(np.isnan(fs)):
+        nan_fs = True
+    if np.any(np.isposinf(fs)):
+        inf_fs = True
+    return fs, neg_fs, nan_fs, inf_fs
 
 
 def generate_fs(func, params_list, logs, theta, ns, pts_l,
@@ -58,7 +70,30 @@ def generate_fs(func, params_list, logs, theta, ns, pts_l,
         params_list = new_params_list
 
     with Pool(processes=ncpu) as pool:
-        fs_list = pool.map(worker_func, arg_list)
+        res = np.array(pool.map(worker_func, arg_list))
+    # print('full',[len(ele) for ele in res])
+    # res = np.array([ele for ele in res])
+    # for i in range(len(res[0])):
+    #     print(i, res[0,i])
+    # print(res.shape)
+    fs_list = list(res[:,0])
+    print(fs_list)
+
+    # with open(f'{args.outfile}_quality.txt', 'a') as fh:
+    #     fh.write(f'Quality check for {args.outfile}:\n')
+    #     fh.write(
+    #         f'Number of FS with at least one negative entry: {neg_fs}\n')
+    #     fh.write(
+    #         f'Number of FS with at least one NaN entry: {nan_fs}\n')
+    #     fh.write(
+    #         f'Number of FS with at least one pos inf entry: {inf_fs}\n')
+
+    neg_fs = str(sum(res[:,1]))
+    nan_fs = str(sum(res[:,2]))
+    inf_fs = str(sum(res[:,3]))
+
+    # print(neg_fs, nan_fs, inf_fs)
+
 
     data_dict = {}
     for params, fs in zip(params_list, fs_list):
@@ -93,7 +128,7 @@ def generate_fs(func, params_list, logs, theta, ns, pts_l,
                 fs_tostore = fs_tostore.fold()
             data_dict[params] = fs_tostore
 
-    return data_dict
+    return data_dict, neg_fs, nan_fs, inf_fs
 
 
 def _get_subsequent_layer(init_hls: list, n_sub_layer: int):

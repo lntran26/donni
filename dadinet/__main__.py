@@ -27,7 +27,7 @@ def run_generate_data(args):
 
     if not args.generate_tune_hyperparam_only:
         # generate data
-        data = generate_fs(dadi_func, params_list, logs,
+        data, neg_fs, nan_fs, inf_fs = generate_fs(dadi_func, params_list, logs,
                            args.theta, args.sample_sizes, args.grids,
                            args.non_normalize, args.no_sampling, args.folded,
                            args.bootstrap, args.n_bstr, args.n_cpu)
@@ -53,18 +53,18 @@ def run_generate_data(args):
             # need to change output location accordingly
             if not args.no_fs_qual_check:
                 keys = list(data.keys())
-                neg_fs = 0
-                nan_fs = 0
-                inf_fs = 0
-                for key in keys:
-                    fs = data[key]
-                    if not args.bootstrap:
-                        if np.any(fs < 0):
-                            neg_fs += 1
-                        if np.any(np.isnan(fs)):
-                            nan_fs += 1
-                        if np.any(np.isposinf(fs)):
-                            inf_fs += 1
+                # neg_fs = 0
+                # nan_fs = 0
+                # inf_fs = 0
+                # for key in keys:
+                #     fs = data[key]
+                #     if not args.bootstrap:
+                #         if np.any(fs < 0):
+                #             neg_fs += 1
+                #         if np.any(np.isnan(fs)):
+                #             nan_fs += 1
+                #         if np.any(np.isposinf(fs)):
+                #             inf_fs += 1
                 with open(f'{args.outfile}_quality.txt', 'a') as fh:
                     fh.write(f'Quality check for {args.outfile}:\n')
                     fh.write(
