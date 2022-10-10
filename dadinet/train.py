@@ -44,7 +44,7 @@ def prep_data(data: dict, mapie=True):
 #     return loguniform(lower, upper)
 
 
-def _pool_worker_func(args):
+def _tune_worker_func(args):
     '''
     Helper method for tuning() parallelization with Pool
     '''
@@ -57,7 +57,6 @@ def _pool_worker_func(args):
     # note: resource is defined by max_iter rather than n_samples
     search.fit(X_input, param)
     return [search, param]
-
 
 def tune(X_input, y_label, param_dist, max_iter=243, eta=3, cv=5, mp=True):
     '''
@@ -96,9 +95,9 @@ def tune(X_input, y_label, param_dist, max_iter=243, eta=3, cv=5, mp=True):
                                   param_dist, eta, max_iter, n_iter_list[ii], cv,))
 
         with Pool(processes=len(n_iter_list)*len(y_label)) as pool:
-            res = pool.map(_pool_worker_func, args_list)
-            for search, param in res:
-                search_dict[param].append(search)
+            res = pool.map(_tune_worker_func, args_list)
+        for search, param in res:
+            search_dict[param].append(search)
 
         for param in y_label:
             result_list.append(search_dict[param])
@@ -163,8 +162,23 @@ def get_best_specs(result_list):
 
     return mlpr_specs, score_list
 
+def _train_worker_func(args):
+    '''
+    Helper method for tuning() parallelization with Pool
+    '''
+    mlpr_spec, mapie, X_input, param = args
+    # initiate one mlpr with mlpr_spec for each mlpr model
+    mlpr = MLPRegressor()
+    mlpr.set_params(**mlpr_spec)
 
-def train(X_input, y_label, mlpr_specs, mapie=True) -> list:
+    # use sklearn mlpr with multi-output option or mapie mlpr
+    param_predictor = MapieRegressor(mlpr) if mapie else mlpr
+
+    # train mlpr with input data
+    param_predictor.fit(X_input, param)
+    return [param_predictor, param]
+
+def train(X_input, y_label, mlpr_specs, mapie=True, mp=True) -> list:
     '''
     Train one or multiple MLPR for one demographic model data set
     with either mapie or sklearn MLPR
@@ -182,22 +196,37 @@ def train(X_input, y_label, mlpr_specs, mapie=True) -> list:
     '''
 
     mlpr_list = []
-    for param, mlpr_spec in zip(y_label, mlpr_specs):
-        # param is a tuple of len(data) for one dem param if mapie
-        # or a list of len(data) for all params tuples if sklearn
+    if mp:
+        param_predictor_dict = {}
+        args_list = []
+        for param, mlpr_spec in zip(y_label, mlpr_specs):
+            args_list.append((mlpr_spec, mapie, X_input, param))
+            # param is a tuple of len(data) for one dem param if mapie
+            # or a list of len(data) for all params tuples if sklearn
+        with Pool(processes=len(y_label)) as pool:
+            res = pool.map(_train_worker_func, args_list)
+        for param_predictor, param in res:
+            param_predictor_dict[param] = param_predictor
+        for param in y_label:
+            # save trained mlpr model
+            mlpr_list.append(param_predictor_dict[param])
+    else:
+            for param, mlpr_spec in zip(y_label, mlpr_specs):
+                # param is a tuple of len(data) for one dem param if mapie
+                # or a list of len(data) for all params tuples if sklearn
 
-        # initiate one mlpr with mlpr_spec for each mlpr model
-        mlpr = MLPRegressor()
-        mlpr.set_params(**mlpr_spec)
+                # initiate one mlpr with mlpr_spec for each mlpr model
+                mlpr = MLPRegressor()
+                mlpr.set_params(**mlpr_spec)
 
-        # use sklearn mlpr with multi-output option or mapie mlpr
-        param_predictor = MapieRegressor(mlpr) if mapie else mlpr
+                # use sklearn mlpr with multi-output option or mapie mlpr
+                param_predictor = MapieRegressor(mlpr) if mapie else mlpr
 
-        # train mlpr with input data
-        param_predictor.fit(X_input, param)
+                # train mlpr with input data
+                param_predictor.fit(X_input, param)
 
-        # save trained mlpr model
-        mlpr_list.append(param_predictor)
+                # save trained mlpr model
+                mlpr_list.append(param_predictor)
 
     return mlpr_list
 
