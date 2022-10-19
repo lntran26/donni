@@ -1,6 +1,27 @@
 '''Module for using trained MLPR to make demographic param predictions'''
 import numpy as np
+import dadi
 
+def get_supported_ss(dims):
+    if dims < 3:
+        return [10, 20, 40, 80, 160]
+    else:
+        return [10, 20, 40]
+
+def project_fs(input_fs):
+    bounds = input_fs.shape
+    # take min of the sample sizes as the limit
+    bound_limit = min(bounds)
+    dims = len(bounds) # 1d, 2d, or 3d
+    ss_list = get_supported_ss(dims)
+    ss_max = -1
+    for ss in ss_list:
+        if ss > ss_max and ss <= bound_limit:
+            ss_max = ss
+    if ss_max == -1:
+        raise ValueError("Sample sizes in input fs are too small")
+    projected_fs = input_fs.project([ss_max for i in range(dims)])
+    return projected_fs
 
 def prep_fs_for_ml(input_fs):
     '''normalize and set masked entries to zeros
