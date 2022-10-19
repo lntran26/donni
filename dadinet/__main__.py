@@ -112,7 +112,7 @@ def run_train(args):
         excluded_args = ['data_file', 'mlpr_dir', 'multioutput', 'tune',
                          'max_iter', 'subcommand', 'func', 'hyperparam',
                          'eta', 'cv', 'hyperparam_list', 'tune_only',
-                         'training_score']
+                         'training_score', 'shared']
         for arg in vars(args):
             if arg not in excluded_args and getattr(args, arg) is not None:
                 param_dict[arg] = getattr(args, arg)
@@ -121,7 +121,7 @@ def run_train(args):
     if args.tune or args.tune_only:
         # run tuning using input param_dict
         all_results = tune(X_input, y_label, param_dict,
-                           args.max_iter, args.eta, args.cv)
+                           args.max_iter, args.eta, args.cv, args.shared)
         # output full tuning result file
         pickle.dump(all_results, open(
             f'{args.mlpr_dir}/tune_results_full', 'wb'))
@@ -445,6 +445,8 @@ def dadi_ml_parser():
                               help='halving factor')
     train_parser.add_argument('--cv', type=_int_2, default=5,
                               help='k-fold cross validation')
+    train_parser.add_argument("--shared", action='store_true',
+                              help="Store training data in shared memory")
 
     # optional input for a pickled dict file instead of setting params manually
     # with flags

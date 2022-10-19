@@ -7,7 +7,7 @@ from sklearn.neural_network import MLPRegressor
 from sklearn.experimental import enable_halving_search_cv  # noqa
 from sklearn.model_selection import HalvingRandomSearchCV, cross_val_score
 from mapie.regression import MapieRegressor
-from multiprocessing import Pool
+from multiprocessing import Pool, shared_memory
 
 
 def prep_data(data: dict, mapie=True):
@@ -58,7 +58,24 @@ def _tune_worker_func(args):
     search.fit(X_input, param)
     return [search, param]
 
-def tune(X_input, y_label, param_dist, max_iter=243, eta=3, cv=5, mp=True):
+def _tune_share_mem_worker_func(args):
+    '''
+    Helper method for tuning() parallelization with Pool
+    '''
+    name, shape, datatype, param, mlpr, param_dist, eta, max_iter, n_iters, cv = args
+    shm = shared_memory.SharedMemory(name='X_input')
+    X_input = np.ndarray(shape, dtype=datatype, buffer=shm.buf)
+    # print(X_input)
+    search = HalvingRandomSearchCV(mlpr, param_dist,
+                                   resource='max_iter', factor=eta,
+                                   max_resources=max_iter,
+                                   min_resources=n_iters, cv=cv,
+                                   refit=False, n_jobs=1)
+    # note: resource is defined by max_iter rather than n_samples
+    search.fit(X_input, param)
+    return [search, param]
+
+def tune(X_input, y_label, param_dist, max_iter=243, eta=3, cv=5, shared=True, mp=True):
     '''
     Method for searching over many MLPR hyperparameters
     with successive halving randomized search and hyperband
@@ -84,18 +101,46 @@ def tune(X_input, y_label, param_dist, max_iter=243, eta=3, cv=5, mp=True):
         # parallelize with Pool
         search_dict = {}
         args_list = []
+
+        if shared == True:
+            try:
+                print('shared object exists')
+                shm = shared_memory.SharedMemory(name='X_input')
+                pass
+            except:
+                shm = shared_memory.SharedMemory(name='X_input', create=True, size=np.array(X_input).nbytes)
+                name = shm.name
+                shape = np.array(X_input).shape
+                datatype = np.array(X_input).dtype
+                # Now create a NumPy array backed by shared memory
+                X_array = np.ndarray(shape, dtype=datatype, buffer=shm.buf)
+                X_array[:] = np.array(X_input)[:]  # Copy the original data into shared memory
+
         for param in y_label:
             param_i = y_label.index(param)
             search_dict[param] = []
             # begin Hyperband outer loop
             n_iter_list = [int(max_iter*eta**(-s))
                            for s in list(reversed(range(s_max+1)))]
-            for ii in range(len(n_iter_list)):
-                args_list.append((X_input, param, MLPRegressor(),
-                                  param_dist, eta, max_iter, n_iter_list[ii], cv,))
+            if shared == True:
+                    for ii in range(len(n_iter_list)):
+                        args_list.append((name, shape, datatype, param, MLPRegressor(),
+                                          param_dist, eta, max_iter, n_iter_list[ii], cv,))
+            else:
+                for ii in range(len(n_iter_list)):
+                    args_list.append((X_input, param, MLPRegressor(),
+                                      param_dist, eta, max_iter, n_iter_list[ii], cv,))
 
         with Pool(processes=len(n_iter_list)*len(y_label)) as pool:
-            res = pool.map(_tune_worker_func, args_list)
+            if shared == True:
+                res = pool.map(_tune_share_mem_worker_func, args_list)
+            else:
+                res = pool.map(_tune_worker_func, args_list)
+        try:
+            shm.close()
+            shm.unlink()
+        except:
+            pass
         for search, param in res:
             search_dict[param].append(search)
 
