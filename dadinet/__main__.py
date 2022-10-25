@@ -4,7 +4,6 @@ import pickle
 import re
 import sys
 import os
-from inspect import getmembers, isfunction
 import numpy as np
 import dadi
 from scipy.stats._distn_infrastructure import rv_frozen as distribution
@@ -27,13 +26,50 @@ def run_generate_data(args):
 
     if not args.generate_tune_hyperparam_only:
         # generate data
-        data = generate_fs(dadi_func, params_list, logs,
-                           args.theta, args.sample_sizes, args.grids,
-                           args.non_normalize, args.no_sampling, args.folded,
-                           args.bootstrap, args.n_bstr, args.n_cpu)
+        data, qual = generate_fs(dadi_func, params_list, logs,
+                                 args.theta, args.sample_sizes, args.grids,
+                                 args.non_normalize, args.no_sampling, args.folded,
+                                 args.bootstrap, args.n_bstr, args.n_cpu)
+
+        # output fs quality check results
+        if not args.no_fs_qual_check:
+            qual_arr = np.array(qual)
+            neg_fs = np.count_nonzero(qual_arr[:, 0])
+            nan_fs = np.count_nonzero(qual_arr[:, 1])
+            inf_fs = np.count_nonzero(qual_arr[:, 2])
+            # get index of FS with negative entries
+            neg_fs_idx = list(np.where(qual_arr[:, 0] > 0)[0])
+
+            with open(f'{args.outfile}_quality.txt', 'w') as fh:
+                fh.write(f'Quality check for {args.outfile}:\n')
+                fh.write('Number of FS with at least one negative entry: '
+                         f'{neg_fs}\n')
+                fh.write('Number of FS with at least one NaN entry: '
+                         f'{nan_fs}\n')
+                fh.write('Number of FS with at least one pos inf entry: '
+                         f'{inf_fs}\n\n')
+                if len(neg_fs_idx) != 0:
+                    fh.write('Note: Negative entries in FS reported above'
+                             ' were automatically converted to 0 as part'
+                             ' of the pipeline processing.\n\n')
+                    fh.write('Details of FS with negative entries before '
+                             'conversion:\n\n')
+                    for idx in neg_fs_idx:
+                        fh.write(f'FS {idx}:\n')
+                        fh.write('Negative entry counts: '
+                                 f'{int(qual_arr[:,0][idx])}\n')
+                        fh.write('Most negative entry: '
+                                 f'{qual_arr[:,3][idx]}\n')
+                        fh.write('Sum of all neg entries: '
+                                 f'{qual_arr[:,4][idx]}\n')
+                        fh.write('Sum of fs before normalization: '
+                                 f'{qual_arr[:,5][idx]}\n\n')
 
         # save data as a dictionary or as individual files
         if args.save_individual_fs:
+            # to do: try catch statement to warn user about the requirement
+            # of --outdir flag when using --save_individual_fs flag
+
             # make dir to save individual fs and true params to
             if not os.path.exists(args.outdir):
                 os.makedirs(args.outdir)
@@ -48,32 +84,8 @@ def run_generate_data(args):
         else:
             # save data dict as one pickled file
             pickle.dump(data, open(args.outfile, 'wb'))
-            # check fs quality
-            # to do: add this option to save individual fs
-            # need to change output location accordingly
-            if not args.no_fs_qual_check:
-                keys = list(data.keys())
-                neg_fs = 0
-                nan_fs = 0
-                inf_fs = 0
-                for key in keys:
-                    fs = data[key]
-                    if not args.bootstrap:
-                        if np.any(fs < 0):
-                            neg_fs += 1
-                        if np.any(np.isnan(fs)):
-                            nan_fs += 1
-                        if np.any(np.isposinf(fs)):
-                            inf_fs += 1
-                with open(f'{args.outfile}_quality.txt', 'a') as fh:
-                    fh.write(f'Quality check for {args.outfile}:\n')
-                    fh.write(
-                        f'Number of FS with at least one negative entry: {neg_fs}\n')
-                    fh.write(
-                        f'Number of FS with at least one NaN entry: {nan_fs}\n')
-                    fh.write(
-                        f'Number of FS with at least one pos inf entry: {inf_fs}\n')
 
+    # generate and save hyperparams dict for tuning
     if args.generate_tune_hyperparam_only or args.generate_tune_hyperparam:
         tune_dict = get_hyperparam_tune_dict(args.sample_sizes)
         pickle.dump(tune_dict, open(f'{args.hyperparam_outfile}', 'wb'))
