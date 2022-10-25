@@ -8,7 +8,6 @@ import string
 from subprocess import getstatusoutput, getoutput
 import pickle
 import shutil
-import pytest
 
 PRG = 'dadi-ml'
 
@@ -42,7 +41,7 @@ def run_generate_data_sub(args, args_expected):
 
     outfile = random_string()
     try:
-        rv, out = getstatusoutput(
+        rv, _ = getstatusoutput(
             f'{PRG} generate_data {" ".join(args)} --outfile {outfile}')
 
         # check that program executed without errors
@@ -58,9 +57,11 @@ def run_generate_data_sub(args, args_expected):
         data = pickle.load(open(outfile, 'rb'))
         assert len(data) == args_expected['n_samples']
 
-    finally:  # remove output file
+    finally:  # remove output files
         if os.path.isfile(outfile):
             os.remove(outfile)
+        if os.path.isfile(f'{outfile}_quality.txt'):
+            os.remove(f'{outfile}_quality.txt')
 
 
 def test_run_generate_data_sub_1():

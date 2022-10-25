@@ -20,9 +20,9 @@ def run(model_name, sample_size, theta, n_samples,
     '''Template method for testing different models, sample sizes, thetas'''
 
     grids = [40, 50, 60]
-    dem, dem_params, p_logs, param_names = get_model(model_name, n_samples)
-    data = generate_fs(dem, dem_params, p_logs, theta,
-                       sample_size, grids, norm, sampling, folded)
+    dem, dem_params, p_logs, _ = get_model(model_name, n_samples)
+    data, _ = generate_fs(dem, dem_params, p_logs, theta,
+                          sample_size, grids, norm, sampling, folded)
 
     # check that output dataset format is a dict
     assert isinstance(data, dict)
@@ -57,7 +57,7 @@ def run(model_name, sample_size, theta, n_samples,
         test_p = random.choice(list(data.keys()))
         test_p_logs = [10**test_p[i] if p_logs[i] else test_p[i]
                        for i in range(len(p_logs))]
-        if (len(test_p_logs) < len(test_p)):  # add misid param
+        if len(test_p_logs) < len(test_p):  # add misid param
             test_p_logs.append(test_p[-1])
         # make expected fs with dadi
         if not folded:
@@ -124,9 +124,9 @@ def run_bootstrap(model_name, sample_size, theta, n_samples, n_bstr):
     '''Template method for testing generating bootstrap data'''
 
     grids = [40, 50, 60]
-    dem, dem_params, p_logs, param_names = get_model(model_name, n_samples)
-    data = generate_fs(dem, dem_params, p_logs, theta, sample_size,
-                       grids, bootstrap=True, n_bstr=n_bstr)
+    dem, dem_params, p_logs, _ = get_model(model_name, n_samples)
+    data, _ = generate_fs(dem, dem_params, p_logs, theta, sample_size,
+                          grids, bootstrap=True, n_bstr=n_bstr)
 
     # check that output dataset format is a dict
     assert isinstance(data, dict)
@@ -154,7 +154,7 @@ def test_run_bstr_theta_1():
     '''Test raising SystemExit exception when trying to
     generate bootstrap data with theta = 1'''
     grids = [40, 50, 60]
-    dem, dem_params, p_logs, param_names = get_model('two_epoch', 5)
+    dem, dem_params, p_logs, _ = get_model('two_epoch', 5)
     with pytest.raises(SystemExit):
         generate_fs(dem, dem_params, p_logs, 1, [
                     20], grids, bootstrap=True, n_bstr=10)
