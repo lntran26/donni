@@ -33,7 +33,7 @@ def predict(models: list, input_fs, logs, mapie=True, pis=[95]):
     # flatten input_fs and put in a list
     input_x = [np.array(input_fs).flatten()]
 
-    # convert confidence intervals to decimals
+    # convert intervals to decimals
     alpha = [(100 - pi) / 100 for pi in pis]
 
     # get prediction using trained ml models

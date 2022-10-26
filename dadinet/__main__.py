@@ -20,6 +20,13 @@ def run_generate_data(args):
     '''Method to generate data given inputs from the
     generate_data subcommand'''
 
+    if args.save_individual_fs:
+        # check if outdir is provided
+        if args.outdir is None:
+            sys.exit('dadi-ml generate_data: error: '
+                    'the following arguments are required:'
+                    ' --outdir when using --save_individual_fs')
+
     # get dem function and params specifications for model
     dadi_func, params_list, logs, param_names = get_model(
         args.model, args.n_samples, args.model_file)
@@ -39,7 +46,8 @@ def run_generate_data(args):
             inf_fs = np.count_nonzero(qual_arr[:, 2])
             # get index of FS with negative entries
             neg_fs_idx = list(np.where(qual_arr[:, 0] > 0)[0])
-
+            # get index of FS with negative entries above threshold
+            bad_fs_idx = list(np.where(qual_arr[:, 6] > 0.001)[0])
             with open(f'{args.outfile}_quality.txt', 'w') as fh:
                 fh.write(f'Quality check for {args.outfile}:\n')
                 fh.write('Number of FS with at least one negative entry: '
@@ -50,26 +58,28 @@ def run_generate_data(args):
                          f'{inf_fs}\n\n')
                 if len(neg_fs_idx) != 0:
                     fh.write('Note: Negative entries in FS reported above'
-                             ' were automatically converted to 0 as part'
-                             ' of the pipeline processing.\n\n')
-                    fh.write('Details of FS with negative entries before '
-                             'conversion:\n\n')
-                    for idx in neg_fs_idx:
+                             ' were automatically converted to its absolute'
+                             ' value as part of the pipeline processing.\n\n')
+                    fh.write('Any FS with sum of negative entries to sum'
+                             ' of the FS exceeding a ratio of 0.001'
+                             ' will be reported below.\n\n')
+                if len(bad_fs_idx) != 0:
+                    fh.write(f'{"-"*60}\n\n')
+                    fh.write('Details of FS with negative entries exceeding '
+                             'threshold before conversion:\n\n')
+                    for idx in bad_fs_idx:
                         fh.write(f'FS {idx}:\n')
                         fh.write('Negative entry counts: '
                                  f'{int(qual_arr[:,0][idx])}\n')
                         fh.write('Most negative entry: '
-                                 f'{qual_arr[:,3][idx]}\n')
+                                 f'{round(qual_arr[:,3][idx], 4)}\n')
                         fh.write('Sum of all neg entries: '
-                                 f'{qual_arr[:,4][idx]}\n')
+                                 f'{round(qual_arr[:,4][idx], 4)}\n')
                         fh.write('Sum of fs before normalization: '
-                                 f'{qual_arr[:,5][idx]}\n\n')
+                                 f'{round(qual_arr[:,5][idx], 4)}\n\n')
 
         # save data as a dictionary or as individual files
         if args.save_individual_fs:
-            # to do: try catch statement to warn user about the requirement
-            # of --outdir flag when using --save_individual_fs flag
-
             # make dir to save individual fs and true params to
             if not os.path.exists(args.outdir):
                 os.makedirs(args.outdir)
@@ -97,8 +107,8 @@ def run_generate_data(args):
                     distribution_name = vars(
                         tune_dict[hyperparam].dist)["name"]
                     distribution_vals = vars(tune_dict[hyperparam])["args"]
-                    fh.write(
-                        f'{hyperparam}:{distribution_name}, {distribution_vals}\n')
+                    fh.write(f'{hyperparam}: {distribution_name}, '
+                             f'{distribution_vals}\n')
                 else:
                     fh.write(f'{hyperparam}: {tune_dict[hyperparam]}\n')
 
@@ -275,8 +285,8 @@ def run_predict(args):
     # print prediction
     print(*pred, sep='\t', file=output_stream)
     print(file=output_stream)  # newline
-    # print readable confidence intervals
-    print(f"{'# PIs: ':<10}", end="", file=output_stream)
+    # print readable intervals
+    print(f"{'# CIs: ':<10}", end="", file=output_stream)
     for pi in pis_list:
         print(f"|----------{pi}----------|", end='\t', file=output_stream)
     print(file=output_stream)
@@ -385,8 +395,9 @@ def dadi_ml_parser():
                                       nargs='+', required=True,
                                       help="Sample sizes of populations",)
     generate_data_parser.add_argument('--outfile',
-                                      type=str, default="training_fs",
-                                      help="Path to save generated data")
+                                      type=str, required=True,
+                                      help="Path to save generated data and\
+                                         associated quality check file")
     generate_data_parser.add_argument('--save_individual_fs',
                                       action='store_true',
                                       help="Save individual FS as a file\

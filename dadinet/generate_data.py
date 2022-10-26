@@ -77,15 +77,14 @@ def generate_fs(func, params_list, logs, theta, ns, pts_l,
         fs_qual = [num_neg, num_nan, num_inf]
         # store more detailed stats for negative entries
         if np.any(fs < 0):
-            most_neg = fs.min()
             sum_neg = np.sum(fs[fs < 0])
-            fs_qual += [most_neg, sum_neg, fs.sum()]
+            fs_qual += [fs.min(), sum_neg, fs.sum(), abs(sum_neg/fs.sum())]
         else:
-            fs_qual += [0, 0, fs.sum()]
+            fs_qual += [0, 0, 0, 0]
         # append stat for each fs to a list of all fs stats
         qual_check.append(fs_qual)
-        # convert any negative entry in fs to 0 before further processing
-        fs = np.maximum(fs, 0)
+        # convert any negative entry in fs before further processing
+        fs = abs(fs)
 
         # generate data for bootstrapping
         if bootstrap:
