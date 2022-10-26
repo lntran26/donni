@@ -127,7 +127,8 @@ def _param_range(param_type):
     range_dict = {"nu": (4, -2),
                   "T": (1.9, 0.1),
                   "m": (9, 1),
-                  "s": (0.98, 0.01)}
+                  "s": (0.98, 0.01),
+                  "F": (1, 0)}
     a, b = range_dict[param_type]
 
     return random.random() * a + b
