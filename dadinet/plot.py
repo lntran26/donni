@@ -41,7 +41,7 @@ def sort_by_param(y_true, y_pred):
     return param_true, param_pred
 
 
-def plot_accuracy_single(x, y, size=[8, 2, 20], x_label="true",
+def plot_accuracy_single(x, y, size=(8, 2, 20), x_label="true",
                          y_label="predict", log=False,
                          r2=None, msle=None, rho=None, c=None, title=None):
     '''
@@ -225,7 +225,7 @@ def plot(models: list, X_test, y_test, results_prefix, logs, mapie=True,
 
         for i, _ in enumerate(param_true):
             # handling log-scale data
-            if i < len(logs) - 1 and logs[i]:  # misid is not included in log
+            if logs[i]:
                 # convert log-scale values back to regular scale
                 plot_p_true = [10**p_true for p_true in param_true[i]]
                 plot_p_pred = [10**p_pred for p_pred in param_pred[i]]

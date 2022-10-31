@@ -2,13 +2,12 @@
 Method for generating dadi-simulated fs datasets
 '''
 import sys
-import random
 from multiprocessing import Pool
-import dadi
-from scipy.stats import loguniform
 import math
+import random
+from scipy.stats import loguniform
 import numpy as np
-
+import dadi
 
 def worker_func(args: tuple):
     '''
@@ -46,18 +45,9 @@ def generate_fs(func, params_list, logs, theta, ns, pts_l,
     '''
 
     arg_list = []
-    new_params_list = []
     for p in params_list:
         delog_p = [10**p[i] if logs[i] else p[i] for i in range(len(logs))]
-        if not folded:
-            misid = random.random() / 4  # range 0 to .25
-            delog_p.append(misid)
-            new_p = list(p)
-            new_p.append(misid)
-            new_params_list.append(new_p)
         arg_list.append((delog_p, func, ns, pts_l, folded))
-    if not folded:
-        params_list = new_params_list
 
     with Pool(processes=ncpu) as pool:
         fs_list = pool.map(worker_func, arg_list)

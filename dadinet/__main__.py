@@ -7,7 +7,7 @@ import os
 import numpy as np
 import dadi
 from scipy.stats._distn_infrastructure import rv_frozen as distribution
-from dadinet.dadi_dem_models import get_model
+from dadinet.dadi_dem_models import get_model, get_param_values
 from dadinet.generate_data import generate_fs, get_hyperparam_tune_dict
 from dadinet.train import prep_data, tune, report,\
     get_best_specs, train, get_cv_score
@@ -24,19 +24,23 @@ def run_generate_data(args):
         # check if outdir is provided
         if args.outdir is None:
             sys.exit('dadi-ml generate_data: error: '
-                    'the following arguments are required:'
-                    ' --outdir when using --save_individual_fs')
+                     'the following arguments are required:'
+                     ' --outdir when using --save_individual_fs')
 
     # get dem function and params specifications for model
-    dadi_func, params_list, logs, param_names = get_model(
-        args.model, args.n_samples, args.model_file)
+    dadi_func, param_names, logs = get_model(args.model,
+                                             args.model_file, args.folded)
+    # get demographic param values
+    params_list = get_param_values(param_names, args.n_samples,
+                                   args.seed, args.seed_offset)
 
     if not args.generate_tune_hyperparam_only:
         # generate data
         data, qual = generate_fs(dadi_func, params_list, logs,
                                  args.theta, args.sample_sizes, args.grids,
-                                 args.non_normalize, args.no_sampling, args.folded,
-                                 args.bootstrap, args.n_bstr, args.n_cpu)
+                                 args.non_normalize, args.no_sampling,
+                                 args.folded, args.bootstrap, args.n_bstr,
+                                 args.n_cpu)
 
         # output fs quality check results
         if not args.no_fs_qual_check:
@@ -47,7 +51,7 @@ def run_generate_data(args):
             # get index of FS with negative entries
             neg_fs_idx = list(np.where(qual_arr[:, 0] > 0)[0])
             # get index of FS with negative entries above threshold
-            bad_fs_idx = list(np.where(qual_arr[:, 6] > 0.001)[0])
+            bad_fs_idx = list(np.where(qual_arr[:, 6] > 0.01)[0])
             with open(f'{args.outfile}_quality.txt', 'w') as fh:
                 fh.write(f'Quality check for {args.outfile}:\n')
                 fh.write('Number of FS with at least one negative entry: '
@@ -60,13 +64,14 @@ def run_generate_data(args):
                     fh.write('Note: Negative entries in FS reported above'
                              ' were automatically converted to its absolute'
                              ' value as part of the pipeline processing.\n\n')
-                    fh.write('Any FS with sum of negative entries to sum'
-                             ' of the FS exceeding a ratio of 0.001'
+                    fh.write('Any FS with negative entries sum to more than'
+                             ' 1% of the sum of all entries in FS'
                              ' will be reported below.\n\n')
                 if len(bad_fs_idx) != 0:
                     fh.write(f'{"-"*60}\n\n')
                     fh.write('Details of FS with negative entries exceeding '
                              'threshold before conversion:\n\n')
+                    fh.write(f'Total number of FS: {len(bad_fs_idx)}\n\n')
                     for idx in bad_fs_idx:
                         fh.write(f'FS {idx}:\n')
                         fh.write('Negative entry counts: '
@@ -171,7 +176,6 @@ def run_train(args):
                                                   scores)):
                 fh.write(f'CV score of best MLPR for param {i+1}: {score}\n')
                 fh.write(f'Spec of best MLPR for param {i+1}: {spec}\n')
-        # print("Finish tuning\n")
 
     else:
         # alternatively, train directly without tuning first.
@@ -240,7 +244,8 @@ def _load_trained_mlpr(args):
         else:
             continue
     # need to get logs to de-log prediction
-    func, _, logs, param_names = get_model(args.model, 0, args.model_file)
+    _, param_names, logs = get_model(args.model, args.model_file,
+                                     args.folded)  # now included misid
     # this way of getting logs misses one log value for misid,
     # which is currently added only in after running generate_data
     # module helper function
@@ -259,10 +264,6 @@ def run_predict(args):
     # load trained MLPRs and demographic model logs
     mlpr_list, mapie, logs, param_names = _load_trained_mlpr(args)
     pis_list = sorted(args.pis)
-    # misid case
-    if not fs.folded:
-        logs.append(False)
-        param_names.append("misid")
     # infer params using input FS
     pred, pis = predict(mlpr_list, fs, logs, mapie=mapie, pis=pis_list)
     # write output
@@ -304,7 +305,7 @@ def run_plot(args):
     '''Method to plot outputs'''
 
     # load trained MLPRs and demographic model logs
-    mlpr_list, mapie, logs, _ = _load_trained_mlpr(args)
+    mlpr_list, mapie, logs, param_names = _load_trained_mlpr(args)
 
     # load test fs set
     test_dict = pickle.load(open(args.test_dict, 'rb'))
@@ -317,14 +318,6 @@ def run_plot(args):
 
     # parse data into test FS and corresponding labels
     X_test, y_test = prep_data(prep_test_dict, mapie=mapie)
-
-    # Get param names
-    # Want to do one sample so that
-    # get_model can test custom model file?
-    _, _, _, param_names = get_model(args.model, 0, args.model_file)
-    # Check if misid is a parameter to be added
-    if not args.folded:
-        param_names += ['misid']
 
     # plot results
     plot(mlpr_list, X_test, y_test, args.results_prefix, logs, mapie=mapie,
@@ -411,6 +404,12 @@ def dadi_ml_parser():
     generate_data_parser.add_argument('--theta', type=_pos_int,
                                       help="Factor to multiply FS with",
                                       default=1)
+    generate_data_parser.add_argument('--seed', type=_pos_int,
+                                      help="Seed for reproducibility")
+    generate_data_parser.add_argument('--seed_offset', type=_pos_int,
+                                      help="Offset value for ensuring\
+                                         non-overlap param range",
+                                      default=0)
     generate_data_parser.add_argument('--non_normalize', action='store_false',
                                       help="Don't normalize FS")
     generate_data_parser.add_argument('--no_sampling', action='store_false',
