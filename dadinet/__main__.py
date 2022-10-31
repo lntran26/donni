@@ -51,7 +51,7 @@ def run_generate_data(args):
             # get index of FS with negative entries
             neg_fs_idx = list(np.where(qual_arr[:, 0] > 0)[0])
             # get index of FS with negative entries above threshold
-            bad_fs_idx = list(np.where(qual_arr[:, 6] > 0.01)[0])
+            bad_fs_idx = list(np.where(qual_arr[:, 6] > 0.001)[0])
             with open(f'{args.outfile}_quality.txt', 'w') as fh:
                 fh.write(f'Quality check for {args.outfile}:\n')
                 fh.write('Number of FS with at least one negative entry: '
@@ -63,24 +63,27 @@ def run_generate_data(args):
                 if len(neg_fs_idx) != 0:
                     fh.write('Note: Negative entries in FS reported above'
                              ' were automatically converted to its absolute'
-                             ' value as part of the pipeline processing.\n\n')
+                             ' value as part of the pipeline processing.\n')
                     fh.write('Any FS with negative entries sum to more than'
-                             ' 1% of the sum of all entries in FS'
-                             ' will be reported below.\n\n')
+                             ' 0.1% of the sum of all entries in FS'
+                             ' before conversion will be reported below.\n')
+                    fh.write('To reduce the number of FS with negative entries'
+                             ' in initial simluations try increasing the grids'
+                             ' size.\n\n')
                 if len(bad_fs_idx) != 0:
                     fh.write(f'{"-"*60}\n\n')
                     fh.write('Details of FS with negative entries exceeding '
-                             'threshold before conversion:\n\n')
+                             'threshold before absolute value conversion:\n\n')
                     fh.write(f'Total number of FS: {len(bad_fs_idx)}\n\n')
                     for idx in bad_fs_idx:
                         fh.write(f'FS {idx}:\n')
                         fh.write('Negative entry counts: '
                                  f'{int(qual_arr[:,0][idx])}\n')
-                        fh.write('Most negative entry: '
+                        fh.write('Most negative entry value: '
                                  f'{round(qual_arr[:,3][idx], 4)}\n')
-                        fh.write('Sum of all neg entries: '
+                        fh.write('Sum of all negative entries: '
                                  f'{round(qual_arr[:,4][idx], 4)}\n')
-                        fh.write('Sum of fs before normalization: '
+                        fh.write('Sum of FS before normalization: '
                                  f'{round(qual_arr[:,5][idx], 4)}\n\n')
 
         # save data as a dictionary or as individual files
