@@ -4,7 +4,6 @@ import sys
 import os
 import importlib
 from inspect import getmembers, isfunction
-import random
 import numpy as np
 import dadi
 
@@ -77,8 +76,7 @@ def get_model(model_name, model_file=None, folded=False):
     return func, param_names, logs
 
 
-def get_param_values(param_names, n_samples,
-                     seed=None, seed_offset=0):
+def get_param_values(param_names, n_samples, seed=None):
     """
     Generate a list of randomly selected demographic parameter values.
     Input:
@@ -90,38 +88,28 @@ def get_param_values(param_names, n_samples,
     Output:
         params_list list: List of length n_samples of parameter values.
     """
-    # random seed settings
-    seed_len = n_samples * len(param_names) * 2
-    if seed is not None:
-        random.seed(seed)  # this seed control random.sample()
-        seed_list = random.sample(
-            range(seed_offset, seed_len + seed_offset), seed_len)
-    else:
-        seed_list = [None] * seed_len
+    # set random seed
+    np.random.seed(seed)
     # generate param values
     params_list = []
-    s_idx = 0
     for _ in range(n_samples):
         p = []
         # special handling for T param with Tsum restriction
         n_T = sum([name.startswith("T") for name in param_names])
-        np.random.seed(seed_list[s_idx])
         T_fraction_list = np.random.dirichlet(np.ones(n_T))
         T_fraction_index = 0
-        t_sum = _param_range("T", seed_list[s_idx])
-        s_idx += 1
+        t_sum = _param_range("T")
         for name in param_names:
             if name.startswith("T"):
                 p_val = t_sum * T_fraction_list[T_fraction_index]
                 T_fraction_index += 1
             elif name.startswith("nu"):
-                p_val = _param_range("nu", seed_list[s_idx])
+                p_val = _param_range("nu")
             elif name == "misid":
-                p_val = _param_range("misid", seed_list[s_idx])
+                p_val = _param_range("misid")
             else:
-                p_val = _param_range(name[0], seed_list[s_idx])
+                p_val = _param_range(name[0])
             p.append(p_val)
-            s_idx += 1
         params_list.append(tuple(p))
 
     return params_list
@@ -143,7 +131,7 @@ def print_built_in_models():
     print()
 
 
-def _param_range(param_type, seed=None):
+def _param_range(param_type):
     ''' Helper function to generate random parameter values
     within biologically realistic range for each type of dem param.
     Input: param_type is a string corresponding to range_dict key'''
@@ -154,5 +142,4 @@ def _param_range(param_type, seed=None):
                   "F": (1, 0, 1),
                   "misid": (1, 0, 4)}
     a, b, c = range_dict[param_type]
-    random.seed(seed)
-    return (random.random() * a + b) / c
+    return (np.random.random() * a + b) / c

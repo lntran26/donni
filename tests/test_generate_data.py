@@ -178,26 +178,22 @@ def test_run_split_mig_bstr():
     run_bootstrap('split_mig', [20, 20], 100, 3, 5)
 
 
-def run_seed(param_names, n_samples, s_pair, offset_pair):
+def run_seed(param_names, n_samples, s_pair):
     '''Template method for testing if seeding is working correctly
     for generating reproducible parameter set'''
 
-    p_1 = get_param_values(param_names, n_samples,
-                           s_pair[0], offset_pair[0])
-    p_2 = get_param_values(param_names, n_samples,
-                           s_pair[1], offset_pair[1])
+    p_1 = get_param_values(param_names, n_samples, s_pair[0])
+    p_2 = get_param_values(param_names, n_samples, s_pair[1])
 
     assert len(p_1) == n_samples
     assert len(p_2) == n_samples
     assert all(len(p) == len(param_names) for p in p_1)
 
-    if s_pair[0] == s_pair[1] and offset_pair[0] == offset_pair[1]:
+    if s_pair[0] == s_pair[1]:
         assert p_1 == p_2
     else:
         assert p_1 != p_2
-    # more rigorous case for different offset pair
-    # the offset case must not over lap at all
-    if offset_pair[0] != offset_pair[1]:
+        # params must not over lap at all
         assert all(p not in p_2 for p in p_1)
 
 
@@ -205,18 +201,13 @@ def test_run_seed_1():
     '''Test if similar seed pair is the same'''
 
     param_names = ['nu', 'T', 'misid']
-    run_seed(param_names, 45, (1, 1), (0, 0))
+    run_seed(param_names, 45, (1, 1))
+    run_seed(param_names, 30, (5, 5))
 
 
 def test_run_seed_2():
     '''Test if different when seed pair is different'''
 
     param_names = ['nu', 'T', 'm', 'misid']
-    run_seed(param_names, 40, (1, 5), (0, 0))
-
-
-def test_run_seed_3():
-    '''Test if different when seed pair is the same but offset is different'''
-
-    param_names = ['nu1', 'nu2', 'T', 'm']
-    run_seed(param_names, 50, (6, 6), (0, 55))
+    run_seed(param_names, 40, (1, 5))
+    run_seed(param_names, 20, (3, 4))

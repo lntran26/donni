@@ -4,10 +4,10 @@ Method for generating dadi-simulated fs datasets
 import sys
 from multiprocessing import Pool
 import math
-import random
 from scipy.stats import loguniform
 import numpy as np
 import dadi
+
 
 def worker_func(args: tuple):
     '''
@@ -101,6 +101,63 @@ def generate_fs(func, params_list, logs, theta, ns, pts_l,
                 fs_tostore = fs_tostore.fold()
             data_dict[params] = fs_tostore
     return data_dict, qual_check
+
+
+def fs_quality_check(qual_check, filename, params_list, param_names, logs):
+    """
+    Method for checking FS quality and print output.
+    Inputs:
+        qual_check: from generate_fs()
+        filename: from CLI input
+        params_list: demographic model param sets
+        param_names: demographic model parameter names
+        logs: indicate which dem param is in log10 values
+    """
+    qual_arr = np.array(qual_check)
+    neg_fs = np.count_nonzero(qual_arr[:, 0])
+    nan_fs = np.count_nonzero(qual_arr[:, 1])
+    inf_fs = np.count_nonzero(qual_arr[:, 2])
+    # get index of FS with negative entries
+    neg_fs_idx = list(np.where(qual_arr[:, 0] > 0)[0])
+    # get index of FS with negative entries above threshold
+    bad_fs_idx = list(np.where(qual_arr[:, 6] > 0.001)[0])
+    with open(f'{filename}_quality.txt', 'w') as fh:
+        fh.write(f'Quality check for {filename}:\n')
+        fh.write('Number of FS with at least one negative entry: '
+                 f'{neg_fs}\n')
+        fh.write('Number of FS with at least one NaN entry: '
+                 f'{nan_fs}\n')
+        fh.write('Number of FS with at least one pos inf entry: '
+                 f'{inf_fs}\n\n')
+        if len(neg_fs_idx) != 0:
+            fh.write('Note: Negative entries in FS reported above'
+                     ' were automatically converted to its absolute'
+                     ' value as part of the pipeline processing.\n')
+            fh.write('Any FS with negative entries sum to more than'
+                     ' 0.1% of the sum of all entries in FS'
+                     ' before conversion will be reported below.\n')
+            fh.write('To reduce the number of FS with negative entries'
+                     ' in initial simluations try increasing the grids'
+                     ' size.\n\n')
+        if len(bad_fs_idx) != 0:
+            fh.write(f'{"-"*60}\n\n')
+            fh.write('Details of FS with negative entries exceeding '
+                     'threshold before absolute value conversion:\n\n')
+            fh.write(f'Total number of FS: {len(bad_fs_idx)}\n\n')
+            for idx in bad_fs_idx:
+                fh.write(f'FS {idx}:\n')
+                fh.write('Params: ')
+                for p, log, p_val in zip(param_names, logs, params_list[idx]):
+                    p_val_delog = 10**p_val if log else p_val
+                    fh.write(f'{str(p)}={round(p_val_delog, 3)} ')
+                fh.write('\nNegative entry counts: '
+                         f'{int(qual_arr[:,0][idx])}\n')
+                fh.write('Most negative entry value: '
+                         f'{round(qual_arr[:,3][idx], 4)}\n')
+                fh.write('Sum of all negative entries: '
+                         f'{round(qual_arr[:,4][idx], 4)}\n')
+                fh.write('Sum of FS before normalization: '
+                         f'{round(qual_arr[:,5][idx], 4)}\n\n')
 
 
 def _get_subsequent_layer(init_hls: list, n_sub_layer: int):

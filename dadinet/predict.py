@@ -15,7 +15,7 @@ def prep_fs_for_ml(input_fs):
     return input_fs
 
 
-def predict(models: list, input_fs, logs, mapie=True, pis=[95]):
+def predict(models: list, input_fs, logs, mapie, pis):
     '''
     models: list of single mlpr object if sklearn,
         list of multiple mlpr objects if mapie
