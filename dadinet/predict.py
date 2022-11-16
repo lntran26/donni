@@ -3,6 +3,7 @@ import numpy as np
 import dadi
 
 def get_supported_ss(dims):
+    # can update these lists as needed (or pull from cloud)
     if dims < 3:
         return [10, 20, 40, 80, 160]
     else:
@@ -20,7 +21,8 @@ def project_fs(input_fs):
             ss_max = ss
     if ss_max == -1:
         raise ValueError("Sample sizes in input fs are too small")
-    projected_fs = input_fs.project([ss_max for i in range(dims)])
+    # the size is actually -1
+    projected_fs = input_fs.project([ss_max-1 for i in range(dims)])
     return projected_fs
 
 def prep_fs_for_ml(input_fs):
@@ -46,7 +48,8 @@ def predict(models: list, input_fs, logs, mapie=True, pis=[95]):
         individual params
     if not mapie, should be list of length 1
     '''
-    # TODO: check fs shape and project down to exp input size if needed
+    # project to supported sample sizes
+    input_fs = project_fs(input_fs)
 
     # get input_fs ready for ml prediction
     input_fs = prep_fs_for_ml(input_fs)
