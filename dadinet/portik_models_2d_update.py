@@ -5,18 +5,6 @@ Adapted from https://github.com/dportik
 from dadi import Numerics, PhiManip, Integration, Spectrum
 
 
-def no_divergence(_, ns, pts):
-    """
-    Standard neutral model, populations never diverge.
-    """
-    xx = Numerics.default_grid(pts)
-    phi = PhiManip.phi_1D(xx)
-    phi = PhiManip.phi_1D_to_2D(xx, phi)
-    fs = Spectrum.from_phi(phi, ns, (xx, xx))
-    return fs
-no_divergence.__param_names__ = []
-
-
 def no_mig(params, ns, pts):
     """
     Split into two populations, no migration.
