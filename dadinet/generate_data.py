@@ -137,7 +137,7 @@ def fs_quality_check(qual_check, filename, params_list, param_names, logs):
                      ' 0.1% of the sum of all entries in FS'
                      ' before conversion will be reported below.\n')
             fh.write('To reduce the number of FS with negative entries'
-                     ' in initial simluations try increasing the grids'
+                     ' in initial simulations try increasing the grids'
                      ' size.\n\n')
         if len(bad_fs_idx) != 0:
             fh.write(f'{"-"*60}\n\n')

@@ -41,7 +41,7 @@ def sort_by_param(y_true, y_pred):
 
 
 def plot_accuracy_single(x, y, size=(8, 2, 20), x_label="True",
-                         y_label="Predict", log=False,
+                         y_label="Inferred", log=False,
                          r2=None, rho=None, c=None, title=None):
     '''
     Plot a single x vs. y scatter plot panel, with correlation scores
