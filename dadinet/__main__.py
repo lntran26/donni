@@ -47,6 +47,7 @@ def run_generate_data(args):
                              params_list, param_names, logs)
 
         # save data as a dictionary or as individual files
+        # (in addition to saving as a single file)
         if args.save_individual_fs:
             # make dir to save individual fs and true params to
             if not os.path.exists(args.outdir):
@@ -59,9 +60,9 @@ def run_generate_data(args):
                 fs.tofile(f"{args.outdir}/fs_{i:03d}")
             pickle.dump(true_log_params, open(
                 f'{args.outdir}/true_log_params', 'wb'))
-        else:
-            # save data dict as one pickled file
-            pickle.dump(data, open(args.outfile, 'wb'))
+        
+        # save data dict as one pickled file (default)
+        pickle.dump(data, open(args.outfile, 'wb'))
 
     # generate and save hyperparams dict for tuning
     if args.generate_tune_hyperparam_only or args.generate_tune_hyperparam:
