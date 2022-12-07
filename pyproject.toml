@@ -1,3 +1,40 @@
 [build-system]
-requires = ["setuptools", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "dadi-ml-tjs-hatch"
+version = "1.0"
+description = "Machine learning applications for dadi"
+readme = "README.md"
+requires-python = ">=3.7"
+license = ""
+authors = [
+    { name = "Linh Tran", email = "lnt@email.arizona.edu"},
+    { name = "Connie Sun" },
+]
+dependencies = [
+    "dadi",
+    "numpy",
+    "flake8",
+    "mapie == 0.3.1",
+    "mypy",
+    "pylint",
+    "pytest",
+    "pytest-flake8",
+    "pytest-mypy",
+    "pytest-pylint",
+    "scikit-learn == 1.0.2",
+]
+
+[project.scripts]
+dadi-ml = "dadinet.__main__:main"
+
+[tool.hatch.version]
+path = "dadinet/__init__.py"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/dadinet",
+]
+
