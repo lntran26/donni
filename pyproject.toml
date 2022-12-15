@@ -3,8 +3,8 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "dadi-ml-tjs-hatch"
-version = "1.0"
+name = "project-ml-AB3NzaC1yc-hatch"
+version = "1.0.1"
 description = "Machine learning applications for dadi"
 readme = "README.md"
 requires-python = ">=3.7"
@@ -14,8 +14,7 @@ authors = [
     { name = "Connie Sun" },
 ]
 dependencies = [
-    "dadi",
-    "numpy",
+    "project-base-AB3NzaC1yc-setuptools",
     "flake8",
     "mapie == 0.3.1",
     "mypy",
