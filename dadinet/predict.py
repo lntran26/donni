@@ -17,12 +17,13 @@ def project_fs(input_fs):
     ss_list = get_supported_ss(dims)
     ss_max = -1
     for ss in ss_list:
-        if ss > ss_max and ss <= bound_limit:
+        # fs increases dimensions by 1
+        if ss + 1 > ss_max and ss + 1 <= bound_limit:
             ss_max = ss
     if ss_max == -1:
         raise ValueError("Sample sizes in input fs are too small")
     # the size is actually -1
-    projected_fs = input_fs.project([ss_max-1 for i in range(dims)])
+    projected_fs = input_fs.project([ss_max for i in range(dims)])
     return projected_fs
 
 def prep_fs_for_ml(input_fs):
@@ -40,13 +41,19 @@ def prep_fs_for_ml(input_fs):
 
 def predict(models: list, input_fs, logs, mapie=True, pis=[95]):
     '''
-    models: list of single mlpr object if sklearn,
-        list of multiple mlpr objects if mapie
-    input_fs: single Spectrum object from which to generate prediction
-
-    if mapie, should be passing in a list of models trained on
-        individual params
-    if not mapie, should be list of length 1
+    Inputs:
+        models: list of single mlpr object if sklearn,
+            list of multiple mlpr objects if mapie
+        input_fs: single Spectrum object from which to generate prediction
+        logs: list of bools, indicates which dem params are in log10 values
+        if mapie, should be passing in a list of models trained on
+            individual params
+        if not mapie, should be list of length 1
+        pis: list of confidence intervals to calculate
+    Outputs:
+        pred_list: if mapie, outputs list prediction for each param
+        pi_list: if mapie, outputs list of prediction intervals for each
+            alpha for each param
     '''
     # project to supported sample sizes
     input_fs = project_fs(input_fs)
