@@ -136,8 +136,8 @@ def _param_range(param_type):
     within biologically realistic range for each type of dem param.
     Input: param_type is a string corresponding to range_dict key'''
     range_dict = {"nu": (4, -2, 1),
-                  "T": (1.9, 0.1, 1),
-                  "m": (9, 1, 1),
+                  "T": (1.99, 0.01, 1),
+                  "m": (10, 0, 1),
                   "s": (0.98, 0.01, 1),
                   "F": (1, 0, 1),
                   "misid": (1, 0, 4)}
