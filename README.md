@@ -17,7 +17,6 @@ We recommend you start by creating a new `conda` environment. This can be done u
 ```console
 $ conda env create -f environment.yml
 $ conda activate donni
-$ pip install .
 ```
 
 ## Requirements
