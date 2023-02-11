@@ -74,8 +74,9 @@ def test_project_fs_2d(input_size, exp_size):
                         [[95],
                          [95, 80, 70]])
 def test_predict_split_mig(models_list, split_mig_fs, pis):
+    func = getattr(dadi.Demographics2D, "split_mig")
     logs = [True, True, False, False, False]
-    pred_list, pi_list = predict(models_list, split_mig_fs, logs, pis=pis)
+    pred_list, theta, pi_list = predict(models_list, func, split_mig_fs, logs, pis=pis)
     pred_list = np.array(pred_list)
     pi_list = np.array(pi_list)
 

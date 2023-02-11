@@ -234,21 +234,23 @@ def run_predict(args):
 
     # open input FS from file
     fs = dadi.Spectrum.from_file(args.input_fs)
-    # load trained MLPRs and demographic model logs
+    # load trained MLPRs and demographic model logs; TODO: remove for cloud support
     mlpr_list, mapie, logs, param_names = _load_trained_mlpr(args)
+    # load func
+    func, _, _, _ = get_model(args.model, 0, args.model_file)
     pis_list = sorted(args.pis)
     # misid case
     if not fs.folded:
         logs.append(False)
         param_names.append("misid")
     # infer params using input FS
-    pred, pis = predict(mlpr_list, fs, logs, mapie=mapie, pis=pis_list)
+    pred, theta, pis = predict(mlpr_list, func, fs, logs, mapie=mapie, pis=pis_list)
     # write output
     if args.output_prefix:
         output_stream = open(args.output_prefix, 'w')
     else:
         output_stream = sys.stdout
-
+    pred.append(theta)
     pi_names = []
     for i, pi in enumerate(pis_list):
         for j, param in enumerate(param_names):
@@ -256,7 +258,7 @@ def run_predict(args):
             pi_names.append(param + "_ub_" + str(pi))
             pred.append(pis[j][i][0])
             pred.append(pis[j][i][1])
-    print_names = param_names + pi_names
+    print_names = param_names + ["theta"] + pi_names
     # print parameter names
     print("# ", end="", file=output_stream)
     print(*print_names, sep='\t', file=output_stream)

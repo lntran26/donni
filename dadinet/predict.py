@@ -1,6 +1,7 @@
 '''Module for using trained MLPR to make demographic param predictions'''
 import numpy as np
 import dadi
+import math
 
 def get_supported_ss(dims):
     # can update these lists as needed (or pull from cloud)
@@ -26,6 +27,25 @@ def project_fs(input_fs):
     projected_fs = input_fs.project([ss_max for i in range(dims)])
     return projected_fs
 
+
+def get_grid_pts(ss):
+    pts = []
+    for i,s in enumerate(ss):
+        pt = math.floor(s * (1 + .1*(i+1))) + (2 * (i+1))
+        pts.append(pt)
+    return pts
+
+
+def estimate_theta(pred, func, fs):
+    # (p, func, ns, pts_l, folded) = args
+    if not fs.folded:
+        func = dadi.Numerics.make_anc_state_misid_func(func)
+    func_ex = dadi.Numerics.make_extrap_func(func)
+    grid_pts = get_grid_pts(fs.sample_sizes)
+    model_fs = func_ex(pred, fs.sample_sizes, grid_pts)
+    return dadi.Inference.optimal_sfs_scaling(model_fs, fs)
+
+
 def prep_fs_for_ml(input_fs):
     '''normalize and set masked entries to zeros
     input_fs: single Spectrum object from which to generate prediction'''
@@ -39,7 +59,7 @@ def prep_fs_for_ml(input_fs):
     return input_fs
 
 
-def predict(models: list, input_fs, logs, mapie=True, pis=[95]):
+def predict(models: list, func, input_fs, logs, mapie=True, pis=[95]):
     '''
     Inputs:
         models: list of single mlpr object if sklearn,
@@ -56,13 +76,13 @@ def predict(models: list, input_fs, logs, mapie=True, pis=[95]):
             alpha for each param
     '''
     # project to supported sample sizes
-    input_fs = project_fs(input_fs)
+    projected_fs = project_fs(input_fs)
 
     # get input_fs ready for ml prediction
-    input_fs = prep_fs_for_ml(input_fs)
+    fs = prep_fs_for_ml(projected_fs)
 
     # flatten input_fs and put in a list
-    input_x = [np.array(input_fs).flatten()]
+    input_x = [np.array(fs).flatten()]
 
     # convert confidence intervals to decimals
     alpha = [(100 - pi) / 100 for pi in pis]
@@ -80,6 +100,8 @@ def predict(models: list, input_fs, logs, mapie=True, pis=[95]):
                 pis = 10 ** pis
             pred_list.append(pred)
             pi_list.append(pis.T)
+        
+        theta = estimate_theta(pred_list, func, projected_fs)
 
     else:  # sklearn multioutput case: don't know if this works yet
         pred_list = models[0].predict([input_x])
@@ -87,4 +109,4 @@ def predict(models: list, input_fs, logs, mapie=True, pis=[95]):
         # log transformed prediction results
         pred_list = [10**pred_list[i] if logs[i] else pred_list[i]
                      for i in range(len(logs))]
-    return pred_list, pi_list
+    return pred_list, theta, pi_list
