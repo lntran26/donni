@@ -4,14 +4,14 @@ import random
 import numpy as np
 import pytest
 import dadi
-from dadinet.dadi_dem_models import get_model, get_param_values
-from dadinet.generate_data import generate_fs
+from donni.dadi_dem_models import get_model, get_param_values
+from donni.generate_data import generate_fs
 
 
 def test_exists():
     """ Test program exists """
 
-    PRG = '../dadinet/generate_data.py'
+    PRG = '../donni/generate_data.py'
     assert os.path.isfile(PRG)
 
 

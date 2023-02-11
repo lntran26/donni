@@ -1,4 +1,4 @@
-name: dadi-ml
+name: donni
 channels:
   - conda-forge
 dependencies:

@@ -1,4 +1,4 @@
-"""Command-line interface setup for dadi-ml"""
+"""Command-line interface setup for donni"""
 import argparse
 import pickle
 import re
@@ -6,13 +6,13 @@ import sys
 import os
 import dadi
 from scipy.stats._distn_infrastructure import rv_frozen as distribution
-from dadinet.dadi_dem_models import get_model, get_param_values
-from dadinet.generate_data import generate_fs, get_hyperparam_tune_dict,\
+from donni.dadi_dem_models import get_model, get_param_values
+from donni.generate_data import generate_fs, get_hyperparam_tune_dict,\
     fs_quality_check
-from dadinet.train import prep_data, tune, report,\
+from donni.train import prep_data, tune, report,\
     get_best_specs, train, get_cv_score
-from dadinet.predict import predict, prep_fs_for_ml
-from dadinet.plot import plot
+from donni.predict import predict, prep_fs_for_ml
+from donni.plot import plot
 
 
 # run_ methods for importing methods from other modules
@@ -23,7 +23,7 @@ def run_generate_data(args):
     if args.save_individual_fs:
         # check if outdir is provided
         if args.outdir is None:
-            sys.exit('dadi-ml generate_data: error: '
+            sys.exit('donni generate_data: error: '
                      'the following arguments are required:'
                      ' --outdir when using --save_individual_fs')
 
@@ -335,11 +335,11 @@ def _int_2(input_int):
     return int(input_int)
 
 
-def dadi_ml_parser():
+def donni_parser():
     """Get command-line arguments"""
 
     parser = argparse.ArgumentParser(
-        description='Machine learning applications for dadi',
+        description='Demography Optimization via Neural Network Inference',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     subparsers = parser.add_subparsers(required=True, dest="subcommand")
@@ -538,6 +538,6 @@ def dadi_ml_parser():
 def main(arg_list=None):
     """Main program"""
 
-    parser = dadi_ml_parser()
+    parser = donni_parser()
     args = parser.parse_args(arg_list)
     args.func(args)

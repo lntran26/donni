@@ -6,13 +6,13 @@ from sklearn.experimental import enable_halving_search_cv  # noqa
 from sklearn.model_selection import HalvingRandomSearchCV
 from scipy.stats import randint, loguniform
 from mapie.regression import MapieRegressor
-from dadinet.train import prep_data, tune, get_best_specs, train
+from donni.train import prep_data, tune, get_best_specs, train
 
 
 def test_exists():
     """ Test program exists """
 
-    PRG = '../dadinet/train.py'
+    PRG = '../donni/train.py'
     assert os.path.isfile(PRG)
 
 

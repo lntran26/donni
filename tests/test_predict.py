@@ -5,5 +5,5 @@ import os
 def test_exists():
     """ Test program exists """
 
-    PRG = '../dadinet/predict.py'
+    PRG = '../donni/predict.py'
     assert os.path.isfile(PRG)

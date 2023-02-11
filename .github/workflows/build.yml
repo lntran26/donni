@@ -19,11 +19,11 @@ jobs:
     - name: Add micromamba to system path
       uses: mamba-org/provision-with-micromamba@main
       with:
-        environment-name: dadi-ml
-        activate-environment: dadi-ml
+        environment-name: donni
+        activate-environment: donni
         environment-file: environment.yml
     - name: Test with pytest
       run: |
         cd tests
-        micromamba run -n dadi-ml pytest -xv *.py
+        micromamba run -n donni pytest -xv *.py
 

@@ -6,7 +6,7 @@ archive
 out
 *.ipynb
 build/*
-dadi_ml.egg-info/*
+*.egg-info/*
 dist/*
 *split_mig_1500
-dadinet/data/*
+donni/data/*

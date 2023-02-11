@@ -9,7 +9,7 @@ from subprocess import getstatusoutput, getoutput
 import pickle
 import shutil
 
-PRG = 'dadi-ml'
+PRG = 'donni'
 
 
 def random_string():

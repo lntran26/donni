@@ -1,11 +1,10 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="dadi-ml",
+    name="donni",
     version="0.0.1",
-    description="Machine learning applications for dadi",
-    author="Linh Tran, Connie Sun",
-    packages=["dadinet"],
+    description="Demography Optimization via Neural Network Inference",
+    packages=["donni"],
     # packges=find_packages(),
     install_requires=[
         "dadi",
@@ -19,5 +18,5 @@ setup(
         "pytest-flake8",
         "pytest-mypy"
         ],
-    entry_points={"console_scripts": ["dadi-ml=dadinet.__main__:main"]},
+    entry_points={"console_scripts": ["donni=donni.__main__:main"]},
 )
