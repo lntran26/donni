@@ -22,8 +22,8 @@ $ conda activate donni
 ## Requirements
 1. Python 3.9+
 2. [dadi](https://dadi.readthedocs.io/en/latest/)
-3. [scikit-learn](https://scikit-learn.org/1.0/) 1.0.2
-4. [MAPIE](https://mapie.readthedocs.io/en/latest/) 0.3.1
+3. [scikit-learn](https://scikit-learn.org/1.0/) 1.2.0
+4. [MAPIE](https://mapie.readthedocs.io/en/latest/) 0.6.1
 
 
 ## References

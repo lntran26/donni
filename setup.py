@@ -8,8 +8,8 @@ setup(
     # packges=find_packages(),
     install_requires=[
         "dadi",
-        "scikit-learn == 1.0.2",
-        "mapie == 0.3.1",
+        "scikit-learn == 1.2.0",
+        "mapie == 0.6.1",
         "pytest",
         "pylint",
         "flake8",
