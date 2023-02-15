@@ -1,17 +1,17 @@
-""" Tests for generate_data.py """
+""" Tests for generate_data.py and dadi_dem_models.py"""
 import os
 import random
 import numpy as np
 import pytest
 import dadi
-from dadinet.dadi_dem_models import get_model
-from dadinet.generate_data import generate_fs
+from donni.dadi_dem_models import get_model, get_param_values
+from donni.generate_data import generate_fs
 
 
 def test_exists():
     """ Test program exists """
 
-    PRG = '../dadinet/generate_data.py'
+    PRG = '../donni/generate_data.py'
     assert os.path.isfile(PRG)
 
 
@@ -20,9 +20,10 @@ def run(model_name, sample_size, theta, n_samples,
     '''Template method for testing different models, sample sizes, thetas'''
 
     grids = [40, 50, 60]
-    dem, dem_params, p_logs, param_names = get_model(model_name, n_samples)
-    data = generate_fs(dem, dem_params, p_logs, theta,
-                       sample_size, grids, norm, sampling, folded)
+    dem, dem_params, p_logs = get_model(model_name, folded=folded)
+    p = get_param_values(dem_params, n_samples)
+    data, _ = generate_fs(dem, p, p_logs, theta,
+                          sample_size, grids, norm, sampling, folded)
 
     # check that output dataset format is a dict
     assert isinstance(data, dict)
@@ -57,7 +58,7 @@ def run(model_name, sample_size, theta, n_samples,
         test_p = random.choice(list(data.keys()))
         test_p_logs = [10**test_p[i] if p_logs[i] else test_p[i]
                        for i in range(len(p_logs))]
-        if (len(test_p_logs) < len(test_p)):  # add misid param
+        if len(test_p_logs) < len(test_p):  # add misid param
             test_p_logs.append(test_p[-1])
         # make expected fs with dadi
         if not folded:
@@ -124,9 +125,10 @@ def run_bootstrap(model_name, sample_size, theta, n_samples, n_bstr):
     '''Template method for testing generating bootstrap data'''
 
     grids = [40, 50, 60]
-    dem, dem_params, p_logs, param_names = get_model(model_name, n_samples)
-    data = generate_fs(dem, dem_params, p_logs, theta, sample_size,
-                       grids, bootstrap=True, n_bstr=n_bstr)
+    dem, dem_params, p_logs = get_model(model_name, )
+    p = get_param_values(dem_params, n_samples)
+    data, _ = generate_fs(dem, p, p_logs, theta,
+                          sample_size, grids, bootstrap=True, n_bstr=n_bstr)
 
     # check that output dataset format is a dict
     assert isinstance(data, dict)
@@ -154,9 +156,11 @@ def test_run_bstr_theta_1():
     '''Test raising SystemExit exception when trying to
     generate bootstrap data with theta = 1'''
     grids = [40, 50, 60]
-    dem, dem_params, p_logs, param_names = get_model('two_epoch', 5)
+
+    dem, dem_params, p_logs = get_model('two_epoch')
+    p = get_param_values(dem_params, 5)
     with pytest.raises(SystemExit):
-        generate_fs(dem, dem_params, p_logs, 1, [
+        generate_fs(dem, p, p_logs, 1, [
                     20], grids, bootstrap=True, n_bstr=10)
 
 
@@ -172,3 +176,38 @@ def test_run_split_mig_bstr():
     of the split_mig model with two population sample sizes 20, 20'''
 
     run_bootstrap('split_mig', [20, 20], 100, 3, 5)
+
+
+def run_seed(param_names, n_samples, s_pair):
+    '''Template method for testing if seeding is working correctly
+    for generating reproducible parameter set'''
+
+    p_1 = get_param_values(param_names, n_samples, s_pair[0])
+    p_2 = get_param_values(param_names, n_samples, s_pair[1])
+
+    assert len(p_1) == n_samples
+    assert len(p_2) == n_samples
+    assert all(len(p) == len(param_names) for p in p_1)
+
+    if s_pair[0] == s_pair[1]:
+        assert p_1 == p_2
+    else:
+        assert p_1 != p_2
+        # params must not over lap at all
+        assert all(p not in p_2 for p in p_1)
+
+
+def test_run_seed_1():
+    '''Test if similar seed pair is the same'''
+
+    param_names = ['nu', 'T', 'misid']
+    run_seed(param_names, 45, (1, 1))
+    run_seed(param_names, 30, (5, 5))
+
+
+def test_run_seed_2():
+    '''Test if different when seed pair is different'''
+
+    param_names = ['nu', 'T', 'm', 'misid']
+    run_seed(param_names, 40, (1, 5))
+    run_seed(param_names, 20, (3, 4))

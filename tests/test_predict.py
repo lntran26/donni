@@ -3,7 +3,7 @@ import pickle
 import pytest
 import os
 import numpy as np
-from dadinet.predict import project_fs, predict
+from donni.predict import project_fs, predict
 
 
 @pytest.fixture

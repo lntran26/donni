@@ -1,19 +1,18 @@
-"""Command-line interface setup for dadi-ml"""
+"""Command-line interface setup for donni"""
 import argparse
 import pickle
 import re
 import sys
 import os
-from inspect import getmembers, isfunction
-import numpy as np
 import dadi
 from scipy.stats._distn_infrastructure import rv_frozen as distribution
-from dadinet.dadi_dem_models import get_model
-from dadinet.generate_data import generate_fs, get_hyperparam_tune_dict
-from dadinet.train import prep_data, tune, report,\
+from donni.dadi_dem_models import get_model, get_param_values
+from donni.generate_data import generate_fs, get_hyperparam_tune_dict,\
+    fs_quality_check
+from donni.train import prep_data, tune, report,\
     get_best_specs, train, get_cv_score
-from dadinet.predict import predict, prep_fs_for_ml
-from dadinet.plot import plot
+from donni.predict import predict, prep_fs_for_ml
+from donni.plot import plot
 
 
 # run_ methods for importing methods from other modules
@@ -21,18 +20,34 @@ def run_generate_data(args):
     '''Method to generate data given inputs from the
     generate_data subcommand'''
 
+    if args.save_individual_fs:
+        # check if outdir is provided
+        if args.outdir is None:
+            sys.exit('donni generate_data: error: '
+                     'the following arguments are required:'
+                     ' --outdir when using --save_individual_fs')
+
     # get dem function and params specifications for model
-    dadi_func, params_list, logs, param_names = get_model(
-        args.model, args.n_samples, args.model_file)
+    dadi_func, param_names, logs = get_model(args.model,
+                                             args.model_file, args.folded)
+    # get demographic param values
+    params_list = get_param_values(param_names, args.n_samples, args.seed)
 
     if not args.generate_tune_hyperparam_only:
         # generate data
-        data = generate_fs(dadi_func, params_list, logs,
-                           args.theta, args.sample_sizes, args.grids,
-                           args.non_normalize, args.no_sampling, args.folded,
-                           args.bootstrap, args.n_bstr, args.n_cpu)
+        data, qual = generate_fs(dadi_func, params_list, logs,
+                                 args.theta, args.sample_sizes, args.grids,
+                                 args.non_normalize, args.no_sampling,
+                                 args.folded, args.bootstrap, args.n_bstr,
+                                 args.n_cpu)
+
+        # output fs quality check results
+        if not args.no_fs_qual_check:
+            fs_quality_check(qual, args.outfile,
+                             params_list, param_names, logs)
 
         # save data as a dictionary or as individual files
+        # (in addition to saving as a single file)
         if args.save_individual_fs:
             # make dir to save individual fs and true params to
             if not os.path.exists(args.outdir):
@@ -45,63 +60,33 @@ def run_generate_data(args):
                 fs.tofile(f"{args.outdir}/fs_{i:03d}")
             pickle.dump(true_log_params, open(
                 f'{args.outdir}/true_log_params', 'wb'))
-        else:
-            # save data dict as one pickled file
-            pickle.dump(data, open(args.outfile, 'wb'))
-            # check fs quality
-            # to do: add this option to save individual fs
-            # need to change output location accordingly
-            if not args.no_fs_qual_check:
-                keys = list(data.keys())
-                neg_fs = 0
-                nan_fs = 0
-                inf_fs = 0
-                for key in keys:
-                    fs = data[key]
-                    if not args.bootstrap:
-                        if np.any(fs < 0):
-                            neg_fs += 1
-                        if np.any(np.isnan(fs)):
-                            nan_fs += 1
-                        if np.any(np.isposinf(fs)):
-                            inf_fs += 1
-                with open(f'{args.outfile}_quality.txt', 'a') as fh:
-                    fh.write(f'Quality check for {args.outfile}:\n')
-                    fh.write(
-                        f'Number of FS with at least one negative entry: {neg_fs}\n')
-                    fh.write(
-                        f'Number of FS with at least one NaN entry: {nan_fs}\n')
-                    fh.write(
-                        f'Number of FS with at least one pos inf entry: {inf_fs}\n')
+        
+        # save data dict as one pickled file (default)
+        pickle.dump(data, open(args.outfile, 'wb'))
 
+    # generate and save hyperparams dict for tuning
     if args.generate_tune_hyperparam_only or args.generate_tune_hyperparam:
         tune_dict = get_hyperparam_tune_dict(args.sample_sizes)
         pickle.dump(tune_dict, open(f'{args.hyperparam_outfile}', 'wb'))
 
         # output text file for details of hyper param tune dict
         with open(f'{args.hyperparam_outfile}.txt', 'w') as fh:
-            for hyperparam in tune_dict:
-                if isinstance(tune_dict[hyperparam], distribution):
+            for hyperparam, option in tune_dict.items():
+                if isinstance(option, distribution):
                     distribution_name = vars(
-                        tune_dict[hyperparam].dist)["name"]
-                    distribution_vals = vars(tune_dict[hyperparam])["args"]
-                    fh.write(
-                        f'{hyperparam}:{distribution_name}, {distribution_vals}\n')
+                        option.dist)["name"]
+                    distribution_vals = vars(option)["args"]
+                    fh.write(f'{hyperparam}: {distribution_name}, '
+                             f'{distribution_vals}\n')
                 else:
-                    fh.write(f'{hyperparam}: {tune_dict[hyperparam]}\n')
+                    fh.write(f'{hyperparam}: {option}\n')
 
 
-def run_train(args):
-    '''Method to train MLPR given inputs from the
-    train subcommand'''
-    # TO DO: update complex if-else trees to handle tune v. train
-    # and using hyperparam vs hyperparam_list more efficiently
-
-    # Load training data
-    data = pickle.load(open(args.data_file, 'rb'))
-    # parse data into input and corresponding labels
-    X_input, y_label = prep_data(data, mapie=args.multioutput)
-
+def _process_param_dict_tune(args):
+    """
+    Helper method for processing input into dict of
+    hyperparams used for tuning and/or training
+    """
     # process input from command line into a dict of hyperparams
     if args.hyperparam is not None:
         param_dict = pickle.load(open(args.hyperparam, 'rb'))
@@ -116,10 +101,57 @@ def run_train(args):
         for arg in vars(args):
             if arg not in excluded_args and getattr(args, arg) is not None:
                 param_dict[arg] = getattr(args, arg)
-    # # for debugging
-    # print(f'param_dict: {param_dict}')
+
+    return param_dict
+
+
+def _process_train_param_dict_list(args, param_dict, y_label):
+    """
+    Helper method for processing input into list of dicts of
+    hyperparams for training of mapie MLPRs when hyperparam file
+    is not provided or when hyperparams are specified individually
+    from command line
+    """
+    # prioritizing reading hyperparam_list over hyperparam if provided
+    if args.hyperparam_list is not None and args.multioutput:
+        # hyperparam_list only works for mapie, not sklearn multioutput
+        # args.multioutput is true if using mapie
+        train_param_dict_list = pickle.load(
+            open(args.hyperparam_list, 'rb'))
+    else:
+        # only process hyperparam input into a list
+        # if hyperparam_list is not provided
+        train_param_dict = {}
+        for key, value in param_dict.items():
+            # handling potentially incorrect input for tune instead of train
+            if isinstance(value, list):  # if input is a list
+                # get only the first value in list for each hyperparam
+                train_param_dict[key] = value[0]
+            elif isinstance(value, distribution):
+                pass  # ignore if input is a scipy distribution
+            else:  # get expected input value as a single input
+                train_param_dict[key] = value
+        # append one hyperparam dict for each demographic param/ MLPR
+        # by making the length of hyperparam dict equal length of y_label
+        train_param_dict_list = []
+        for _ in range(len(y_label)):
+            train_param_dict_list.append(train_param_dict)
+
+    return train_param_dict_list
+
+
+def run_train(args):
+    '''Method to train MLPR given inputs from the train subcommand'''
+
+    # Load training data
+    data = pickle.load(open(args.data_file, 'rb'))
+    # parse data into input and corresponding labels
+    X_input, y_label = prep_data(data, mapie=args.multioutput)
+    # get hyperparam dictionary for tuning or training
+    param_dict = _process_param_dict_tune(args)
+
+    # Tuning, which generate train_param_dict_list used for training
     if args.tune or args.tune_only:
-        # run tuning using input param_dict
         all_results = tune(X_input, y_label, param_dict,
                            args.max_iter, args.eta, args.cv)
         # output full tuning result file
@@ -136,11 +168,10 @@ def run_train(args):
                     str2 = f'candidates for {band.n_resources_} iterations\n'
                     fh.write(str1 + str2)
                     report(band.cv_results_, fh)
-        # get train hyperparam from best mlpr from tuning
-        # list of 1 if sklearn, list of multiple if mapie
+        # get hyperparam of best mlpr from tuning results, which
+        # is a list of 1 if sklearn, list of multiple if mapie
         train_param_dict_list, scores = get_best_specs(all_results)
-        # output train_param_dict_list, which is the list of tuned hyperparam
-        # dicts that will be input into train() for training
+        # output train_param_dict_list will be input into train() for training
         pickle.dump(train_param_dict_list, open(
             f'{args.mlpr_dir}/tuned_hyperparam_dict_list', 'wb'))
         # print best scores after outputing the mlpr model
@@ -149,53 +180,24 @@ def run_train(args):
                                                   scores)):
                 fh.write(f'CV score of best MLPR for param {i+1}: {score}\n')
                 fh.write(f'Spec of best MLPR for param {i+1}: {spec}\n')
-        # print("Finish tuning\n")
-
     else:
-        # alternatively, train directly without tuning first.
-        # This will train with either hyperparam or hyperparam_list if provided.
+        # Train directly without tuning first.
+        # Generate train_param_dict_list with either hyperparam for
+        # sklearn MLPR or hyperparam_list for mapie MLPR.
         # If neither is provided, hyperparam will be generated using the default
         # options for each hyperparam from the command line.
+        train_param_dict_list = _process_train_param_dict_list(
+            args, param_dict, y_label)
 
-        # prioritizing reading hyperparam_list over hyperparam if provided
-        if args.hyperparam_list is not None and args.multioutput:
-            # hyperparam_list only works for mapie, not sklearn multioutput
-            # args.multioutput is true if using mapie
-            train_param_dict_list = pickle.load(
-                open(args.hyperparam_list, 'rb'))
-        else:
-            # only process hyperparam input into a list
-            # if hyperparam_list is not provided
-            train_param_dict = {}
-            for key, value in param_dict.items():
-                # handling potentially incorrect input for tune instead of train
-                if isinstance(value, list):  # if input is a list
-                    # get only the first value in list for each hyperparam
-                    train_param_dict[key] = value[0]
-                elif isinstance(value, distribution):
-                    pass  # ignore if input is a scipy distribution
-                else:  # get expected input value as a single input
-                    train_param_dict[key] = value
-            # append one hyperparam dict for each demographic param/ MLPR
-            # by making the length of hyperparam dict equal length of y_label
-            train_param_dict_list = []
-            for _ in range(len(y_label)):
-                train_param_dict_list.append(train_param_dict)
-    # # for debugging
-    # print(f'train_param_dict_list: {train_param_dict_list}\n')
-
+    # Training with train_param_dict_list
     if not args.tune_only:
-        # print("Start training\n")
-        # train with best hyperparams from tuning or with input if not tuning
         trained = train(X_input, y_label, train_param_dict_list,
                         mapie=args.multioutput)
-
         # save trained mlpr(s)
         for i, mlpr in enumerate(trained):
             index = f'{i+1:02d}' if args.multioutput else 'all'
             pickle.dump(mlpr, open(
                 f'{args.mlpr_dir}/param_{index}_predictor', 'wb'))
-
         # output cv score of trained mlpr on training set
         if args.training_score:
             with open(f'{args.mlpr_dir}/training_score.txt', 'wt') as fh:
@@ -218,7 +220,8 @@ def _load_trained_mlpr(args):
         else:
             continue
     # need to get logs to de-log prediction
-    func, _, logs, param_names = get_model(args.model, 0, args.model_file)
+    _, param_names, logs = get_model(args.model, args.model_file,
+                                     args.folded)  # now included misid
     # this way of getting logs misses one log value for misid,
     # which is currently added only in after running generate_data
     # module helper function
@@ -239,10 +242,6 @@ def run_predict(args):
     # load func
     func, _, _, _ = get_model(args.model, 0, args.model_file)
     pis_list = sorted(args.pis)
-    # misid case
-    if not fs.folded:
-        logs.append(False)
-        param_names.append("misid")
     # infer params using input FS
     pred, theta, pis = predict(mlpr_list, func, fs, logs, mapie=mapie, pis=pis_list)
     # write output
@@ -265,8 +264,8 @@ def run_predict(args):
     # print prediction
     print(*pred, sep='\t', file=output_stream)
     print(file=output_stream)  # newline
-    # print readable confidence intervals
-    print(f"{'# PIs: ':<10}", end="", file=output_stream)
+    # print readable intervals
+    print(f"{'# CIs: ':<10}", end="", file=output_stream)
     for pi in pis_list:
         print(f"|----------{pi}----------|", end='\t', file=output_stream)
     print(file=output_stream)
@@ -284,7 +283,7 @@ def run_plot(args):
     '''Method to plot outputs'''
 
     # load trained MLPRs and demographic model logs
-    mlpr_list, mapie, logs, _ = _load_trained_mlpr(args)
+    mlpr_list, mapie, logs, param_names = _load_trained_mlpr(args)
 
     # load test fs set
     test_dict = pickle.load(open(args.test_dict, 'rb'))
@@ -297,14 +296,6 @@ def run_plot(args):
 
     # parse data into test FS and corresponding labels
     X_test, y_test = prep_data(prep_test_dict, mapie=mapie)
-
-    # Get param names
-    # Want to do one sample so that
-    # get_model can test custom model file?
-    _, _, _, param_names = get_model(args.model, 0, args.model_file)
-    # Check if misid is a parameter to be added
-    if not args.folded:
-        param_names += ['misid']
 
     # plot results
     plot(mlpr_list, X_test, y_test, args.results_prefix, logs, mapie=mapie,
@@ -346,11 +337,11 @@ def _int_2(input_int):
     return int(input_int)
 
 
-def dadi_ml_parser():
+def donni_parser():
     """Get command-line arguments"""
 
     parser = argparse.ArgumentParser(
-        description='Machine learning applications for dadi',
+        description='Demography Optimization via Neural Network Inference',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     subparsers = parser.add_subparsers(required=True, dest="subcommand")
@@ -375,8 +366,9 @@ def dadi_ml_parser():
                                       nargs='+', required=True,
                                       help="Sample sizes of populations",)
     generate_data_parser.add_argument('--outfile',
-                                      type=str, default="training_fs",
-                                      help="Path to save generated data")
+                                      type=str, required=True,
+                                      help="Path to save generated data and\
+                                         associated quality check file")
     generate_data_parser.add_argument('--save_individual_fs',
                                       action='store_true',
                                       help="Save individual FS as a file\
@@ -390,6 +382,8 @@ def dadi_ml_parser():
     generate_data_parser.add_argument('--theta', type=_pos_int,
                                       help="Factor to multiply FS with",
                                       default=1)
+    generate_data_parser.add_argument('--seed', type=_pos_int,
+                                      help="Seed for reproducibility")
     generate_data_parser.add_argument('--non_normalize', action='store_false',
                                       help="Don't normalize FS")
     generate_data_parser.add_argument('--no_sampling', action='store_false',
@@ -546,6 +540,6 @@ def dadi_ml_parser():
 def main(arg_list=None):
     """Main program"""
 
-    parser = dadi_ml_parser()
+    parser = donni_parser()
     args = parser.parse_args(arg_list)
     args.func(args)

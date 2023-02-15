@@ -1,13 +1,13 @@
 """
 Module for training and tuning MLPR with dadi-simulated data
 """
+from multiprocessing import Pool
 import math
 import numpy as np
 from sklearn.neural_network import MLPRegressor
 from sklearn.experimental import enable_halving_search_cv  # noqa
 from sklearn.model_selection import HalvingRandomSearchCV, cross_val_score
 from mapie.regression import MapieRegressor
-from multiprocessing import Pool
 
 
 def prep_data(data: dict, mapie=True):
@@ -37,13 +37,6 @@ def prep_data(data: dict, mapie=True):
     return X_input, y_label_unpack
 
 
-# def make_distribution(lower, upper):
-#     '''Helper method for making a distribution for float value
-#     hyperparameters from two values'''
-#     from sklearn.utils.fixes import loguniform
-#     return loguniform(lower, upper)
-
-
 def _tune_worker_func(args):
     '''
     Helper method for tuning() parallelization with Pool
@@ -58,7 +51,8 @@ def _tune_worker_func(args):
     search.fit(X_input, param)
     return [search, param]
 
-def tune(X_input, y_label, param_dist, max_iter=243, eta=3, cv=5, mp=True):
+
+def tune(X_input, y_label, param_dist, max_iter=243, eta=3, cv=5):
     '''
     Method for searching over many MLPR hyperparameters
     with successive halving randomized search and hyperband
@@ -80,48 +74,80 @@ def tune(X_input, y_label, param_dist, max_iter=243, eta=3, cv=5, mp=True):
 
     result_list = []
 
-    if mp:
-        # parallelize with Pool
-        search_dict = {}
-        args_list = []
-        for param in y_label:
-            param_i = y_label.index(param)
-            search_dict[param] = []
-            # begin Hyperband outer loop
-            n_iter_list = [int(max_iter*eta**(-s))
-                           for s in list(reversed(range(s_max+1)))]
-            for ii in range(len(n_iter_list)):
-                args_list.append((X_input, param, MLPRegressor(),
-                                  param_dist, eta, max_iter, n_iter_list[ii], cv,))
+    # parallelize with Pool
+    search_dict = {}
+    args_list = []
+    for param in y_label:
+        search_dict[param] = []
+        # begin Hyperband outer loop
+        n_iter_list = [int(max_iter*eta**(-s))
+                       for s in list(reversed(range(s_max+1)))]
+        for ii, _ in enumerate(n_iter_list):
+            args_list.append((X_input, param, MLPRegressor(),
+                              param_dist, eta, max_iter, n_iter_list[ii], cv,))
 
-        with Pool(processes=len(n_iter_list)*len(y_label)) as pool:
-            res = pool.map(_tune_worker_func, args_list)
-        for search, param in res:
-            search_dict[param].append(search)
+    with Pool(processes=len(n_iter_list)*len(y_label)) as pool:
+        res = pool.map(_tune_worker_func, args_list)
+    for search, param in res:
+        search_dict[param].append(search)
 
-        for param in y_label:
-            result_list.append(search_dict[param])
-
-    else:
-        # previous version
-        for param in y_label:
-            mlpr = MLPRegressor()
-            search_list = []
-            # begin Hyperband outer loop
-            for s in reversed(range(s_max+1)):
-                n_iters = int(max_iter*eta**(-s))
-                # begin Successive Halving inner loop implemented by sklearn
-                search = HalvingRandomSearchCV(mlpr, param_dist,
-                                               resource='max_iter', factor=eta,
-                                               max_resources=max_iter,
-                                               min_resources=n_iters, cv=cv,
-                                               refit=False, n_jobs=-1)
-                # note: resource is defined by max_iter rather than n_samples
-                search.fit(X_input, param)
-                search_list.append(search)
-            result_list.append(search_list)
+    for param in y_label:
+        result_list.append(search_dict[param])
 
     return result_list
+
+
+def _train_worker_func(args):
+    '''
+    Helper method for tuning() parallelization with Pool
+    '''
+    mlpr_spec, mapie, X_input, param = args
+    # initiate one mlpr with mlpr_spec for each mlpr model
+    mlpr = MLPRegressor()
+    mlpr.set_params(**mlpr_spec)
+
+    # use sklearn mlpr with multi-output option or mapie mlpr
+    param_predictor = MapieRegressor(mlpr) if mapie else mlpr
+
+    # train mlpr with input data
+    param_predictor.fit(X_input, param)
+    return [param_predictor, param]
+
+
+def train(X_input, y_label, mlpr_specs, mapie=True) -> list:
+    '''
+    Train one or multiple MLPR for one demographic model data set
+    with either mapie or sklearn MLPR
+    Input:
+        X_input: list of fs data sets from _prep_data()
+        y_label: list of list of unpacked param labels from _prep_data()
+        mlpr_specs: list of dictionary of MLPR architecture specifications
+            Note: len(y_label) = len(mlpr_spec) = len(mlpr_list)
+        mapie: if False will use sklearn mlpr with multioutput option
+        if True (default) will use mapie mlpr with single-output option
+    Output:
+        List of trained MLPR model(s)
+        Single model if using sklearn, multiple models if using mapie
+        Order of models in list is the same as order of dem parameters
+    '''
+
+    mlpr_list = []
+
+    param_predictor_dict = {}
+    args_list = []
+    for param, mlpr_spec in zip(y_label, mlpr_specs):
+        args_list.append((mlpr_spec, mapie, X_input, param))
+        # param is a tuple of len(data) for one dem param if mapie
+        # or a list of len(data) for all params tuples if sklearn
+    with Pool(processes=len(y_label)) as pool:
+        res = pool.map(_train_worker_func, args_list)
+    for param_predictor, param in res:
+        param_predictor_dict[param] = param_predictor
+    for param in y_label:
+        # save trained mlpr model
+        mlpr_list.append(param_predictor_dict[param])
+
+    return mlpr_list
 
 
 def report(results, file_handle, n_top=3):
@@ -161,74 +187,6 @@ def get_best_specs(result_list):
         score_list.append(best_score)
 
     return mlpr_specs, score_list
-
-def _train_worker_func(args):
-    '''
-    Helper method for tuning() parallelization with Pool
-    '''
-    mlpr_spec, mapie, X_input, param = args
-    # initiate one mlpr with mlpr_spec for each mlpr model
-    mlpr = MLPRegressor()
-    mlpr.set_params(**mlpr_spec)
-
-    # use sklearn mlpr with multi-output option or mapie mlpr
-    param_predictor = MapieRegressor(mlpr) if mapie else mlpr
-
-    # train mlpr with input data
-    param_predictor.fit(X_input, param)
-    return [param_predictor, param]
-
-def train(X_input, y_label, mlpr_specs, mapie=True, mp=True) -> list:
-    '''
-    Train one or multiple MLPR for one demographic model data set
-    with either mapie or sklearn MLPR
-    Input:
-        X_input: list of fs data sets from _prep_data()
-        y_label: list of list of unpacked param labels from _prep_data()
-        mlpr_specs: list of dictionary of MLPR architecture specifications
-            Note: len(y_label) = len(mlpr_spec) = len(mlpr_list)
-        mapie: if False will use sklearn mlpr with multioutput option
-        if True (default) will use mapie mlpr with single-output option
-    Output:
-        List of trained MLPR model(s)
-        Single model if using sklearn, multiple models if using mapie
-        Order of models in list is the same as order of dem parameters
-    '''
-
-    mlpr_list = []
-    if mp:
-        param_predictor_dict = {}
-        args_list = []
-        for param, mlpr_spec in zip(y_label, mlpr_specs):
-            args_list.append((mlpr_spec, mapie, X_input, param))
-            # param is a tuple of len(data) for one dem param if mapie
-            # or a list of len(data) for all params tuples if sklearn
-        with Pool(processes=len(y_label)) as pool:
-            res = pool.map(_train_worker_func, args_list)
-        for param_predictor, param in res:
-            param_predictor_dict[param] = param_predictor
-        for param in y_label:
-            # save trained mlpr model
-            mlpr_list.append(param_predictor_dict[param])
-    else:
-            for param, mlpr_spec in zip(y_label, mlpr_specs):
-                # param is a tuple of len(data) for one dem param if mapie
-                # or a list of len(data) for all params tuples if sklearn
-
-                # initiate one mlpr with mlpr_spec for each mlpr model
-                mlpr = MLPRegressor()
-                mlpr.set_params(**mlpr_spec)
-
-                # use sklearn mlpr with multi-output option or mapie mlpr
-                param_predictor = MapieRegressor(mlpr) if mapie else mlpr
-
-                # train mlpr with input data
-                param_predictor.fit(X_input, param)
-
-                # save trained mlpr model
-                mlpr_list.append(param_predictor)
-
-    return mlpr_list
 
 
 def get_cv_score(mlpr_list, X_input, y_label, file_handle, cv=5):
