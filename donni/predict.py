@@ -2,6 +2,7 @@
 import numpy as np
 import dadi
 import math
+from donni.generate_data import pts_l_func
 
 def get_supported_ss(dims):
     # can update these lists as needed (or pull from cloud)
@@ -28,20 +29,12 @@ def project_fs(input_fs):
     return projected_fs
 
 
-def get_grid_pts(ss):
-    pts = []
-    for i,s in enumerate(ss):
-        pt = math.floor(s * (1 + .1*(i+1))) + (2 * (i+1))
-        pts.append(pt)
-    return pts
-
-
 def estimate_theta(pred, func, fs):
     # (p, func, ns, pts_l, folded) = args
     if not fs.folded:
         func = dadi.Numerics.make_anc_state_misid_func(func)
     func_ex = dadi.Numerics.make_extrap_func(func)
-    grid_pts = get_grid_pts(fs.sample_sizes)
+    grid_pts = pts_l_func(fs.sample_sizes)
     model_fs = func_ex(pred, fs.sample_sizes, grid_pts)
     return dadi.Inference.optimal_sfs_scaling(model_fs, fs)
 
