@@ -376,7 +376,7 @@ def donni_parser():
                                       help="Dir to save individual FS")
     generate_data_parser.add_argument('--grids', type=_pos_int,
                                       nargs=3, help='Sizes of grids',
-                                      default=[40, 50, 60])
+                                      default=None)
     generate_data_parser.add_argument('--theta', type=_pos_int,
                                       help="Factor to multiply FS with",
                                       default=1)
