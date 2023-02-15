@@ -43,6 +43,8 @@ def generate_fs(func, params_list, logs, theta, ns, pts_l,
             (None means using all)
     Output: dataset dictionary with format params:fs
     '''
+    if pts_l == None:
+        pts_l = pts_l_func(ns)
 
     arg_list = []
     for p in params_list:
@@ -214,3 +216,19 @@ def get_hyperparam_tune_dict(sample_sizes: list):
                  'alpha': loguniform(1e-5, 1e-1),
                  'learning_rate_init': loguniform(1e-5, 1e-1)}
     return tune_dict
+
+
+def pts_l_func(sample_sizes):
+    """
+    Description:
+        Calculates plausible grid sizes for modeling a frequency spectrum.
+
+    Arguments:
+        sample_sizes list: Sample sizes.
+
+    Returns:
+        grid_sizes tuple: Grid sizes for modeling.
+    """
+    n = max(sample_sizes)
+    grid_sizes = (int(n * 1.1) + 2, int(n * 1.2) + 4, int(n * 1.3) + 6)
+    return grid_sizes
