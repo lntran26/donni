@@ -150,6 +150,11 @@ def run_train(args):
     # get hyperparam dictionary for tuning or training
     param_dict = _process_param_dict_tune(args)
 
+    try:
+        os.makedirs(args.mlpr_dir)
+    except:
+        pass
+
     # Tuning, which generate train_param_dict_list used for training
     if args.tune or args.tune_only:
         all_results = tune(X_input, y_label, param_dict,
