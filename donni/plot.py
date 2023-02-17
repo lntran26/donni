@@ -41,7 +41,7 @@ def sort_by_param(y_true, y_pred):
     return param_true, param_pred
 
 
-def plot_accuracy_single(x, y, size=(8, 2, 20), x_label="True",
+def plot_accuracy_single(x, y, size=(8, 2, 20), x_label="Simulated",
                          y_label="Inferred", log=False, r2=None,
                          rho=None, rmse=None, c=None, title=None):
     '''
