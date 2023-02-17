@@ -229,6 +229,7 @@ def pts_l_func(sample_sizes):
     Returns:
         grid_sizes tuple: Grid sizes for modeling.
     """
-    n = max(sample_sizes)
-    grid_sizes = (int(n * 1.1) + 2, int(n * 1.2) + 4, int(n * 1.3) + 6)
+    grid_base = np.array([15, 20, 25])
+    grid_sizes = tuple([int(ele) for ele in np.log10(np.prod(sample_sizes)) * grid_base])
+    print(grid_sizes)
     return grid_sizes
