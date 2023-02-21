@@ -4,6 +4,7 @@ from sklearn.metrics import r2_score
 from sklearn.metrics import mean_squared_error
 from scipy import stats
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 def get_r2(y_true, y_pred):
@@ -175,6 +176,7 @@ def plot(models: list, X_test, y_test, results_prefix, logs, mapie=True,
     c = None
     if mapie:
         all_coverage = []
+        all_rho = []
         c = None
         if len(logs) == 2:  # assumption for now
             T_true = y_test[1]
@@ -218,6 +220,14 @@ def plot(models: list, X_test, y_test, results_prefix, logs, mapie=True,
             plt.savefig(f'{results_prefix}_param_{model_i + 1:02d}_accuracy',
                         bbox_inches='tight')
             plt.clf()
+
+            all_rho.append(rho)
+
+        if np.nan in all_rho:
+            rho_fi = open(f'{results_prefix}_rho_check.txt','w')
+            for model_i, model in enumerate(models):
+                rho_fi.write(f'param_{model_i + 1:02d}: {all_rho[model_i]}\n')
+            rho_fi.close()
 
         if coverage:
             # plot coverage
