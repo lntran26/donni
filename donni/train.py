@@ -25,12 +25,6 @@ def prep_data(data: dict, mapie=True):
     X_input = [np.array(fs).flatten() for fs in data.values()]
     y_label = list(data.keys())
 
-    # # longer implementation so as to not rely on data dict being ordered
-    # X_input, y_label = [], []
-    # for params, fs in data.items():
-    #     X_input.append(np.array(fs).flatten())
-    #     y_label.append(params)
-
     # parse labels into single list for each param (required for mapie)
     y_label_unpack = list(zip(*y_label)) if mapie else [y_label]
 
@@ -49,10 +43,11 @@ def _tune_worker_func(args):
                                    refit=False, n_jobs=1)
     # note: resource is defined by max_iter rather than n_samples
     search.fit(X_input, param)
+
     return [search, param]
 
 
-def tune(X_input, y_label, param_dist, max_iter=243, eta=3, cv=5):
+def tune(X_input, y_label, param_dist, max_iter=243, eta=3, cv=5, mapie=True):
     '''
     Method for searching over many MLPR hyperparameters
     with successive halving randomized search and hyperband
@@ -78,6 +73,8 @@ def tune(X_input, y_label, param_dist, max_iter=243, eta=3, cv=5):
     search_dict = {}
     args_list = []
     for param in y_label:
+        if not mapie:
+            param = tuple(param)
         search_dict[param] = []
         # begin Hyperband outer loop
         n_iter_list = [int(max_iter*eta**(-s))
@@ -89,9 +86,13 @@ def tune(X_input, y_label, param_dist, max_iter=243, eta=3, cv=5):
     with Pool(processes=len(n_iter_list)*len(y_label)) as pool:
         res = pool.map(_tune_worker_func, args_list)
     for search, param in res:
+        if not mapie:
+            param = tuple(param)
         search_dict[param].append(search)
 
     for param in y_label:
+        if not mapie:
+            param = tuple(param)
         result_list.append(search_dict[param])
 
     return result_list
@@ -142,9 +143,13 @@ def train(X_input, y_label, mlpr_specs, mapie=True) -> list:
     with Pool(processes=len(y_label)) as pool:
         res = pool.map(_train_worker_func, args_list)
     for param_predictor, param in res:
+        if not mapie:
+            param = tuple(param)
         param_predictor_dict[param] = param_predictor
     for param in y_label:
         # save trained mlpr model
+        if not mapie:
+            param = tuple(param)
         mlpr_list.append(param_predictor_dict[param])
 
     return mlpr_list

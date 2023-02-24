@@ -4,22 +4,6 @@ from sklearn.metrics import r2_score
 from sklearn.metrics import mean_squared_error
 from scipy import stats
 import matplotlib.pyplot as plt
-import numpy as np
-
-
-def get_r2(y_true, y_pred):
-    """Method to get R2 score for prediction"""
-
-    score = r2_score(y_true, y_pred)
-    score_by_param = r2_score(y_true, y_pred, multioutput='raw_values')
-    return score, score_by_param
-
-
-def get_rho(y_true, y_pred):
-    """stats.spearmanr returns two values: correlation and p-value
-    Here we only want the correlation value"""
-
-    return stats.spearmanr(y_true, y_pred)[0]
 
 
 def sort_by_param(y_true, y_pred):
@@ -57,7 +41,8 @@ def plot_accuracy_single(x, y, size=(8, 2, 20), x_label="Simulated",
     rho: rho score for x and y
     c: if true will plot data points in a color range with color bar
     '''
-
+    font = {'size': size[2]}
+    plt.rc('font', **font)
     ax = plt.gca()
     # make square plots with two axes the same size
     ax.set_aspect('equal', 'box')
@@ -116,7 +101,7 @@ def plot_accuracy_single(x, y, size=(8, 2, 20), x_label="Simulated",
     plt.tight_layout()
 
 
-def plot_coverage(cov_scores, alpha, results_prefix, theta=None, params=None):
+def plot_coverage(cov_scores, alpha, theta=None, params=None):
     """Helper method to plot coverage plot"""
 
     expected = [100*(1 - a) for a in alpha]
@@ -152,11 +137,46 @@ def plot_coverage(cov_scores, alpha, results_prefix, theta=None, params=None):
     ax.legend(fontsize=15, frameon=False,
               bbox_to_anchor=(1, 0), loc="lower left")
     plt.tight_layout()
-    plt.savefig(f'{results_prefix}_coverage', bbox_inches='tight')
-    plt.clf()
 
 
-def _get_title(params, i, theta):
+def process_inference(raw_true, raw_pred, log):
+    """
+    Convert log params and get accuracy scores
+    Input:
+        raw prediction and true values
+        log: whether param is in log scale
+    """
+    # log transform
+    if log:
+        true = [10**p_true for p_true in raw_true]
+        pred = [10**p_pred for p_pred in raw_pred]
+    else:
+        true = list(raw_true)
+        pred = list(raw_pred)
+    # get scores
+    r2 = r2_score(true, pred)
+    rho = stats.spearmanr(true, pred)[0]
+    rmse = mean_squared_error(true, pred, squared=False)
+
+    return true, pred, r2, rho, rmse
+
+
+def get_coverage(models: list, X_test, y_test, alpha):
+    """Get coverage scores for mapie MLP models"""
+    all_coverage = []
+    for model_i, model in enumerate(models):
+        true = y_test[model_i]
+        _, pis = model.predict(X_test, alpha=list(alpha))
+        coverage_scores = [
+            regression_coverage_score(true, pis[:, 0, i], pis[:, 1, i])
+            for i, _ in enumerate(alpha)
+        ]
+        all_coverage.append(coverage_scores)
+    return all_coverage
+
+
+def get_title(params, i, theta):
+    """Get title for plot from param name and theta"""
     if params is None:
         title = f'param {i + 1}'
     else:
@@ -167,73 +187,30 @@ def _get_title(params, i, theta):
 
 
 def plot(models: list, X_test, y_test, results_prefix, logs, mapie=True,
-         coverage=False, theta=None, params=None):
+         coverage=False, theta=None, params=None,
+         alpha=(.05, .1, .2, .5, .7, .85)):
     """Main method to plot both accuracy and coverage plots"""
-    # set alpha
-    alpha = [.05, .1, .2, .5, .7, .85]
 
     # make prediction with trained mlpr models
-    c = None
     if mapie:
-        all_coverage = []
-        all_rho = []
-        c = None
-        if len(logs) == 2:  # assumption for now
-            T_true = y_test[1]
-            nu_true = y_test[0]
-            nu_true_delog = [10**nu for nu in nu_true]
-            c = [T/nu for T, nu in zip(T_true, nu_true_delog)]
-        for model_i, model in enumerate(models):
-            true = y_test[model_i]
-            if coverage:
-                pred, pis = model.predict(X_test, alpha=alpha)
-                coverage_scores = [
-                    regression_coverage_score(true, pis[:, 0, i], pis[:, 1, i])
-                    for i, _ in enumerate(alpha)
-                ]
-                all_coverage.append(coverage_scores)
-            else:
-                pred = model.predict(X_test)
-            # set title and text font
-            title = _get_title(params, model_i, theta)
-            font = {'size': 20}
-            plt.rc('font', **font)
-            if logs[model_i]:  # log param verion
-                # for log params, exponentiate each of the test and pred values
-                true_delog = [10**p_true for p_true in true]
-                pred_delog = [10**p_pred for p_pred in pred]
-                r2 = get_r2(true_delog, pred_delog)[0]
-                rho = get_rho(true_delog, pred_delog)
-                rmse = mean_squared_error(
-                    true_delog, pred_delog, squared=False)
-                plot_accuracy_single(true_delog, pred_delog, size=[6, 2, 20],
-                                     log=True, r2=r2, rho=rho, rmse=rmse,
-                                     title=title, c=c)
-            else:  # non-log param version
-                r2 = get_r2(true, pred)[0]
-                rho = get_rho(true, pred)
-                rmse = mean_squared_error(true, pred, squared=False)
-                plot_accuracy_single(list(true), list(pred),
-                                     size=[6, 2, 20], log=False,
-                                     r2=r2, rho=rho, rmse=rmse,
-                                     title=title, c=c)
-            plt.savefig(f'{results_prefix}_param_{model_i + 1:02d}_accuracy',
+        for i, (model, log) in enumerate(zip(models, logs)):
+            raw_pred = model.predict(X_test)
+            true, pred, r2, rho, rmse = process_inference(y_test[i],
+                                                          raw_pred, log)
+            title = get_title(params, i, theta)
+            plot_accuracy_single(true, pred, size=[6, 2, 20], log=log,
+                                 r2=r2, rho=rho, rmse=rmse, title=title)
+            plt.savefig(f'{results_prefix}_param_{i + 1:02d}_accuracy',
                         bbox_inches='tight')
             plt.clf()
 
-            all_rho.append(rho)
-
-        if np.nan in all_rho:
-            rho_fi = open(f'{results_prefix}_rho_check.txt','w')
-            for model_i, model in enumerate(models):
-                rho_fi.write(f'param_{model_i + 1:02d}: {all_rho[model_i]}\n')
-            rho_fi.close()
-
         if coverage:
-            # plot coverage
-            plot_coverage(all_coverage, alpha, results_prefix, theta, params)
+            all_coverage = get_coverage(models, X_test, y_test, alpha)
+            plot_coverage(all_coverage, alpha, theta, params)
+            plt.savefig(f'{results_prefix}_coverage', bbox_inches='tight')
+            plt.clf()
 
-    else:  # implement sklearn version
+    else:
         # for sklearn multioutput, models is a list of one mlpr
         model = models[0]
         # and true is a list of one list containing all dem param tuples
@@ -241,33 +218,14 @@ def plot(models: list, X_test, y_test, results_prefix, logs, mapie=True,
         # get predictions from trained multioutput model
         pred = model.predict(X_test)
         # have to sort true and pred by param to plot results by param
-        param_true, param_pred = sort_by_param(true, pred)
+        sorted_true, sorted_pred = sort_by_param(true, pred)
 
-        # get scores for normal pred versions (logged)
-        r2_all = get_r2(true, pred)[1]
-        rmse_all = mean_squared_error(true, pred, squared=False,
-                                      multioutput='raw_values')
-
-        for i, _ in enumerate(param_true):
-            # handling log-scale data
-            if logs[i]:
-                # convert log-scale values back to regular scale
-                plot_p_true = [10**p_true for p_true in param_true[i]]
-                plot_p_pred = [10**p_pred for p_pred in param_pred[i]]
-                log = True
-            else:  # leave as is if values not in log scale
-                plot_p_true = param_true[i]
-                plot_p_pred = param_pred[i]
-                log = False
-            # handling scores
-            r2 = r2_all[i]
-            rho = get_rho(plot_p_true, plot_p_pred)
-            rmse = rmse_all[i]
-            # set title
-            title = _get_title(params, i, theta)
-            # plot a single subplot
-            plot_accuracy_single(plot_p_true, plot_p_pred, size=[6, 2, 20],
-                                 log=log, r2=r2, rho=rho, rmse=rmse,
-                                 title=title)
-            plt.savefig(f'{results_prefix}_param_{i + 1:02d}_accuracy')
+        for i, (p_true, p_pred, log) in enumerate(zip(sorted_true, sorted_pred,
+                                                      logs)):
+            true, pred, r2, rho, rmse = process_inference(p_true, p_pred, log)
+            title = get_title(params, i, theta)
+            plot_accuracy_single(true, pred, size=[6, 2, 20], log=log,
+                                 r2=r2, rho=rho, rmse=rmse, title=title)
+            plt.savefig(f'{results_prefix}_param_{i + 1:02d}_accuracy',
+                        bbox_inches='tight')
             plt.clf()

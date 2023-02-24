@@ -43,7 +43,7 @@ def generate_fs(func, params_list, logs, theta, ns, pts_l,
             (None means using all)
     Output: dataset dictionary with format params:fs
     '''
-    if pts_l == None:
+    if pts_l is None:
         pts_l = pts_l_func(ns)
 
     arg_list = []
@@ -230,6 +230,5 @@ def pts_l_func(sample_sizes):
         grid_sizes tuple: Grid sizes for modeling.
     """
     grid_base = np.array([15, 20, 25])
-    grid_sizes = tuple([int(ele) for ele in np.log10(np.prod(sample_sizes)) * grid_base])
-    print(grid_sizes)
-    return grid_sizes
+    grid_sizes = np.log10(np.prod(sample_sizes)) * grid_base
+    return tuple(grid_sizes.astype(np.int64))
