@@ -60,7 +60,7 @@ def run_generate_data(args):
                 fs.tofile(f"{args.outdir}/fs_{i:03d}")
             pickle.dump(true_log_params, open(
                 f'{args.outdir}/true_log_params', 'wb'))
-        
+
         # save data dict as one pickled file (default)
         pickle.dump(data, open(args.outfile, 'wb'))
 
@@ -152,13 +152,13 @@ def run_train(args):
 
     try:
         os.makedirs(args.mlpr_dir)
-    except:
+    except FileExistsError:
         pass
 
     # Tuning, which generate train_param_dict_list used for training
     if args.tune or args.tune_only:
         all_results = tune(X_input, y_label, param_dict,
-                           args.max_iter, args.eta, args.cv)
+                           args.max_iter, args.eta, args.cv, args.multioutput)
         # output full tuning result file
         pickle.dump(all_results, open(
             f'{args.mlpr_dir}/tune_results_full', 'wb'))
@@ -214,16 +214,19 @@ def _load_trained_mlpr(args):
 
     mlpr_list = []
     mapie = True
-    for filename in sorted(os.listdir(args.mlpr_dir)):
-        if filename.startswith("param") and filename.endswith("predictor"):
-            mlpr = pickle.load(
-                open(os.path.join(args.mlpr_dir, filename), 'rb'))
-            mlpr_list.append(mlpr)
-            if filename == "param_all_predictor":
-                mapie = False  # this is the sklearn case
-                break
-        else:
-            continue
+    filename_list = sorted(os.listdir(args.mlpr_dir))
+    if "param_all_predictor" in filename_list:
+        mapie = False  # this is the sklearn case
+        mlpr = pickle.load(
+            open(os.path.join(args.mlpr_dir, "param_all_predictor"), 'rb'))
+        mlpr_list = [mlpr]
+    else:
+        for filename in filename_list:
+            if filename.startswith("param") and filename.endswith("predictor"):
+                mlpr = pickle.load(
+                    open(os.path.join(args.mlpr_dir, filename), 'rb'))
+                mlpr_list.append(mlpr)
+
     # need to get logs to de-log prediction
     _, param_names, logs = get_model(args.model, args.model_file,
                                      args.folded)  # now included misid
