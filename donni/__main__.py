@@ -11,7 +11,7 @@ from donni.generate_data import generate_fs, get_hyperparam_tune_dict,\
     fs_quality_check
 from donni.train import prep_data, tune, report,\
     get_best_specs, train, get_cv_score
-from donni.predict import predict, prep_fs_for_ml
+from donni.predict import predict, prep_fs_for_ml, irods_download, irods_cleanup
 from donni.plot import plot
 
 
@@ -243,12 +243,24 @@ def run_predict(args):
     '''Method to get prediction given inputs from the
     predict subcommand'''
 
+    print(sys.argv)
+
     # open input FS from file
     fs = dadi.Spectrum.from_file(args.input_fs)
-    # load trained MLPRs and demographic model logs; TODO: remove for cloud support
-    mlpr_list, mapie, logs, param_names = _load_trained_mlpr(args)
+    
+    if args.mlpr_dir != None:
+        # load trained MLPRs and demographic model logs; TODO: remove for cloud support
+        mlpr_list, mapie, logs, param_names = _load_trained_mlpr(args)
+    else:
+        ss = fs.sample_sizes
+        fold = fs.folded
+        username, password = args.download_mlpr
+        print(ss, fold)
+        args.mlpr_dir = irods_download(username, password, args.model, ss, fold)
+        # load trained MLPRs and demographic model logs; TODO: remove for cloud support
+        mlpr_list, mapie, logs, param_names = _load_trained_mlpr(args)
     # load func
-    func, _, _, _ = get_model(args.model, 0, args.model_file)
+    func, _, _= get_model(args.model, args.model_file, args.folded)
     pis_list = sorted(args.pis)
     # infer params using input FS
     pred, theta, pis = predict(mlpr_list, func, fs, logs, mapie=mapie, pis=pis_list)
@@ -501,9 +513,27 @@ def donni_parser():
     predict_parser.add_argument('--model', type=str,
                                 required=True,
                                 help="Name of dadi demographic model")
-    predict_parser.add_argument("--mlpr_dir", type=str, required=True,
-                                help="Path to saved, trained MLPR(s)")
-
+    # Check for MLPR download or path
+    if '--mlpr_dir' not in sys.argv and '--download_mlpr' not in sys.argv:
+        raise ValueError("User must include either --download_mlpr or --mlpr_dir")
+    # Arg for downloading MLPRs
+    if '--mlpr_dir' not in sys.argv:
+        download_req = True
+    else:
+        download_req = False
+    predict_parser.add_argument('--download_mlpr', nargs=2,
+                                default=[], action="store",
+                                required=download_req,
+                                help="Pass in your username and password for the CyVerse Data Store to download MLPR models. Required if user did not make their own MLPRs for inference.")
+    # Arg for users that made their own MLPRs
+    if '--download_mlpr' not in sys.argv:
+        path_req = True
+    else:
+        path_req = False
+    predict_parser.add_argument("--mlpr_dir", type=str, required=path_req,
+                                help="Path to saved, trained MLPR(s). Required if user is not downloading MLPRs for inference.")
+    predict_parser.add_argument('--folded', action="store_true",
+                                      help="Whether to fold FS")
     # optional
     predict_parser.add_argument("--pis", type=_pos_int,
                                 nargs='+', default=[95],

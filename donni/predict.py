@@ -4,6 +4,13 @@ import dadi
 import math
 from donni.generate_data import pts_l_func
 
+# irods packages
+from irods.session import iRODSSession
+from irods.models import Collection, DataObject
+import irods.exception as exception
+from appdirs import AppDirs
+import os, shutil, pkg_resources
+
 def get_supported_ss(dims):
     # can update these lists as needed (or pull from cloud)
     if dims < 3:
@@ -50,6 +57,70 @@ def prep_fs_for_ml(input_fs):
     input_fs.flat[-1] = 0
 
     return input_fs
+
+def irods_download(username, password, dem_model, sample_sizes, fold=False, tempdir=AppDirs("donni", "Linh Tran", version=pkg_resources.get_distribution("donni").version).user_cache_dir, cleanup=False):
+    print(dem_model, sample_sizes, fold)
+    # Prep naming for model configuration directory
+    # If polarization is determined by a flag
+    if fold:
+        polarization = 'folded'
+    else:
+        polarization = 'unfolded'
+
+    # Name model configuration directory
+    tempdir = tempdir + f"/{dem_model}_{polarization}_ns_{'_'.join([str(ele) for ele in sample_sizes])}"
+    print(tempdir)
+    # Start irods with the Cyvers Data Store
+    session = iRODSSession(host='data.cyverse.org', port=1247, user=username, password=password, zone='iplant')
+
+
+    # Work with a directory
+    try:
+        coll = session.collections.get(f"/iplant/home/rgutenkunst/donni/{dem_model}/{polarization}/ss_{'_'.join([str(ele) for ele in sample_sizes])}")
+    except exception.CollectionDoesNotExist:
+        print("Files for the requested model and configuration do not exist see <blank> for avalible models and configurations")
+        # Exit, might break downstream functions
+        # Will error if not running as a script
+        from sys import exit
+        exit()
+
+    # Make model data directory
+    try:
+        os.makedirs(tempdir)
+    except:
+        pass
+
+    try:
+        # Download files in directory
+        for do in coll.data_objects:
+            session.data_objects.get(do.path, tempdir, force=True)
+            print(f"Downloading: {do.path} to {tempdir}")
+    except exception.OVERWRITE_WITHOUT_FORCE_FLAG:
+        # If we have users name a folder rather than making it automaticly named based on their requested model and configuration:
+        # print("Files for the requested model and configuration have already been downloaded to the given folder, delete the files or rename directory")
+        print(f"Files for the requested model and configuration have already been downloaded to the {tempdir} folder, if you want to redownload delete the directory")
+    print(f"Finished downloading files to {tempdir} folder")
+    return tempdir
+
+
+def irods_cleanup(dem_model, sample_sizes, unfold=True):
+
+    # Prep naming for model configuration directory
+    # If polarization is determined by a flag
+    if unfold:
+        polarization = 'unfolded'
+    else:
+        polarization = 'folded'
+
+    # Name model configuration directory
+    tempdir = tempdir + f"/{dem_model}_{polarization}_ns_{'_'.join([str(ele) for ele in sample_sizes])}"
+
+    # Remove downloaded files
+    # Seperate into a cleanup function for actual donni code?
+    try:
+        shutil.rmtree(tempdir)
+    except FileNotFoundError:
+        print("Directory for model configuration not found.")
 
 
 def predict(models: list, func, input_fs, logs, mapie=True, pis=[95]):
