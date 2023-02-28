@@ -10,6 +10,8 @@ setup(
         "dadi",
         "scikit-learn == 1.2.0",
         "mapie == 0.6.1",
+        "python-irodsclient == 1.1.6",
+        "appdirs == 1.4.4",
         "pytest",
         "pylint",
         "flake8",

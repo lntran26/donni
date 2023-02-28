@@ -1,10 +1,12 @@
-name: donni
+name: donni_test
 channels:
   - conda-forge
 dependencies:
   - python=3.9
   - scikit-learn=1.2.0
   - mapie=0.6.1
+  - python-irodsclient == 1.1.6
+  - appdirs == 1.4.4
   - matplotlib
   - numpy
   - scipy
@@ -12,7 +14,7 @@ dependencies:
   - pytest
   - gfortran
   - pip
+  - dadi
   - pip:
     - git+https://github.com/xin-huang/dadi-cli
-    - git+https://bitbucket.org/gutenkunstlab/dadi
     - .
