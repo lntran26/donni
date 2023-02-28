@@ -513,9 +513,6 @@ def donni_parser():
     predict_parser.add_argument('--model', type=str,
                                 required=True,
                                 help="Name of dadi demographic model")
-    # Check for MLPR download or path
-    if '--mlpr_dir' not in sys.argv and '--download_mlpr' not in sys.argv:
-        raise ValueError("User must include either --download_mlpr or --mlpr_dir")
     # Arg for downloading MLPRs
     if '--mlpr_dir' not in sys.argv:
         download_req = True
