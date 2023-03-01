@@ -11,7 +11,7 @@ from donni.generate_data import generate_fs, get_hyperparam_tune_dict,\
     fs_quality_check
 from donni.train import prep_data, tune, report,\
     get_best_specs, train, get_cv_score
-from donni.predict import predict, prep_fs_for_ml, irods_download, irods_cleanup
+from donni.predict import predict, prep_fs_for_ml, irods_download, irods_cleanup, project_fs
 from donni.plot import plot
 
 
@@ -249,10 +249,11 @@ def run_predict(args):
         # load trained MLPRs and demographic model logs; TODO: remove for cloud support
         mlpr_list, mapie, logs, param_names = _load_trained_mlpr(args)
     else:
+        fs = project_fs(fs)
         ss = fs.sample_sizes
-        fold = fs.folded
+        args.folded = fs.folded
         username, password = args.download_mlpr
-        args.mlpr_dir = irods_download(username, password, args.model, ss, fold)
+        args.mlpr_dir = irods_download(username, password, args.model, ss, args.folded)
         # load trained MLPRs and demographic model logs; TODO: remove for cloud support
         mlpr_list, mapie, logs, param_names = _load_trained_mlpr(args)
     # load func

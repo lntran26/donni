@@ -138,11 +138,9 @@ def predict(models: list, func, input_fs, logs, mapie=True, pis=[95]):
         pi_list: if mapie, outputs list of prediction intervals for each
             alpha for each param
     '''
-    # project to supported sample sizes
-    projected_fs = project_fs(input_fs)
 
     # get input_fs ready for ml prediction
-    fs = prep_fs_for_ml(projected_fs)
+    fs = prep_fs_for_ml(input_fs)
 
     # flatten input_fs and put in a list
     input_x = [np.array(fs).flatten()]
@@ -164,7 +162,7 @@ def predict(models: list, func, input_fs, logs, mapie=True, pis=[95]):
             pred_list.append(pred)
             pi_list.append(pis.T)
         
-        theta = estimate_theta(pred_list, func, projected_fs)
+        theta = estimate_theta(pred_list, func, input_fs)
 
     else:  # sklearn multioutput case: don't know if this works yet
         pred_list = models[0].predict([input_x])
