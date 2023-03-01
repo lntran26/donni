@@ -4,7 +4,7 @@ import pytest
 import os
 import glob
 import numpy as np
-from donni.predict import project_fs, predict
+from donni.infer import project_fs, infer
 
 
 @pytest.fixture
@@ -14,12 +14,12 @@ def models_list():
 
 @pytest.fixture
 def split_mig_fs():
-    p = (0.5, 0.2, 3, 2) # nu1, nu2, T, m
-    func = getattr(dadi.Demographics2D, "split_mig")
-    pts_l = [40, 50]
-    input_size = (40, 30)
+    p0 = [1, 1, 0.1, 0.5]
+    ns = [40, 30]
+    pts_l = [50 ,60 ,70]
+    func = dadi.Demographics2D.split_mig
     func_ex = dadi.Numerics.make_extrap_func(func)
-    fs = func_ex(p, input_size, pts_l)
+    fs = func_ex(p0, ns, pts_l)
     return fs
 
 
@@ -41,7 +41,7 @@ def test_project_fs_fake(input_size, exp_size):
                          ((92,), (80,))])
 def test_project_fs_1d(input_size, exp_size):
     p = (1, 4) # nu, T
-    func = getattr(dadi.Demographics1D, "two_epoch")
+    func = dadi.Demographics1D.two_epoch
     pts_l = [40]
 
     func_ex = dadi.Numerics.make_extrap_func(func)
@@ -56,7 +56,7 @@ def test_project_fs_1d(input_size, exp_size):
                          ((40, 40), (40, 40))])
 def test_project_fs_2d(input_size, exp_size):
     p = (1, 1, 4, 5) # nu1, nu2, T, m
-    func = getattr(dadi.Demographics2D, "split_mig")
+    func = dadi.Demographics2D.split_mig
     pts_l = [40, 50]
 
     func_ex = dadi.Numerics.make_extrap_func(func)
@@ -69,10 +69,10 @@ def test_project_fs_2d(input_size, exp_size):
 @pytest.mark.parametrize("pis",
                         [[95],
                          [95, 80, 70]])
-def test_predict_split_mig(models_list, split_mig_fs, pis):
-    func = getattr(dadi.Demographics2D, "split_mig")
+def test_infer_split_mig(models_list, split_mig_fs, pis):
+    func = dadi.Demographics2D.split_mig
     logs = [True, True, False, False, False]
-    pred_list, theta, pi_list = predict(models_list, func, split_mig_fs, logs, pis=pis)
+    pred_list, theta, pi_list = infer(models_list, func, split_mig_fs, logs, pis=pis)
     pred_list = np.array(pred_list)
     pi_list = np.array(pi_list)
 

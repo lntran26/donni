@@ -122,7 +122,7 @@ def irods_cleanup(dem_model, sample_sizes, unfold=True):
         print("Directory for model configuration not found.")
 
 
-def predict(models: list, func, input_fs, logs, mapie=True, pis=[95]):
+def infer(models: list, func, input_fs, logs, mapie=True, pis=[95]):
     '''
     Inputs:
         models: list of single mlpr object if sklearn,
@@ -161,7 +161,6 @@ def predict(models: list, func, input_fs, logs, mapie=True, pis=[95]):
                 pis = 10 ** pis
             pred_list.append(pred)
             pi_list.append(pis.T)
-        pred_list[0] = -1
         if sum([ele < 0 for ele in pred_list]) > 0:
             raise ValueError("Model inferred a negative parameter value - try a different model.")
         else:

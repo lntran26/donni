@@ -11,7 +11,7 @@ from donni.generate_data import generate_fs, get_hyperparam_tune_dict,\
     fs_quality_check
 from donni.train import prep_data, tune, report,\
     get_best_specs, train, get_cv_score
-from donni.predict import predict, prep_fs_for_ml, irods_download, irods_cleanup, project_fs
+from donni.infer import infer, prep_fs_for_ml, irods_download, irods_cleanup, project_fs
 from donni.plot import plot
 
 
@@ -238,7 +238,7 @@ def _load_trained_mlpr(args):
     return mlpr_list, mapie, logs, param_names
 
 
-def run_predict(args):
+def run_infer(args):
     '''Method to get prediction given inputs from the
     predict subcommand'''
 
@@ -260,7 +260,7 @@ def run_predict(args):
     func, _, _= get_model(args.model, args.model_file, args.folded)
     pis_list = sorted(args.pis)
     # infer params using input FS
-    pred, theta, pis = predict(mlpr_list, func, fs, logs, mapie=mapie, pis=pis_list)
+    pred, theta, pis = infer(mlpr_list, func, fs, logs, mapie=mapie, pis=pis_list)
     # write output
     if args.output_prefix:
         output_stream = open(args.output_prefix, 'w')
@@ -512,17 +512,17 @@ def donni_parser():
     train_parser.add_argument('--n_iter_no_change', nargs='*', type=int,
                               help='Max epochs to not meet tol improvement')
 
-    # subcommand for predict
-    predict_parser = subparsers.add_parser(
-        "predict", help='Use trained MLPR to predict demographic parameters\
+    # subcommand for infer
+    infer_parser = subparsers.add_parser(
+        "infer", help='Use trained MLPR to infer demographic parameters\
             from frequency spectra data')
-    predict_parser.set_defaults(func=run_predict)
+    infer_parser.set_defaults(func=run_infer)
     # need to handle dir for multiple models for mapie
     # single dir for sklearn models
-    predict_parser.add_argument("--input_fs", type=str, required=True,
+    infer_parser.add_argument("--input_fs", type=str, required=True,
                                 help="Path to FS file for generating\
-                                     prediction")
-    predict_parser.add_argument('--model', type=str,
+                                     inference")
+    infer_parser.add_argument('--model', type=str,
                                 required=True,
                                 help="Name of dadi demographic model")
     # Arg for downloading MLPRs
@@ -530,7 +530,7 @@ def donni_parser():
         download_req = True
     else:
         download_req = False
-    predict_parser.add_argument('--download_mlpr', nargs=2,
+    infer_parser.add_argument('--download_mlpr', nargs=2,
                                 default=[], action="store",
                                 required=download_req,
                                 help="Pass in your username and password for the CyVerse Data Store to download MLPR models. Required if user did not make their own MLPRs for inference.")
@@ -539,20 +539,20 @@ def donni_parser():
         path_req = True
     else:
         path_req = False
-    predict_parser.add_argument("--mlpr_dir", type=str, required=path_req,
+    infer_parser.add_argument("--mlpr_dir", type=str, required=path_req,
                                 help="Path to saved, trained MLPR(s). Required if user is not downloading MLPRs for inference.")
-    predict_parser.add_argument('--folded', action="store_true",
+    infer_parser.add_argument('--folded', action="store_true",
                                       help="Whether to fold FS")
     # optional
-    predict_parser.add_argument("--pis", type=_pos_int,
+    infer_parser.add_argument("--pis", type=_pos_int,
                                 nargs='+', default=[95],
                                 help="Optional list of values for\
-                                    prediction intervals,\
+                                    inference intervals,\
                                     e.g., [80 90 95]; default [95]")
-    predict_parser.add_argument('--model_file', type=str,
+    infer_parser.add_argument('--model_file', type=str,
                                 help="Name of file containing custom dadi\
                                      demographic model(s)",)
-    predict_parser.add_argument("--output_prefix", type=str,
+    infer_parser.add_argument("--output_prefix", type=str,
                                 help="Optional output file to write out results\
                                    (default stdout)")
 
