@@ -196,6 +196,9 @@ def retrain(mlpr, i, X_input, label, count, reason, mlpr_dir, results_prefix):
     with open(f'{results_prefix}_QC.txt', 'a') as fh:
         fh.write(f'Retraining param {i+1:02d}: ')
         fh.write(f'Retrain {count} Reason: {reason}\n')
+        if count == 10:
+            fh.write('Maximum retrain times (10) reached. '
+                     'Check accuracy plots for poor performance.\n')
 
     # get current mlpr hyperparam
     mlpr_spec = mlpr.__dict__['estimator'].get_params()
