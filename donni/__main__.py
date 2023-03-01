@@ -149,12 +149,11 @@ def run_train(args):
     X_input, y_label = prep_data(data, mapie=args.multioutput)
     # get hyperparam dictionary for tuning or training
     param_dict = _process_param_dict_tune(args)
-
+    # make dir to save trained MLPs
     try:
         os.makedirs(args.mlpr_dir)
     except FileExistsError:
         pass
-
     # Tuning, which generate train_param_dict_list used for training
     if args.tune or args.tune_only:
         all_results = tune(X_input, y_label, param_dict,
@@ -189,8 +188,8 @@ def run_train(args):
         # Train directly without tuning first.
         # Generate train_param_dict_list with either hyperparam for
         # sklearn MLPR or hyperparam_list for mapie MLPR.
-        # If neither is provided, hyperparam will be generated using the default
-        # options for each hyperparam from the command line.
+        # If neither is provided, hyperparam will be generated using the
+        # default options for each hyperparam from the command line.
         train_param_dict_list = _process_train_param_dict_list(
             args, param_dict, y_label)
 
@@ -314,12 +313,26 @@ def run_plot(args):
     for params_key in test_dict:
         prep_test_dict[params_key] = prep_fs_for_ml(test_dict[params_key])
 
-    # parse data into test FS and corresponding labels
+    # parse test dict into test FS and corresponding labels
     X_test, y_test = prep_data(prep_test_dict, mapie=mapie)
 
+    # load train fs set
+    train_dict = pickle.load(open(args.train_dict, 'rb'))
+
+    # parse data into input and corresponding labels
+    X_input, y_label = prep_data(train_dict, mapie=True)
+
+    # make result dir to save results
+    try:
+        os.makedirs(args.results_dir)
+    except FileExistsError:
+        pass
+
     # plot results
-    plot(mlpr_list, X_test, y_test, args.results_prefix, logs, mapie=mapie,
-         coverage=args.coverage, theta=args.theta, params=param_names)
+    plot_prefix = os.path.join(args.results_dir, args.plot_prefix)
+    plot(mlpr_list, X_test, y_test, X_input, y_label, plot_prefix,
+         args.mlpr_dir, logs, mapie=mapie, coverage=args.coverage,
+         theta=args.theta, params=param_names)
 
 
 # helper methods for custom type checks and parsing
@@ -424,7 +437,8 @@ def donni_parser():
                                       help="Turn off default FS quality check")
     generate_data_parser.add_argument('--generate_tune_hyperparam',
                                       action='store_true',
-                                      help="Generate hyperparam spec for tuning")
+                                      help="Generate hyperparam spec for\
+                                         tuning")
     generate_data_parser.add_argument('--generate_tune_hyperparam_only',
                                       action='store_true',
                                       help="Generate hyperparam spec for tuning\
@@ -456,20 +470,20 @@ def donni_parser():
                               help="When use will output training score")
     # hyperband tuning params
     train_parser.add_argument('--max_iter', type=_int_2, default=243,
-                              help='maximum iterations')
+                              help='Maximum iterations')
     train_parser.add_argument('--eta', type=_int_2, default=3,
-                              help='halving factor')
+                              help='Halving factor')
     train_parser.add_argument('--cv', type=_int_2, default=5,
                               help='k-fold cross validation')
 
     # optional input for a pickled dict file instead of setting params manually
     # with flags
     # if provided will be prioritized over input flags
-    train_parser.add_argument("--hyperparam", type=str,
-                              help="Path to pickled dict of MLPR hyperparam")
+    train_parser.add_argument("--hyperparam", type=str, help="Path to pickled\
+                                dict of MLPR hyperparam")
     # flags for specifying mlpr hyperparams if not providing dict
-    train_parser.add_argument("--hyperparam_list", type=str,
-                              help="Path to pickled list of dict of hyperparam")
+    train_parser.add_argument("--hyperparam_list", type=str, help="Path to\
+                                pickled list of dict of hyperparam")
     # currently: hyperparam expects a single dict, which will be duplicated
     # in the mapie case by the number of params in the demographic model
     # hyperparam_list allows different hyperparam dicts for each demographic
@@ -482,15 +496,15 @@ def donni_parser():
                               help='Use commas to separate layers')
     train_parser.add_argument('--activation', nargs='*', metavar='NAME',
                               choices=['identity', 'logistic', 'tanh', 'relu'],
-                              help='options: identity, logistic, tanh, relu',
+                              help='Options: identity, logistic, tanh, relu',
                               default=['relu'])
     train_parser.add_argument('--solver', nargs='*', metavar='NAME',
                               choices=['lbfgs', 'adam'], default=['adam'],
-                              help='options: lbfgs, adam')  # excluded sgd
+                              help='Options: lbfgs, adam')  # excluded sgd
     train_parser.add_argument('--alpha', nargs='*', type=float,
                               help='L2 penalty regularization param')
     train_parser.add_argument('--tol', nargs='*', type=float,
-                              help='tolerance for optimization')
+                              help='Tolerance for optimization')
     train_parser.add_argument('--early_stopping', nargs='*', type=bool,
                               help='Whether to use early stopping')
     train_parser.add_argument('--beta1', nargs='*', type=float,
@@ -538,7 +552,8 @@ def donni_parser():
                                     prediction intervals,\
                                     e.g., [80 90 95]; default [95]")
     predict_parser.add_argument('--model_file', type=str,
-                                help="Name of file containing custom dadi demographic model(s)",)
+                                help="Name of file containing custom dadi\
+                                     demographic model(s)",)
     predict_parser.add_argument("--output_prefix", type=str,
                                 help="Optional output file to write out results\
                                    (default stdout)")
@@ -552,19 +567,25 @@ def donni_parser():
                              help="Path to trained MLPR(s)")
     plot_parser.add_argument("--test_dict", type=str, required=True,
                              help="Path to test data dictionary file")
-    plot_parser.add_argument("--results_prefix", type=str, required=True,
-                             help="Path to save output plots")
+    plot_parser.add_argument("--train_dict", type=str, required=True,
+                             help="Path to train data dictionary file")
+    plot_parser.add_argument("--results_dir", type=str, required=True,
+                             help="Directory to save output plots")
+    plot_parser.add_argument("--plot_prefix", type=str, required=True,
+                             help="Prefix for plot filenames")
     plot_parser.add_argument('--model', type=str,
                              required=True,
                              help="Name of dadi demographic model")
-    plot_parser.add_argument('--model_file', type=str,
-                             help="Name of file containing custom dadi demographic model(s)",)
 
     # optional
+    plot_parser.add_argument('--model_file', type=str,
+                             help="Name of file containing custom dadi\
+                                 demographic model(s)")
     plot_parser.add_argument('--coverage', action='store_true', default=False,
                              help="Generate coverage plot (used with mapie)")
     plot_parser.add_argument('--theta', type=_pos_int,
-                             help="Theta used to generate test_dict",
+                             help="Theta used to generate test_dict for\
+                                 labeling plots",
                              default=None)
     plot_parser.add_argument('--folded', action="store_true",
                              help="Specify if the test FS is folded")

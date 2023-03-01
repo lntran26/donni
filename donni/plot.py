@@ -1,7 +1,11 @@
 """Module for using trained MLPR to plot many demographic param predictions"""
-from mapie.metrics import regression_coverage_score
+import pickle
+import numpy as np
 from sklearn.metrics import r2_score
 from sklearn.metrics import mean_squared_error
+from sklearn.neural_network import MLPRegressor
+from mapie.metrics import regression_coverage_score
+from mapie.regression import MapieRegressor
 from scipy import stats
 import matplotlib.pyplot as plt
 
@@ -186,17 +190,71 @@ def get_title(params, i, theta):
     return title
 
 
-def plot(models: list, X_test, y_test, results_prefix, logs, mapie=True,
-         coverage=False, theta=None, params=None,
+def retrain(mlpr, i, X_input, label, count, reason, mlpr_dir, results_prefix):
+    """Method for retraining one mapie MLPR"""
+    # open QC text file to record information
+    with open(f'{results_prefix}_QC.txt', 'a') as fh:
+        fh.write(f'Retraining param {i+1:02d}: ')
+        fh.write(f'Retrain {count} Reason: {reason}\n')
+        if count == 10:
+            fh.write('Maximum retrain times (10) reached. '
+                     'Check accuracy plots for poor performance.\n')
+
+    # get current mlpr hyperparam
+    mlpr_spec = mlpr.__dict__['estimator'].get_params()
+    # initialize a new sklearn mlpr
+    mlpr_init = MLPRegressor()
+    # load mlpr hyperparam
+    mlpr_init.set_params(**mlpr_spec)
+    # wrap sklearn mlpr into mapie mlpr
+    new_mlpr = MapieRegressor(mlpr_init)
+    # train new mlpr
+    new_mlpr.fit(X_input, label)
+    # save new mlpr
+    pickle.dump(new_mlpr, open(
+                f'{mlpr_dir}/param_{i+1:02d}_predictor', 'wb'))
+
+    return new_mlpr
+
+
+def plot(models: list, X_test, y_test, X_input, y_label, results_prefix,
+         mlpr_dir, logs, mapie=True, coverage=False, theta=None, params=None,
          alpha=(.05, .1, .2, .5, .7, .85)):
     """Main method to plot both accuracy and coverage plots"""
 
     # make prediction with trained mlpr models
     if mapie:
         for i, (model, log) in enumerate(zip(models, logs)):
-            raw_pred = model.predict(X_test)
-            true, pred, r2, rho, rmse = process_inference(y_test[i],
-                                                          raw_pred, log)
+            # internal QC per trained MLP
+            rerun_count = 0
+            while rerun_count < 10:  # limit retrain to 10 times
+                # get prediction and accuracy score
+                raw_pred = model.predict(X_test)
+                true, pred, r2, rho, rmse = process_inference(y_test[i],
+                                                              raw_pred, log)
+                if rho is np.nan:
+                    rerun_count += 1
+                    model = retrain(model, i, X_input, y_label[i], rerun_count,
+                                    'rho is nan', mlpr_dir, results_prefix)
+                elif rho <= 0.05:
+                    rerun_count += 1
+                    model = retrain(model, i, X_input, y_label[i], rerun_count,
+                                    'rho <= 0.05', mlpr_dir, results_prefix)
+                elif (log and max(pred) > max(true)*1e4 or
+                      log and min(pred) < min(true)/1e4):
+                    rerun_count += 1
+                    model = retrain(model, i, X_input, y_label[i], rerun_count,
+                                    'log param inferred 4 logs out of bounds',
+                                    mlpr_dir, results_prefix)
+                elif (not log and max(pred) > max(true)*10 or
+                      not log and abs(min(pred)) > max(true)*10):
+                    rerun_count += 1
+                    model = retrain(model, i, X_input, y_label[i], rerun_count,
+                                    'param inferred 10x out of bounds',
+                                    mlpr_dir, results_prefix)
+                else:
+                    break
+
             title = get_title(params, i, theta)
             plot_accuracy_single(true, pred, size=[6, 2, 20], log=log,
                                  r2=r2, rho=rho, rmse=rmse, title=title)
