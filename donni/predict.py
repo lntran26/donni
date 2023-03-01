@@ -161,8 +161,11 @@ def predict(models: list, func, input_fs, logs, mapie=True, pis=[95]):
                 pis = 10 ** pis
             pred_list.append(pred)
             pi_list.append(pis.T)
-        
-        theta = estimate_theta(pred_list, func, input_fs)
+        pred_list[0] = -1
+        if sum([ele < 0 for ele in pred_list]) > 0:
+            raise ValueError("Model inferred a negative parameter value - try a different model.")
+        else:
+            theta = estimate_theta(pred_list, func, input_fs)
 
     else:  # sklearn multioutput case: don't know if this works yet
         pred_list = models[0].predict([input_x])
