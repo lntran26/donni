@@ -242,8 +242,6 @@ def run_predict(args):
     '''Method to get prediction given inputs from the
     predict subcommand'''
 
-    print(sys.argv)
-
     # open input FS from file
     fs = dadi.Spectrum.from_file(args.input_fs)
     
@@ -254,7 +252,6 @@ def run_predict(args):
         ss = fs.sample_sizes
         fold = fs.folded
         username, password = args.download_mlpr
-        print(ss, fold)
         args.mlpr_dir = irods_download(username, password, args.model, ss, fold)
         # load trained MLPRs and demographic model logs; TODO: remove for cloud support
         mlpr_list, mapie, logs, param_names = _load_trained_mlpr(args)
