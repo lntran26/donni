@@ -7,10 +7,6 @@ name = "donni"
 version = "0.0.1"
 description = "Demography Optimization via Neural Network Inference"
 readme = "README.md"
-authors = [
-    { name = "Linh Tran", email = "lnt@arizona.edu" },
-    { name = "Connie Sun", email = "conniesun@arizona.edu" }
-]
 license = ""
 dependencies = [
     "dadi",
