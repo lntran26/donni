@@ -29,7 +29,7 @@ def test_usage():
 def test_usage_subcommand():
     """ Prints subcommand usage """
 
-    for subcommand in ['generate_data', 'train', 'predict', 'plot']:
+    for subcommand in ['generate_data', 'train', 'infer', 'plot']:
         for flag in ['', '-h', '--help']:
             out = getoutput(f'{PRG} {subcommand} {flag}')
             assert re.match("usage", out, re.IGNORECASE)

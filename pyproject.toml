@@ -23,6 +23,8 @@ dependencies = [
     "pytest-mypy",
     "pytest-pylint",
     "scikit-learn == 1.2.0",
+    "python-irodsclient == 1.1.6",
+    "appdirs == 1.4.4",
 ]
 
 [project.scripts]
