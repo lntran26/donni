@@ -252,8 +252,7 @@ def run_infer(args):
         fs = project_fs(fs)
         ss = fs.sample_sizes
         args.folded = fs.folded
-        username, password = args.download_mlpr
-        args.mlpr_dir = irods_download(username, password, args.model, ss, args.folded)
+        args.mlpr_dir = irods_download(args.model, ss, args.folded)
         # load trained MLPRs and demographic model logs; TODO: remove for cloud support
         mlpr_list, mapie, logs, param_names = _load_trained_mlpr(args)
     # load func
@@ -525,21 +524,7 @@ def donni_parser():
     infer_parser.add_argument('--model', type=str,
                                 required=True,
                                 help="Name of dadi demographic model")
-    # Arg for downloading MLPRs
-    if '--mlpr_dir' not in sys.argv:
-        download_req = True
-    else:
-        download_req = False
-    infer_parser.add_argument('--download_mlpr', nargs=2,
-                                default=[], action="store",
-                                required=download_req,
-                                help="Pass in your username and password for the CyVerse Data Store to download MLPR models. Required if user did not make their own MLPRs for inference.")
-    # Arg for users that made their own MLPRs
-    if '--download_mlpr' not in sys.argv:
-        path_req = True
-    else:
-        path_req = False
-    infer_parser.add_argument("--mlpr_dir", type=str, required=path_req,
+    infer_parser.add_argument("--mlpr_dir", type=str, required=False,
                                 help="Path to saved, trained MLPR(s). Required if user is not downloading MLPRs for inference.")
     infer_parser.add_argument('--folded', action="store_true",
                                       help="Whether to fold FS")
