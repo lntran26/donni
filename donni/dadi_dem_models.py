@@ -140,6 +140,7 @@ def _param_range(param_type):
                   "m": (10, 0, 1),
                   "s": (0.98, 0.01, 1),
                   "F": (1, 0, 1),
+                  "f": (1, 0, 1),
                   "misid": (1, 0, 4)}
     a, b, c = range_dict[param_type]
     return (np.random.random() * a + b) / c

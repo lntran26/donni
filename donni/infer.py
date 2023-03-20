@@ -58,6 +58,7 @@ def prep_fs_for_ml(input_fs):
 
     return input_fs
 
+
 def irods_download(dem_model, sample_sizes, fold=False, tempdir=AppDirs("donni", "Linh Tran", version=pkg_resources.get_distribution("donni").version).user_cache_dir, cleanup=False):
     # Prep naming for model configuration directory
     # If polarization is determined by a flag
