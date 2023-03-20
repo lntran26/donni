@@ -14,13 +14,26 @@ def models_list():
 
 @pytest.fixture
 def split_mig_fs():
-    p0 = [1, 1, 0.1, 0.5]
+    p0 = [1, 1, 0.1, 0.5, 0.05]
     ns = [40, 30]
     pts_l = [50 ,60 ,70]
     func = dadi.Demographics2D.split_mig
-    func_ex = dadi.Numerics.make_extrap_func(func)
+    func_misid = dadi.Numerics.make_anc_state_misid_func(func)
+    func_ex = dadi.Numerics.make_extrap_func(func_misid)
     fs = func_ex(p0, ns, pts_l)
+    print(fs)
     return fs
+
+# # This fs gets a bad result
+# @pytest.fixture
+# def split_mig_fs():
+#     p0 = [1, 1, 0.1, 0.5]
+#     ns = [40, 30]
+#     pts_l = [50 ,60 ,70]
+#     func = dadi.Demographics2D.split_mig
+#     func_ex = dadi.Numerics.make_extrap_func(func)
+#     fs = func_ex(p0, ns, pts_l)
+#     return fs
 
 
 @pytest.mark.parametrize("input_size, exp_size",
@@ -66,15 +79,17 @@ def test_project_fs_2d(input_size, exp_size):
     np.testing.assert_array_equal(projected_fs, fs.project(exp_size))
 
 @pytest.mark.skip("Test not working")
-@pytest.mark.parametrize("cis",
+@pytest.mark.parametrize("ci_list",
                         [[95],
                          [95, 80, 70]])
-def test_infer_split_mig(models_list, split_mig_fs, cis):
+def test_infer_split_mig(models_list, split_mig_fs, ci_list):
+    # split_mig_fs = dadi.Spectrum.from_file("test_data/split_mig_40_30_infer_test.fs")
+    split_mig_fs = project_fs(split_mig_fs)
     func = dadi.Demographics2D.split_mig
     logs = [True, True, False, False, False]
-    pred_list, theta, pi_list = infer(models_list, func, split_mig_fs, logs, cis=cis)
+    pred_list, theta, cis = infer(models_list, func, split_mig_fs, logs, mapie=True, cis=ci_list)
     pred_list = np.array(pred_list)
-    pi_list = np.array(pi_list)
+    cis = np.array(cis)
 
     assert pred_list.shape == (5,)
-    assert pi_list.shape == (5, len(pis), 2)
+    assert cis.shape == (5, len(ci_list), 2)
