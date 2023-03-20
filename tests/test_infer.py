@@ -66,13 +66,13 @@ def test_project_fs_2d(input_size, exp_size):
     np.testing.assert_array_equal(projected_fs, fs.project(exp_size))
 
 @pytest.mark.skip("Test not working")
-@pytest.mark.parametrize("pis",
+@pytest.mark.parametrize("cis",
                         [[95],
                          [95, 80, 70]])
-def test_infer_split_mig(models_list, split_mig_fs, pis):
+def test_infer_split_mig(models_list, split_mig_fs, cis):
     func = dadi.Demographics2D.split_mig
     logs = [True, True, False, False, False]
-    pred_list, theta, pi_list = infer(models_list, func, split_mig_fs, logs, pis=pis)
+    pred_list, theta, pi_list = infer(models_list, func, split_mig_fs, logs, cis=cis)
     pred_list = np.array(pred_list)
     pi_list = np.array(pi_list)
 

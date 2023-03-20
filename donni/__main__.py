@@ -257,23 +257,23 @@ def run_infer(args):
         mlpr_list, mapie, logs, param_names = _load_trained_mlpr(args)
     # load func
     func, _, _= get_model(args.model, args.model_file, args.folded)
-    pis_list = sorted(args.pis)
+    cis_list = sorted(args.cis)
     # infer params using input FS
-    pred, theta, pis = infer(mlpr_list, func, fs, logs, mapie=mapie, pis=pis_list)
+    pred, theta, cis = infer(mlpr_list, func, fs, logs, mapie=mapie, cis=cis_list)
     # write output
     if args.output_prefix:
         output_stream = open(args.output_prefix, 'w')
     else:
         output_stream = sys.stdout
     pred.append(theta)
-    pi_names = []
-    for i, pi in enumerate(pis_list):
+    ci_names = []
+    for i, ci in enumerate(cis_list):
         for j, param in enumerate(param_names):
-            pi_names.append(param + "_lb_" + str(pi))
-            pi_names.append(param + "_ub_" + str(pi))
-            pred.append(pis[j][i][0])
-            pred.append(pis[j][i][1])
-    print_names = param_names + ["theta"] + pi_names
+            ci_names.append(param + "_lb_" + str(ci))
+            ci_names.append(param + "_ub_" + str(ci))
+            pred.append(cis[j][i][0])
+            pred.append(cis[j][i][1])
+    print_names = param_names + ["theta"] + ci_names
     # print parameter names
     print("# ", end="", file=output_stream)
     print(*print_names, sep='\t', file=output_stream)
@@ -282,13 +282,13 @@ def run_infer(args):
     print(file=output_stream)  # newline
     # print readable intervals
     print(f"{'# CIs: ':<10}", end="", file=output_stream)
-    for pi in pis_list:
-        print(f"|----------{pi}----------|", end='\t', file=output_stream)
+    for ci in cis_list:
+        print(f"|----------{ci}----------|", end='\t', file=output_stream)
     print(file=output_stream)
     for i, param in enumerate(param_names):
         print(f"{'# ' + param + ': ':<10}", end="", file=output_stream)
-        for pi in pis[i]:
-            print(f"[{pi[0]:10.6f}, {pi[1]:10.6f}]",
+        for ci in cis[i]:
+            print(f"[{ci[0]:10.6f}, {ci[1]:10.6f}]",
                   end="\t", file=output_stream)
         print(file=output_stream)
     if args.output_prefix:

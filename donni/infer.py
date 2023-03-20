@@ -123,7 +123,7 @@ def irods_cleanup(dem_model, sample_sizes, unfold=True):
         print("Directory for model configuration not found.")
 
 
-def infer(models: list, func, input_fs, logs, mapie=True, pis=[95]):
+def infer(models: list, func, input_fs, logs, mapie=True, cis=[95]):
     '''
     Inputs:
         models: list of single mlpr object if sklearn,
@@ -133,10 +133,10 @@ def infer(models: list, func, input_fs, logs, mapie=True, pis=[95]):
         if mapie, should be passing in a list of models trained on
             individual params
         if not mapie, should be list of length 1
-        pis: list of confidence intervals to calculate
+        cis: list of confidence intervals to calculate
     Outputs:
         pred_list: if mapie, outputs list prediction for each param
-        pi_list: if mapie, outputs list of prediction intervals for each
+        ci_list: if mapie, outputs list of prediction intervals for each
             alpha for each param
     '''
 
@@ -147,21 +147,21 @@ def infer(models: list, func, input_fs, logs, mapie=True, pis=[95]):
     input_x = [np.array(fs).flatten()]
 
     # convert intervals to decimals
-    alpha = [(100 - pi) / 100 for pi in pis]
+    alpha = [(100 - ci) / 100 for ci in cis]
 
     # get prediction using trained ml models
     if mapie:
         pred_list = []
-        pi_list = []
+        ci_list = []
         for i, model in enumerate(models):
-            pred, pis = model.predict(input_x, alpha=alpha)
+            pred, cis = model.predict(input_x, alpha=alpha)
             pred = pred[0]  # one sample
-            pis = pis[0]    # one sample
+            cis = cis[0]    # one sample
             if logs[i]:
                 pred = 10 ** pred
-                pis = 10 ** pis
+                cis = 10 ** cis
             pred_list.append(pred)
-            pi_list.append(pis.T)
+            ci_list.append(cis.T)
         if sum([ele < 0 for ele in pred_list]) > 0:
             raise ValueError("Model inferred a negative parameter value - try a different model.")
         else:
@@ -169,8 +169,8 @@ def infer(models: list, func, input_fs, logs, mapie=True, pis=[95]):
 
     else:  # sklearn multioutput case: don't know if this works yet
         pred_list = models[0].predict([input_x])
-        pi_list = None
+        ci_list = None
         # log transformed prediction results
         pred_list = [10**pred_list[i] if logs[i] else pred_list[i]
                      for i in range(len(logs))]
-    return pred_list, theta, pi_list
+    return pred_list, theta, ci_list
