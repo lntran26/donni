@@ -58,7 +58,8 @@ def prep_fs_for_ml(input_fs):
 
     return input_fs
 
-def irods_download(username, password, dem_model, sample_sizes, fold=False, tempdir=AppDirs("donni", "Linh Tran", version=pkg_resources.get_distribution("donni").version).user_cache_dir, cleanup=False):
+
+def irods_download(dem_model, sample_sizes, fold=False, tempdir=AppDirs("donni", "Linh Tran", version=pkg_resources.get_distribution("donni").version).user_cache_dir, cleanup=False):
     # Prep naming for model configuration directory
     # If polarization is determined by a flag
     if fold:
@@ -70,12 +71,12 @@ def irods_download(username, password, dem_model, sample_sizes, fold=False, temp
     tempdir = tempdir + f"/{dem_model}_{polarization}_ns_{'_'.join([str(ele) for ele in sample_sizes])}"
 
     # Start irods with the Cyvers Data Store
-    session = iRODSSession(host='data.cyverse.org', port=1247, user=username, password=password, zone='iplant')
+    session = iRODSSession(host='data.cyverse.org', port=1247, user='anonymous', zone='iplant')
 
 
     # Work with a directory
     try:
-        coll = session.collections.get(f"/iplant/home/rgutenkunst/donni/{dem_model}/{polarization}/ss_{'_'.join([str(ele) for ele in sample_sizes])}/tuned_models")
+        coll = session.collections.get(f"/iplant/home/shared/donni/{dem_model}/{polarization}/ss_{'_'.join([str(ele) for ele in sample_sizes])}/v0.0.1/tuned_models")
     except exception.CollectionDoesNotExist:
         print("Files for the requested model and configuration do not exist see <blank> for avalible models and configurations")
         # Exit, might break downstream functions
