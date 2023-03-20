@@ -244,14 +244,13 @@ def run_infer(args):
 
     # open input FS from file
     fs = dadi.Spectrum.from_file(args.input_fs)
-    
+    args.folded = fs.folded
     if args.mlpr_dir != None:
         # load trained MLPRs and demographic model logs; TODO: remove for cloud support
         mlpr_list, mapie, logs, param_names = _load_trained_mlpr(args)
     else:
         fs = project_fs(fs)
         ss = fs.sample_sizes
-        args.folded = fs.folded
         args.mlpr_dir = irods_download(args.model, ss, args.folded)
         # load trained MLPRs and demographic model logs; TODO: remove for cloud support
         mlpr_list, mapie, logs, param_names = _load_trained_mlpr(args)
