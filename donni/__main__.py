@@ -526,8 +526,6 @@ def donni_parser():
                                 help="Name of dadi demographic model")
     infer_parser.add_argument("--mlpr_dir", type=str, required=False,
                                 help="Path to saved, trained MLPR(s). Required if user is not downloading MLPRs for inference.")
-    infer_parser.add_argument('--folded', action="store_true",
-                                      help="Whether to fold FS")
     # optional
     infer_parser.add_argument("--pis", type=_pos_int,
                                 nargs='+', default=[95],
