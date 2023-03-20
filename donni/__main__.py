@@ -527,10 +527,10 @@ def donni_parser():
     infer_parser.add_argument("--mlpr_dir", type=str, required=False,
                                 help="Path to saved, trained MLPR(s). Required if user is not downloading MLPRs for inference.")
     # optional
-    infer_parser.add_argument("--pis", type=_pos_int,
+    infer_parser.add_argument("--cis", type=_pos_int,
                                 nargs='+', default=[95],
                                 help="Optional list of values for\
-                                    inference intervals,\
+                                    confidence intervals,\
                                     e.g., [80 90 95]; default [95]")
     infer_parser.add_argument('--model_file', type=str,
                                 help="Name of file containing custom dadi\
