@@ -58,7 +58,8 @@ def prep_fs_for_ml(input_fs):
 
     return input_fs
 
-def irods_download(username, password, dem_model, sample_sizes, fold=False, tempdir=AppDirs("donni", "Linh Tran", version=pkg_resources.get_distribution("donni").version).user_cache_dir, cleanup=False):
+
+def irods_download(dem_model, sample_sizes, fold=False, tempdir=AppDirs("donni", "Linh Tran", version=pkg_resources.get_distribution("donni").version).user_cache_dir, cleanup=False):
     # Prep naming for model configuration directory
     # If polarization is determined by a flag
     if fold:
@@ -70,12 +71,12 @@ def irods_download(username, password, dem_model, sample_sizes, fold=False, temp
     tempdir = tempdir + f"/{dem_model}_{polarization}_ns_{'_'.join([str(ele) for ele in sample_sizes])}"
 
     # Start irods with the Cyvers Data Store
-    session = iRODSSession(host='data.cyverse.org', port=1247, user=username, password=password, zone='iplant')
+    session = iRODSSession(host='data.cyverse.org', port=1247, user='anonymous', zone='iplant')
 
 
     # Work with a directory
     try:
-        coll = session.collections.get(f"/iplant/home/rgutenkunst/donni/{dem_model}/{polarization}/ss_{'_'.join([str(ele) for ele in sample_sizes])}/tuned_models")
+        coll = session.collections.get(f"/iplant/home/shared/donni/{dem_model}/{polarization}/ss_{'_'.join([str(ele) for ele in sample_sizes])}/v0.0.1/tuned_models")
     except exception.CollectionDoesNotExist:
         print("Files for the requested model and configuration do not exist see <blank> for avalible models and configurations")
         # Exit, might break downstream functions
@@ -122,7 +123,7 @@ def irods_cleanup(dem_model, sample_sizes, unfold=True):
         print("Directory for model configuration not found.")
 
 
-def infer(models: list, func, input_fs, logs, mapie=True, pis=[95]):
+def infer(models: list, func, input_fs, logs, mapie=True, cis=[95]):
     '''
     Inputs:
         models: list of single mlpr object if sklearn,
@@ -132,10 +133,10 @@ def infer(models: list, func, input_fs, logs, mapie=True, pis=[95]):
         if mapie, should be passing in a list of models trained on
             individual params
         if not mapie, should be list of length 1
-        pis: list of confidence intervals to calculate
+        cis: list of confidence intervals to calculate
     Outputs:
         pred_list: if mapie, outputs list prediction for each param
-        pi_list: if mapie, outputs list of prediction intervals for each
+        ci_list: if mapie, outputs list of prediction intervals for each
             alpha for each param
     '''
 
@@ -146,21 +147,21 @@ def infer(models: list, func, input_fs, logs, mapie=True, pis=[95]):
     input_x = [np.array(fs).flatten()]
 
     # convert intervals to decimals
-    alpha = [(100 - pi) / 100 for pi in pis]
+    alpha = [(100 - ci) / 100 for ci in cis]
 
     # get prediction using trained ml models
     if mapie:
         pred_list = []
-        pi_list = []
+        ci_list = []
         for i, model in enumerate(models):
-            pred, pis = model.predict(input_x, alpha=alpha)
+            pred, cis = model.predict(input_x, alpha=alpha)
             pred = pred[0]  # one sample
-            pis = pis[0]    # one sample
+            cis = cis[0]    # one sample
             if logs[i]:
                 pred = 10 ** pred
-                pis = 10 ** pis
+                cis = 10 ** cis
             pred_list.append(pred)
-            pi_list.append(pis.T)
+            ci_list.append(cis.T)
         if sum([ele < 0 for ele in pred_list]) > 0:
             raise ValueError("Model inferred a negative parameter value - try a different model.")
         else:
@@ -168,8 +169,8 @@ def infer(models: list, func, input_fs, logs, mapie=True, pis=[95]):
 
     else:  # sklearn multioutput case: don't know if this works yet
         pred_list = models[0].predict([input_x])
-        pi_list = None
+        ci_list = None
         # log transformed prediction results
         pred_list = [10**pred_list[i] if logs[i] else pred_list[i]
                      for i in range(len(logs))]
-    return pred_list, theta, pi_list
+    return pred_list, theta, ci_list

@@ -244,37 +244,35 @@ def run_infer(args):
 
     # open input FS from file
     fs = dadi.Spectrum.from_file(args.input_fs)
-    
+    args.folded = fs.folded
     if args.mlpr_dir != None:
         # load trained MLPRs and demographic model logs; TODO: remove for cloud support
         mlpr_list, mapie, logs, param_names = _load_trained_mlpr(args)
     else:
         fs = project_fs(fs)
         ss = fs.sample_sizes
-        args.folded = fs.folded
-        username, password = args.download_mlpr
-        args.mlpr_dir = irods_download(username, password, args.model, ss, args.folded)
+        args.mlpr_dir = irods_download(args.model, ss, args.folded)
         # load trained MLPRs and demographic model logs; TODO: remove for cloud support
         mlpr_list, mapie, logs, param_names = _load_trained_mlpr(args)
     # load func
     func, _, _= get_model(args.model, args.model_file, args.folded)
-    pis_list = sorted(args.pis)
+    cis_list = sorted(args.cis)
     # infer params using input FS
-    pred, theta, pis = infer(mlpr_list, func, fs, logs, mapie=mapie, pis=pis_list)
+    pred, theta, cis = infer(mlpr_list, func, fs, logs, mapie=mapie, cis=cis_list)
     # write output
     if args.output_prefix:
         output_stream = open(args.output_prefix, 'w')
     else:
         output_stream = sys.stdout
     pred.append(theta)
-    pi_names = []
-    for i, pi in enumerate(pis_list):
+    ci_names = []
+    for i, ci in enumerate(cis_list):
         for j, param in enumerate(param_names):
-            pi_names.append(param + "_lb_" + str(pi))
-            pi_names.append(param + "_ub_" + str(pi))
-            pred.append(pis[j][i][0])
-            pred.append(pis[j][i][1])
-    print_names = param_names + ["theta"] + pi_names
+            ci_names.append(param + "_lb_" + str(ci))
+            ci_names.append(param + "_ub_" + str(ci))
+            pred.append(cis[j][i][0])
+            pred.append(cis[j][i][1])
+    print_names = param_names + ["theta"] + ci_names
     # print parameter names
     print("# ", end="", file=output_stream)
     print(*print_names, sep='\t', file=output_stream)
@@ -283,13 +281,13 @@ def run_infer(args):
     print(file=output_stream)  # newline
     # print readable intervals
     print(f"{'# CIs: ':<10}", end="", file=output_stream)
-    for pi in pis_list:
-        print(f"|----------{pi}----------|", end='\t', file=output_stream)
+    for ci in cis_list:
+        print(f"|----------{ci}----------|", end='\t', file=output_stream)
     print(file=output_stream)
     for i, param in enumerate(param_names):
         print(f"{'# ' + param + ': ':<10}", end="", file=output_stream)
-        for pi in pis[i]:
-            print(f"[{pi[0]:10.6f}, {pi[1]:10.6f}]",
+        for ci in cis[i]:
+            print(f"[{ci[0]:10.6f}, {ci[1]:10.6f}]",
                   end="\t", file=output_stream)
         print(file=output_stream)
     if args.output_prefix:
@@ -525,29 +523,13 @@ def donni_parser():
     infer_parser.add_argument('--model', type=str,
                                 required=True,
                                 help="Name of dadi demographic model")
-    # Arg for downloading MLPRs
-    if '--mlpr_dir' not in sys.argv:
-        download_req = True
-    else:
-        download_req = False
-    infer_parser.add_argument('--download_mlpr', nargs=2,
-                                default=[], action="store",
-                                required=download_req,
-                                help="Pass in your username and password for the CyVerse Data Store to download MLPR models. Required if user did not make their own MLPRs for inference.")
-    # Arg for users that made their own MLPRs
-    if '--download_mlpr' not in sys.argv:
-        path_req = True
-    else:
-        path_req = False
-    infer_parser.add_argument("--mlpr_dir", type=str, required=path_req,
+    infer_parser.add_argument("--mlpr_dir", type=str, required=False,
                                 help="Path to saved, trained MLPR(s). Required if user is not downloading MLPRs for inference.")
-    infer_parser.add_argument('--folded', action="store_true",
-                                      help="Whether to fold FS")
     # optional
-    infer_parser.add_argument("--pis", type=_pos_int,
+    infer_parser.add_argument("--cis", type=_pos_int,
                                 nargs='+', default=[95],
                                 help="Optional list of values for\
-                                    inference intervals,\
+                                    confidence intervals,\
                                     e.g., [80 90 95]; default [95]")
     infer_parser.add_argument('--model_file', type=str,
                                 help="Name of file containing custom dadi\
