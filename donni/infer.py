@@ -81,7 +81,9 @@ def irods_download(dem_model, sample_sizes, fold, tempdir):
     try:
         coll = session.collections.get(f"/iplant/home/shared/donni/{dem_model}/{polarization}/ss_{'_'.join([str(ele) for ele in sample_sizes])}/v0.0.1/tuned_models")
     except exception.CollectionDoesNotExist:
-        print("Files for the requested model and configuration do not exist.")
+        print("The requested demographic model does not exist on the CyVerse Data Store.")
+        print("Users can check for available models at https://de.cyverse.org/data/ds/iplant/home/shared/donni")
+        print("If the user has generated their own trained MLPRs, use --mlpr_dir")
         # Exit, might break downstream functions
         # Will error if not running as a script
         from sys import exit
