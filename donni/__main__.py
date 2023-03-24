@@ -251,7 +251,7 @@ def run_infer(args):
     else:
         fs = project_fs(fs)
         ss = fs.sample_sizes
-        args.mlpr_dir = irods_download(args.model, ss, args.folded)
+        args.mlpr_dir = irods_download(args.model, ss, args.folded, args.download_dir)
         # load trained MLPRs and demographic model logs; TODO: remove for cloud support
         mlpr_list, mapie, logs, param_names = _load_trained_mlpr(args)
     # load func
@@ -523,6 +523,8 @@ def donni_parser():
     infer_parser.add_argument('--model', type=str,
                                 required=True,
                                 help="Name of dadi demographic model")
+    infer_parser.add_argument("--download_dir", type=str, required=False,
+                                help="Path to saved, trained MLPR(s) downloaded from the University of Arizona CyVerse Data Store.")
     infer_parser.add_argument("--mlpr_dir", type=str, required=False,
                                 help="Path to saved, trained MLPR(s). Required if user is not downloading MLPRs for inference.")
     # optional
