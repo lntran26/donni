@@ -236,10 +236,10 @@ def plot(models: list, X_test, y_test, X_input, y_label, results_prefix,
                     rerun_count += 1
                     model = retrain(model, i, X_input, y_label[i], rerun_count,
                                     'rho is nan', mlpr_dir, results_prefix)
-                elif rho <= 0.05:
+                elif rho <= 0.2:
                     rerun_count += 1
                     model = retrain(model, i, X_input, y_label[i], rerun_count,
-                                    'rho <= 0.05', mlpr_dir, results_prefix)
+                                    'rho <= 0.2', mlpr_dir, results_prefix)
                 elif (log and max(pred) > max(true)*1e4 or
                       log and min(pred) < min(true)/1e4):
                     rerun_count += 1
