@@ -378,7 +378,7 @@ def donni_parser():
     # subcommand for generate_data
     generate_data_parser = subparsers.add_parser(
         'generate_data',
-        help='Generate frequency spectra datasets')
+        help='Simulate allele frequency data from demographic history models')
     generate_data_parser.set_defaults(func=run_generate_data)
 
     generate_data_parser.add_argument('--model', type=str,
@@ -447,7 +447,7 @@ def donni_parser():
 
     # subcommand for train
     train_parser = subparsers.add_parser(
-        "train", help='Train MLPR with frequency spectra data')
+        "train", help='Train MLPR with simulated allele frequency data')
     train_parser.set_defaults(func=run_train)
     train_parser.add_argument("--data_file", type=str, required=True,
                               help="Path to input training data")
@@ -512,8 +512,8 @@ def donni_parser():
 
     # subcommand for infer
     infer_parser = subparsers.add_parser(
-        "infer", help='Use trained MLPR to infer demographic parameters\
-            from frequency spectra data')
+        "infer", help='Infer demographic history parameters\
+                        from allele frequency with trained MLPRs')
     infer_parser.set_defaults(func=run_infer)
     # need to handle dir for multiple models for mapie
     # single dir for sklearn models
@@ -540,7 +540,7 @@ def donni_parser():
 
     # subcommand for plot
     plot_parser = subparsers.add_parser(
-        "plot", help='Plot prediction results and statistics')
+        "plot", help='Plot trained MLPRs inference accuracy and CI coverage')
     plot_parser.set_defaults(func=run_plot)
 
     plot_parser.add_argument("--mlpr_dir", type=str, required=True,

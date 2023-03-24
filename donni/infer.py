@@ -78,7 +78,7 @@ def irods_download(dem_model, sample_sizes, fold=False, tempdir=AppDirs("donni",
     try:
         coll = session.collections.get(f"/iplant/home/shared/donni/{dem_model}/{polarization}/ss_{'_'.join([str(ele) for ele in sample_sizes])}/v0.0.1/tuned_models")
     except exception.CollectionDoesNotExist:
-        print("Files for the requested model and configuration do not exist see <blank> for avalible models and configurations")
+        print("Files for the requested model and configuration do not exist.")
         # Exit, might break downstream functions
         # Will error if not running as a script
         from sys import exit
