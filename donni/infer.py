@@ -59,10 +59,10 @@ def prep_fs_for_ml(input_fs):
     return input_fs
 
 
-def irods_download(dem_model, sample_sizes, fold, tempdir):
+def irods_download(dem_model, sample_sizes, fold, datadir):
     # Prep naming for model configuration directory
-    if tempdir == None:
-        tempdir=AppDirs("donni", "Linh Tran", version=pkg_resources.get_distribution("donni").version).user_cache_dir
+    if datadir == None:
+        datadir=AppDirs("donni", "Linh Tran", version=pkg_resources.get_distribution("donni").version).user_cache_dir
 
     # If polarization is determined by a flag
     if fold:
@@ -71,7 +71,8 @@ def irods_download(dem_model, sample_sizes, fold, tempdir):
         polarization = 'unfolded'
 
     # Name model configuration directory
-    tempdir = tempdir + f"/{dem_model}_{polarization}_ns_{'_'.join([str(ele) for ele in sample_sizes])}"
+    datadir = datadir + f"/{dem_model}_{polarization}_ns_{'_'.join([str(ele) for ele in sample_sizes])}"
+    plotdir = f"{datadir}_QC"
 
     # Start irods with the Cyvers Data Store
     session = iRODSSession(host='data.cyverse.org', port=1247, user='anonymous', zone='iplant')
@@ -79,7 +80,8 @@ def irods_download(dem_model, sample_sizes, fold, tempdir):
 
     # Work with a directory
     try:
-        coll = session.collections.get(f"/iplant/home/shared/donni/{dem_model}/{polarization}/ss_{'_'.join([str(ele) for ele in sample_sizes])}/v0.0.1/tuned_models")
+        tuned_models = session.collections.get(f"/iplant/home/shared/donni/{dem_model}/{polarization}/ss_{'_'.join([str(ele) for ele in sample_sizes])}/v0.0.1/tuned_models")
+        plots = session.collections.get(f"/iplant/home/shared/donni/{dem_model}/{polarization}/ss_{'_'.join([str(ele) for ele in sample_sizes])}/v0.0.1/plots")
     except exception.CollectionDoesNotExist:
         print("The requested demographic model does not exist on the CyVerse Data Store.")
         print("Users can check for available models at https://de.cyverse.org/data/ds/iplant/home/shared/donni")
@@ -90,21 +92,23 @@ def irods_download(dem_model, sample_sizes, fold, tempdir):
         exit()
 
     # Make model data directory
-    try:
-        os.makedirs(tempdir)
-    except:
-        pass
+    os.makedirs(datadir, exist_ok=True)
+    os.makedirs(plotdir, exist_ok=True)
 
     try:
         # Download files in directory
-        for do in coll.data_objects:
-            session.data_objects.get(do.path, tempdir, force=True)
-            print(f"Downloading: {do.path} to {tempdir}")
+        for model in tuned_models.data_objects:
+            print(f"Downloading model: {model.path} to {datadir}")
+            session.data_objects.get(model.path, datadir, force=True)
+        for qc in plots.data_objects:
+            print(f"Downloading QC: {qc.path} to {plotdir}")
+            session.data_objects.get(qc.path, plotdir, force=True)
     except exception.OVERWRITE_WITHOUT_FORCE_FLAG:
         # If we have users name a folder rather than making it automaticly named based on their requested model and configuration:
-        print(f"Files for the requested model and configuration have already been downloaded to the {tempdir} folder.\nIf you want to redownload delete the directory")
-    print(f"Finished downloading files to {tempdir} folder")
-    return tempdir
+        print(f"Files for the requested model and configuration have already been downloaded to the {datadir} folder.\nIf you want to redownload delete the directory")
+    print(f"Finished downloading files to {datadir} folder")
+    print(f"Check {plotdir} quality of model")
+    return datadir
 
 
 def irods_cleanup(dem_model, sample_sizes, unfold=True):
@@ -117,12 +121,12 @@ def irods_cleanup(dem_model, sample_sizes, unfold=True):
         polarization = 'folded'
 
     # Name model configuration directory
-    tempdir = tempdir + f"/{dem_model}_{polarization}_ns_{'_'.join([str(ele) for ele in sample_sizes])}"
+    datadir = datadir + f"/{dem_model}_{polarization}_ns_{'_'.join([str(ele) for ele in sample_sizes])}"
 
     # Remove downloaded files
     # Seperate into a cleanup function for actual donni code?
     try:
-        shutil.rmtree(tempdir)
+        shutil.rmtree(datadir)
     except FileNotFoundError:
         print("Directory for model configuration not found.")
 
