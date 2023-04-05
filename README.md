@@ -60,11 +60,21 @@ $ donni infer --input_fs examples/data/1d_ns20_sfs.fs --model three_epoch
 This command will automatically download the relevant trained MLPRs used for inference to the user's home directory and the download location will be printed to the command line. The file size of one trained MLPR varies from a few Kb to ~100 Mb depending on the sample size of the input data and the number of populations in the demographic model. The number of trained MLPRs downloaded will correspond to the number of parameters in the requested demographic model (i.e. one trained MLPR per parameter.)
 
 ```console
-Downloading: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.0.1/tuned_models/param_01_predictor to /Users/username/Library/Caches/donni/0.0.1/three_epoch_unfolded_ns_20
-Downloading: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.0.1/tuned_models/param_02_predictor to /Users/username/Library/Caches/donni/0.0.1/three_epoch_unfolded_ns_20
-Downloading: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.0.1/tuned_models/param_03_predictor to /Users/username/Library/Caches/donni/0.0.1/three_epoch_unfolded_ns_20
-Downloading: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.0.1/tuned_models/param_04_predictor to /Users/username/Library/Caches/donni/0.0.1/three_epoch_unfolded_ns_20
-Downloading: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.0.1/tuned_models/param_05_predictor to /Users/username/Library/Caches/donni/0.0.1/three_epoch_unfolded_ns_20
+Downloading model: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.0.1/tuned_models/param_01_predictor to /Users/username/Library/Caches/donni/0.0.1/three_epoch_unfolded_ns_20
+Downloading model: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.0.1/tuned_models/param_02_predictor to /Users/username/Library/Caches/donni/0.0.1/three_epoch_unfolded_ns_20
+Downloading model: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.0.1/tuned_models/param_03_predictor to /Users/username/Library/Caches/donni/0.0.1/three_epoch_unfolded_ns_20
+Downloading model: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.0.1/tuned_models/param_04_predictor to /Users/username/Library/Caches/donni/0.0.1/three_epoch_unfolded_ns_20
+Downloading model: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.0.1/tuned_models/param_05_predictor to /Users/username/Library/Caches/donni/0.0.1/three_epoch_unfolded_ns_20
+Downloading QC: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.0.1/plots/theta_1000_coverage.png to /Users/username/Library/Caches/donni/0.0.1/three_epoch_unfolded_ns_20_QC
+Downloading QC: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.0.1/plots/theta_1000_param_01_accuracy.png to /Users/username/Library/Caches/donni/0.0.1/three_epoch_unfolded_ns_20_QC
+Downloading QC: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.0.1/plots/theta_1000_param_02_accuracy.png to /Users/username/Library/Caches/donni/0.0.1/three_epoch_unfolded_ns_20_QC
+Downloading QC: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.0.1/plots/theta_1000_param_03_accuracy.png to /Users/username/Library/Caches/donni/0.0.1/three_epoch_unfolded_ns_20_QC
+Downloading QC: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.0.1/plots/theta_1000_param_04_accuracy.png to /Users/username/Library/Caches/donni/0.0.1/three_epoch_unfolded_ns_20_QC
+Downloading QC: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.0.1/plots/theta_1000_param_05_accuracy.png to /Users/username/Library/Caches/donni/0.0.1/three_epoch_unfolded_ns_20_QC
+Downloading QC: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.0.1/plots/theta_1000_QC.txt to /Users/username/Library/Caches/donni/0.0.1/three_epoch_unfolded_ns_20_QC
+
+If you want to redownload delete the directory
+Check /Users/username/Library/Caches/donni/0.0.1/three_epoch_unfolded_ns_20_QC for the quality of MLPR models
 ```
 
 Once downloaded, donni will use the trained MLPRs to infer the demographic parameter values and confidence intervals (default: 95% CI) for the user's input allele frequency data.
