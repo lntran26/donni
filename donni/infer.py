@@ -105,9 +105,9 @@ def irods_download(dem_model, sample_sizes, fold, datadir):
             session.data_objects.get(qc.path, plotdir, force=True)
     except exception.OVERWRITE_WITHOUT_FORCE_FLAG:
         # If we have users name a folder rather than making it automaticly named based on their requested model and configuration:
-        print(f"Files for the requested model and configuration have already been downloaded to the {datadir} folder.\nIf you want to redownload delete the directory")
+        print(f"\nFiles for the requested model and configuration have already been downloaded to the {datadir} folder.\nIf you want to redownload delete the directory")
     print(f"Finished downloading files to {datadir} folder")
-    print(f"Check {plotdir} quality of model")
+    print(f"Check {plotdir} for the quality of MLPR models")
     return datadir
 
 

@@ -72,6 +72,10 @@ Downloading QC: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.0.1/plot
 Downloading QC: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.0.1/plots/theta_1000_param_04_accuracy.png to /Users/username/Library/Caches/donni/0.0.1/three_epoch_unfolded_ns_20_QC
 Downloading QC: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.0.1/plots/theta_1000_param_05_accuracy.png to /Users/username/Library/Caches/donni/0.0.1/three_epoch_unfolded_ns_20_QC
 Downloading QC: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.0.1/plots/theta_1000_QC.txt to /Users/username/Library/Caches/donni/0.0.1/three_epoch_unfolded_ns_20_QC
+
+Files for the requested model and configuration have already been downloaded to the /Users/username/Library/Caches/donni/0.0.1/three_epoch_unfolded_ns_20 folder.
+If you want to redownload delete the directory
+Check /Users/username/Library/Caches/donni/0.0.1/three_epoch_unfolded_ns_20_QC for the quality of MLPR models
 ```
 
 Once downloaded, donni will use the trained MLPRs to infer the demographic parameter values and confidence intervals (default: 95% CI) for the user's input allele frequency data.
