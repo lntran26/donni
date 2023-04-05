@@ -400,7 +400,7 @@ def sec_contact_asym_mig_three_epoch(params, ns, pts):
     T2: The scaled time between the secondary contact and third epoch.
     T3 (not used): The scaled time between the isolation and present.
     """
-    nu1, nu2, m12, m21, T1, T2, _ = params
+    nu1, nu2, m12, m21, T1, T2 = params
     xx = Numerics.default_grid(pts)
     phi = PhiManip.phi_1D(xx)
     phi = PhiManip.phi_1D_to_2D(xx, phi)
@@ -409,7 +409,7 @@ def sec_contact_asym_mig_three_epoch(params, ns, pts):
     phi = Integration.two_pops(phi, xx, T2, nu1, nu2, m12=0, m21=0)
     fs = Spectrum.from_phi(phi, ns, (xx, xx))
     return fs
-sec_contact_asym_mig_three_epoch.__param_names__ = ['nu1', 'nu2', 'm12', 'm21', 'T1', 'T2', '_']
+sec_contact_asym_mig_three_epoch.__param_names__ = ['nu1', 'nu2', 'm12', 'm21', 'T1', 'T2']
 
 
 def sec_contact_sym_mig_size_three_epoch(params, ns, pts):
