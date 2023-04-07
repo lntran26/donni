@@ -4,12 +4,14 @@ import pytest
 import os
 import glob
 import numpy as np
-from donni.infer import project_fs, infer
+from donni.infer import *
 
 
 @pytest.fixture
 def models_list():
-    return [pickle.load(open(filename,'rb')) for filename in glob.glob("test_models/split_mig_tuned_20_20/param_*_predictor")]
+    mlprs = glob.glob("test_models/split_mig_tuned_20_20/param_*_predictor")
+    mlprs.sort()
+    return [pickle.load(open(filename,'rb')) for filename in mlprs]
 
 
 @pytest.fixture
@@ -78,7 +80,7 @@ def test_project_fs_2d(input_size, exp_size):
     projected_fs = project_fs(fs)
     np.testing.assert_array_equal(projected_fs, fs.project(exp_size))
 
-@pytest.mark.skip("Test not working")
+# @pytest.mark.skip("Test not working")
 @pytest.mark.parametrize("ci_list",
                         [[95],
                          [95, 80, 70]])
@@ -87,9 +89,21 @@ def test_infer_split_mig(models_list, split_mig_fs, ci_list):
     split_mig_fs = project_fs(split_mig_fs)
     func = dadi.Demographics2D.split_mig
     logs = [True, True, False, False, False]
+    print(models_list, func, split_mig_fs, logs)
     pred_list, theta, cis = infer(models_list, func, split_mig_fs, logs, mapie=True, cis=ci_list)
     pred_list = np.array(pred_list)
     cis = np.array(cis)
 
     assert pred_list.shape == (5,)
     assert cis.shape == (5, len(ci_list), 2)
+
+
+def test_irods_download():
+    dem_model = "two_epoch"
+    sample_sizes = [10]
+    fold = False
+    datadir = "temp/"
+
+
+
+
