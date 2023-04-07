@@ -183,7 +183,7 @@ donni can also generate bootstraped AFS data with the `--bootstrap` argument. Fo
 By default, donni will use all available CPUs to simulate the AFS in parallel. Users can control the number of CPUs used with `--n_cpu`.
 
 ## Generating hyperparmeters for tuning:
-To prepare the next step (tuning), we also generate a dictionary file containing the hyperparmeters for the MLPRs that will be used during automatic hyperparemeter tuning. Since the number of hidden layers and neurons in the MLPR depend on `--sample_sizes`, we also generate the appropriate hyperparmeters in this step. `donni generate_data` has three arguments for this purpose: `--generate_tune_hyperparam`, `--generate_tune_hyperparam_only` (no AFS simulation), and `--hyperparam_outfile`. An example command for generating the hyperparmeters dictionary would be:
+To prepare for the next step (tuning), we also generate a dictionary file containing the hyperparmeters for the MLPRs that will be used during automatic hyperparemeter tuning. Since the number of hidden layers and neurons in the MLPR depend on `--sample_sizes`, we also generate the appropriate hyperparmeters in this step. `donni generate_data` has three arguments for this purpose: `--generate_tune_hyperparam`, `--generate_tune_hyperparam_only` (no AFS simulation), and `--hyperparam_outfile`. An example command for generating the hyperparmeters dictionary would be:
 ```console
 --generate_tune_hyperparam --hyperparam_outfile data/param_dict_tune
 ```
@@ -216,10 +216,52 @@ $ donni generate_data --model split_mig --n_samples 100 --sample_sizes 160 160 \
 ```
 
 ## Hyperparameter tuning and training the MLPR
-​
+​After we have generated the data for training and testing, we will now use these data to tune and train the MLPRs for each demographic model parameter. This can be done using the donni subcommand `train` with the two required flags: `--data_file` pointing to the training data output from the previous step, and `--mlpr_dir` indicating the path the save the output trained MLPR.
+
+```console
+$ donni train --data_file data/train_5000 --mlpr_dir tuned_models
+```
+
+While it is possible to train MLPR using the default set of hyperparameters, we recommend users to first run the tuning procedure to find the most optimized set of hyperparameters. This can be done by adding the argument `--tune` and input the dictionary file containing the hyperparmeters generated above with the argument `--hyperparam`.
+
+```console
+$ donni train --data_file data/train_5000 --mlpr_dir tuned_models --tune \
+--hyperparam data/param_dict_tune
+```
+The above command will run automatic hyperparameter optimization to retrieve the best hyperparameter set AND train the MLPR using this set to output trained MLPRs. If only tuning and no training is desired, use argument `--tune_only` instead of `--tune`.
+
+The optional arguments `--max_iter`, `--eta`, `--cv` can be used to customize the tuning procedure. The default settings are 
+```console
+$ --max_iter 243 --eta 3 --cv 5
+```
+
+### Other optional arguments:
+For descriptions of other optional arguments, use:
+```console
+$ donni train -h
+```
 
 ## Plotting trained MLPRs accuracy and confidence interval coverage
+Finally, we can use the simulated test data to measure the accuracy performance of the trained MLPRs with the subcommand `plot`. The two required arguments are `--mlpr_dir` and `--test_dict` to indicate the path to the trained MLPRs and test data, respectively.
 
+Because training can sometimes fail due to the stochasticity of the training optimization algorithm, this step also acts as a quality control step where training will be automatically repeated for a demographic parameter if its accuracy score rho is <= 0.2. The retraining is limited to a maximum of 10 reruns. Because of this, the path to the training data is also required and should be provided using the argument `--train_dict`.
+
+Other required arguments include `--results_dir` to indicate the path to save the output plots to, `--plot_prefix` for the prefix of each plot's filename, and `--model` for the demographic model used (required to obtain the demographic model parameters).
+
+The optional arguments `--theta` can be used to indicate the noise level of the test set (used for plot labeling purpose only) and `--coverage` will output the confidence interval coverage plot in addition to the accuracy plots for each demographic history model parameter.
+
+Below is an example of a full command for a sample size of the split migration demographic model:
+```console
+$ donni plot --mlpr_dir tuned_models --test_dict data/test_1000_theta_1000 \
+--train_dict data/train_5000 --results_dir plots --plot_prefix theta_1000 \
+--model split_mig --theta 1000 --coverage
+```
+
+### Other optional arguments:
+For descriptions of other optional arguments, use:
+```console
+$ donni plot -h
+```
 
 # Requirements
 1. Python 3.9+
