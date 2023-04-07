@@ -248,10 +248,11 @@ def run_infer(args):
     if args.mlpr_dir != None:
         # load trained MLPRs and demographic model logs; TODO: remove for cloud support
         mlpr_list, mapie, logs, param_names = _load_trained_mlpr(args)
+        qc_dir = False
     else:
         fs = project_fs(fs)
         ss = fs.sample_sizes
-        args.mlpr_dir = irods_download(args.model, ss, args.folded, args.download_dir)
+        args.mlpr_dir, qc_dir = irods_download(args.model, ss, args.folded, args.download_dir)
         # load trained MLPRs and demographic model logs; TODO: remove for cloud support
         mlpr_list, mapie, logs, param_names = _load_trained_mlpr(args)
     # load func
@@ -292,6 +293,8 @@ def run_infer(args):
         print(file=output_stream)
     if args.output_prefix:
         output_stream.close()
+    if qc_dir != False:
+        print(f"\nCheck the plots in {qc_dir} for performance of download MLPR models.")
 
 
 def run_plot(args):

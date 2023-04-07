@@ -11,12 +11,14 @@ import irods.exception as exception
 from appdirs import AppDirs
 import os, shutil, pkg_resources
 
+
 def get_supported_ss(dims):
     # can update these lists as needed (or pull from cloud)
     if dims < 3:
         return [10, 20, 40, 80, 160]
     else:
         return [10, 20, 40]
+
 
 def project_fs(input_fs):
     bounds = input_fs.shape
@@ -107,8 +109,7 @@ def irods_download(dem_model, sample_sizes, fold, datadir):
         # If we have users name a folder rather than making it automaticly named based on their requested model and configuration:
         print(f"Files for the requested model and configuration have already been downloaded to the {datadir} folder.\nIf you want to redownload delete the directory")
     print(f"\nFinished downloading files to {datadir} folder")
-    print(f"Check {plotdir} for the quality of MLPR models")
-    return datadir
+    return datadir, plotdir
 
 
 def irods_cleanup(dem_model, sample_sizes, unfold=True):
