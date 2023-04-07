@@ -80,7 +80,7 @@ def test_project_fs_2d(input_size, exp_size):
     projected_fs = project_fs(fs)
     np.testing.assert_array_equal(projected_fs, fs.project(exp_size))
 
-# @pytest.mark.skip("Test not working")
+
 @pytest.mark.parametrize("ci_list",
                         [[95],
                          [95, 80, 70]])
@@ -99,10 +99,22 @@ def test_infer_split_mig(models_list, split_mig_fs, ci_list):
 
 
 def test_irods_download():
+    import shutil
+    try:
+        shutil.rmtree("temp")
+    except FileNotFoundError:
+        pass
     dem_model = "two_epoch"
     sample_sizes = [10]
-    fold = False
-    datadir = "temp/"
+    fold = True
+    datadir = "temp"
+    irods_download(dem_model, sample_sizes, fold, datadir)
+    assert os.path.isfile("temp/two_epoch_folded_ns_10/param_01_predictor")
+    assert os.path.isfile("temp/two_epoch_folded_ns_10/param_02_predictor")
+    assert os.path.isfile("temp/two_epoch_folded_ns_10_QC/theta_1000_coverage.png")
+    assert os.path.isfile("temp/two_epoch_folded_ns_10_QC/theta_1000_param_01_accuracy.png")
+    assert os.path.isfile("temp/two_epoch_folded_ns_10_QC/theta_1000_param_02_accuracy.png")
+    shutil.rmtree("temp")
 
 
 
