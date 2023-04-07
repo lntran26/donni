@@ -26,17 +26,6 @@ def split_mig_fs():
     print(fs)
     return fs
 
-# # This fs gets a bad result
-# @pytest.fixture
-# def split_mig_fs():
-#     p0 = [1, 1, 0.1, 0.5]
-#     ns = [40, 30]
-#     pts_l = [50 ,60 ,70]
-#     func = dadi.Demographics2D.split_mig
-#     func_ex = dadi.Numerics.make_extrap_func(func)
-#     fs = func_ex(p0, ns, pts_l)
-#     return fs
-
 
 @pytest.mark.parametrize("input_size, exp_size",
                         [((93,), (81,)),
@@ -98,7 +87,7 @@ def test_infer_split_mig(models_list, split_mig_fs, ci_list):
     assert cis.shape == (5, len(ci_list), 2)
 
 
-def test_irods_download():
+def test_irods_download(capfd):
     import shutil
     try:
         shutil.rmtree("temp")
@@ -114,6 +103,11 @@ def test_irods_download():
     assert os.path.isfile("temp/two_epoch_folded_ns_10_QC/theta_1000_coverage.png")
     assert os.path.isfile("temp/two_epoch_folded_ns_10_QC/theta_1000_param_01_accuracy.png")
     assert os.path.isfile("temp/two_epoch_folded_ns_10_QC/theta_1000_param_02_accuracy.png")
+
+    irods_download(dem_model, sample_sizes, fold, datadir)
+    out, err = capfd.readouterr()
+    assert '\n'.join([out.split('\n')[-6],out.split('\n')[-5]]) == f"Files for the requested model and configuration have already been downloaded to the temp/two_epoch_folded_ns_10 folder.\nIf you want to redownload delete the directory"
+
     shutil.rmtree("temp")
 
 
