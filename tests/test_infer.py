@@ -4,12 +4,14 @@ import pytest
 import os
 import glob
 import numpy as np
-from donni.infer import project_fs, infer
+from donni.infer import *
 
 
 @pytest.fixture
 def models_list():
-    return [pickle.load(open(filename,'rb')) for filename in glob.glob("test_models/split_mig_tuned_20_20/param_*_predictor")]
+    mlprs = glob.glob("test_models/split_mig_tuned_20_20/param_*_predictor")
+    mlprs.sort()
+    return [pickle.load(open(filename,'rb')) for filename in mlprs]
 
 
 @pytest.fixture
@@ -23,17 +25,6 @@ def split_mig_fs():
     fs = func_ex(p0, ns, pts_l)
     print(fs)
     return fs
-
-# # This fs gets a bad result
-# @pytest.fixture
-# def split_mig_fs():
-#     p0 = [1, 1, 0.1, 0.5]
-#     ns = [40, 30]
-#     pts_l = [50 ,60 ,70]
-#     func = dadi.Demographics2D.split_mig
-#     func_ex = dadi.Numerics.make_extrap_func(func)
-#     fs = func_ex(p0, ns, pts_l)
-#     return fs
 
 
 @pytest.mark.parametrize("input_size, exp_size",
@@ -78,7 +69,7 @@ def test_project_fs_2d(input_size, exp_size):
     projected_fs = project_fs(fs)
     np.testing.assert_array_equal(projected_fs, fs.project(exp_size))
 
-@pytest.mark.skip("Test not working")
+
 @pytest.mark.parametrize("ci_list",
                         [[95],
                          [95, 80, 70]])
@@ -87,9 +78,38 @@ def test_infer_split_mig(models_list, split_mig_fs, ci_list):
     split_mig_fs = project_fs(split_mig_fs)
     func = dadi.Demographics2D.split_mig
     logs = [True, True, False, False, False]
+    print(models_list, func, split_mig_fs, logs)
     pred_list, theta, cis = infer(models_list, func, split_mig_fs, logs, mapie=True, cis=ci_list)
     pred_list = np.array(pred_list)
     cis = np.array(cis)
 
     assert pred_list.shape == (5,)
     assert cis.shape == (5, len(ci_list), 2)
+
+
+def test_irods_download(capfd):
+    import shutil
+    try:
+        shutil.rmtree("temp")
+    except FileNotFoundError:
+        pass
+    dem_model = "two_epoch"
+    sample_sizes = [10]
+    fold = True
+    datadir = "temp"
+    irods_download(dem_model, sample_sizes, fold, datadir)
+    assert os.path.isfile("temp/two_epoch_folded_ns_10/param_01_predictor")
+    assert os.path.isfile("temp/two_epoch_folded_ns_10/param_02_predictor")
+    assert os.path.isfile("temp/two_epoch_folded_ns_10_QC/theta_1000_coverage.png")
+    assert os.path.isfile("temp/two_epoch_folded_ns_10_QC/theta_1000_param_01_accuracy.png")
+    assert os.path.isfile("temp/two_epoch_folded_ns_10_QC/theta_1000_param_02_accuracy.png")
+
+    irods_download(dem_model, sample_sizes, fold, datadir)
+    out, err = capfd.readouterr()
+    assert '\n'.join([out.split('\n')[-5],out.split('\n')[-4]]) == f"Files for the requested model and configuration have already been downloaded to the temp/two_epoch_folded_ns_10 folder.\nIf you want to redownload delete the directory"
+
+    shutil.rmtree("temp")
+
+
+
+

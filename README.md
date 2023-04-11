@@ -73,22 +73,23 @@ Downloading QC: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.0.1/plot
 Downloading QC: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.0.1/plots/theta_1000_param_05_accuracy.png to /Users/username/Library/Caches/donni/0.0.1/three_epoch_unfolded_ns_20_QC
 Downloading QC: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.0.1/plots/theta_1000_QC.txt to /Users/username/Library/Caches/donni/0.0.1/three_epoch_unfolded_ns_20_QC
 
-If you want to redownload delete the directory
-Check /Users/username/Library/Caches/donni/0.0.1/three_epoch_unfolded_ns_20_QC for the quality of MLPR models
+Finished downloading files to /Users/tjstruck/Library/Caches/donni/0.0.1/three_epoch_unfolded_ns_20 folder
 ```
 
 Once downloaded, donni will use the trained MLPRs to infer the demographic parameter values and confidence intervals (default: 95% CI) for the user's input allele frequency data.
 
 ```console
-# nuB	nuF	TB	TF	misid	theta	nuB_lb_95	nuB_ub_95	nuF_lb_95	nuF_ub_95	TB_lb_95	TB_ub_95	TF_lb_95	TF_ub_95	misid_lb_95	misid_ub_95
-1.4589417590202813	0.27766527063507107	0.3348057792116058	0.678676374216568	0.016573499238520806	3078.400966873281	0.0026777917267467415	132.55568205629365	0.0007125091343149004	8.512893988606479	-0.5897319305793076	1.251661724536784	-0.1420600082022596	1.5295973418174724	-0.007558984976014427	0.08056165858500447
+# nuB nuF TB  TF  misid theta nuB_lb_95 nuB_ub_95 nuF_lb_95 nuF_ub_95 TB_lb_95  TB_ub_95  TF_lb_95  TF_ub_95  misid_lb_95 misid_ub_95
+0.9527628534235858  0.19956875019233822 0.4168018273117252  0.5902604221985013  0.015964741573954666  4428.985227492066 0.013038512346691546  88.56064148838828 0.022324698206805948  2.597883255958737 -0.42283439971061865  1.3179671061405958  -0.24917414734478394  1.3873155264559491  -0.02168682787690837  0.09706661611677028
 
-# CIs:    |----------95----------|	
-# nuB:    [  0.002678, 132.555682]	
-# nuF:    [  0.000713,   8.512894]	
-# TB:     [ -0.589732,   1.251662]	
-# TF:     [ -0.142060,   1.529597]	
-# misid:  [ -0.007559,   0.080562]
+# CIs:    |----------95----------|  
+# nuB:    [  0.013039,  88.560641]  
+# nuF:    [  0.022325,   2.597883]  
+# TB:     [ -0.422834,   1.317967]  
+# TF:     [ -0.249174,   1.387316]  
+# misid:  [ -0.021687,   0.097067]  
+
+Check the plots in /Users/tjstruck/Library/Caches/donni/0.0.1/three_epoch_unfolded_ns_20_QC for performance of download MLPR models.
 ```
 ## Supported models and sample sizes
 
