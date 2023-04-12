@@ -8,6 +8,7 @@ import numpy as np
 import dadi
 import donni.portik_models.portik_models_2d
 import donni.portik_models.portik_models_3d
+import donni.custom_models
 
 
 duplicated_models = ["snm", "bottlegrowth"]
@@ -16,6 +17,7 @@ oned_models = [m[0] for m in getmembers(dadi.Demographics1D, isfunction)]
 twod_models = [m[0] for m in getmembers(dadi.Demographics2D, isfunction)]
 portik_2d_models = [m[0] for m in getmembers(donni.portik_models.portik_models_2d, isfunction)]
 portik_3d_models = [m[0] for m in getmembers(donni.portik_models.portik_models_3d, isfunction)]
+custom_models = [m[0] for m in getmembers(donni.custom_models, isfunction)]
 
 for m in duplicated_models:
     oned_models.remove(m)
@@ -58,6 +60,8 @@ def get_model(model_name, model_file=None, folded=False):
         func = getattr(donni.portik_models.portik_models_2d, model_name)
     elif model_name in portik_3d_models:
         func = getattr(donni.portik_models.portik_models_3d, model_name)
+    elif model_name in custom_models:
+        func = getattr(donni.custom_models, model_name)
     else:
         raise ValueError(f"Cannot find model: {model_name}.")
     try:
