@@ -24,6 +24,5 @@ jobs:
         environment-file: environment.yml
     - name: Test with pytest
       run: |
-        cd tests
-        micromamba run -n donni pytest -xv *.py
+        micromamba run -n donni pytest -xv tests/test_*.py
 
