@@ -11,7 +11,7 @@ from donni.generate_data import generate_fs
 def test_exists():
     """ Test program exists """
 
-    PRG = '../donni/generate_data.py'
+    PRG = 'donni/generate_data.py'
     assert os.path.isfile(PRG)
 
 
