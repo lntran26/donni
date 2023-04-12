@@ -36,6 +36,7 @@ def split_nomig(params, ns, pts):
         phi, xx, T2, nu1=nu1, nu2=nu2, nu3=nu3, m12=0, m21=0, m23=0, m32=0, m13=0, m31=0)
     fs = Spectrum.from_phi(phi, ns, (xx, xx, xx))
     return fs
+split_nomig.__param_names__ = ['nu1', 'nuA', 'nu2', 'nu3', 'T1', 'T2']
 
 
 def split_symmig_all(params, ns, pts):
@@ -70,6 +71,7 @@ def split_symmig_all(params, ns, pts):
 
     fs = Spectrum.from_phi(phi, ns, (xx, xx, xx))
     return fs
+split_symmig_all.__param_names__ = ['nu1', 'nuA', 'nu2', 'nu3', 'mA', 'm1', 'm2', 'm3', 'T1', 'T2']
 
 
 def split_symmig_adjacent(params, ns, pts):
@@ -106,6 +108,7 @@ def split_symmig_adjacent(params, ns, pts):
 
     fs = Spectrum.from_phi(phi, ns, (xx, xx, xx))
     return fs
+split_symmig_adjacent.__param_names__ = ['nu1', 'nuA', 'nu2', 'nu3', 'mA', 'm1', 'm2', 'T1', 'T2']
 
 ################################################################################
 # Various models based on forest refugia timing,
@@ -150,6 +153,7 @@ def refugia_adj_1(params, ns, pts):
 
     fs = Spectrum.from_phi(phi, ns, (xx, xx, xx))
     return fs
+refugia_adj_1.__param_names__ = ['nu1', 'nuA', 'nu2', 'nu3', 'm1', 'm2', 'T1', 'T2', 'T3']
 
 
 def refugia_adj_2(params, ns, pts):
@@ -183,6 +187,7 @@ def refugia_adj_2(params, ns, pts):
 
     fs = Spectrum.from_phi(phi, ns, (xx, xx, xx))
     return fs
+refugia_adj_2.__param_names__ = ['nu1', 'nuA', 'nu2', 'nu3', 'm1', 'm2', 'T1', 'T2']
 
 
 def refugia_adj_3(params, ns, pts):
@@ -218,6 +223,7 @@ def refugia_adj_3(params, ns, pts):
 
     fs = Spectrum.from_phi(phi, ns, (xx, xx, xx))
     return fs
+refugia_adj_3.__param_names__ = ['nu1', 'nuA', 'nu2', 'nu3', 'mA', 'm1', 'm2', 'T1a', 'T1b', 'T2']
 
 ###############################################################################
 # Various models based on ancient migration and contemporary isolation
@@ -258,6 +264,7 @@ def ancmig_adj_3(params, ns, pts):
 
     fs = Spectrum.from_phi(phi, ns, (xx, xx, xx))
     return fs
+ancmig_adj_3.__param_names__ = ['nu1', 'nuA', 'nu2', 'nu3', 'mA', 'T1a', 'T1b', 'T2']
 
 
 def ancmig_adj_2(params, ns, pts):
@@ -291,6 +298,7 @@ def ancmig_adj_2(params, ns, pts):
 
     fs = Spectrum.from_phi(phi, ns, (xx, xx, xx))
     return fs
+ancmig_adj_2.__param_names__ = ['nu1', 'nuA', 'nu2', 'nu3', 'mA', 'T1', 'T2']
 
 
 def ancmig_adj_1(params, ns, pts):
@@ -328,6 +336,7 @@ def ancmig_adj_1(params, ns, pts):
 
     fs = Spectrum.from_phi(phi, ns, (xx, xx, xx))
     return fs
+ancmig_adj_1.__param_names__ = ['nu1', 'nuA', 'nu2', 'nu3', 'mA', 'm1', 'm2', 'T1', 'T2', 'T3']
 
 
 ###############################################################################
@@ -355,6 +364,7 @@ def sim_split_no_mig(params, ns, pts):
         phi, xx, T1, nu1=nu1, nu2=nu2, nu3=nu3, m12=0, m21=0, m23=0, m32=0, m13=0, m31=0)
     fs = Spectrum.from_phi(phi, ns, (xx, xx, xx))
     return fs
+sim_split_no_mig.__param_names__ = ['nu1', 'nu2', 'nu3', 'T1']
 
 
 def sim_split_no_mig_size(params, ns, pts):
@@ -385,6 +395,7 @@ def sim_split_no_mig_size(params, ns, pts):
         m12=0, m21=0, m23=0, m32=0, m13=0, m31=0)
     fs = Spectrum.from_phi(phi, ns, (xx, xx, xx))
     return fs
+sim_split_no_mig_size.__param_names__ = ['nu1a', 'nu2a', 'nu3a', 'nu1b', 'nu2b', 'nu3b', 'T1', 'T2']
 
 
 def sim_split_sym_mig_all(params, ns, pts):
@@ -411,6 +422,7 @@ def sim_split_sym_mig_all(params, ns, pts):
         phi, xx, T1, nu1=nu1, nu2=nu2, nu3=nu3, m12=m1, m21=m1, m23=m2, m32=m2, m13=m3, m31=m3)
     fs = Spectrum.from_phi(phi, ns, (xx, xx, xx))
     return fs
+sim_split_sym_mig_all.__param_names__ = ['nu1', 'nu2', 'nu3', 'm1', 'm2', 'm3', 'T1']
 
 
 def sim_split_sym_mig_adjacent(params, ns, pts):
@@ -437,6 +449,7 @@ def sim_split_sym_mig_adjacent(params, ns, pts):
         phi, xx, T1, nu1=nu1, nu2=nu2, nu3=nu3, m12=m1, m21=m1, m23=m2, m32=m2, m13=0, m31=0)
     fs = Spectrum.from_phi(phi, ns, (xx, xx, xx))
     return fs
+sim_split_sym_mig_adjacent.__param_names__ = ['nu1', 'nu2', 'nu3', 'm1', 'm2', 'T1']
 
 
 def sim_split_refugia_sym_mig_all(params, ns, pts):
@@ -469,6 +482,7 @@ def sim_split_refugia_sym_mig_all(params, ns, pts):
         m12=m1, m21=m1, m23=m2, m32=m2, m13=m3, m31=m3)
     fs = Spectrum.from_phi(phi, ns, (xx, xx, xx))
     return fs
+sim_split_refugia_sym_mig_all.__param_names__ = ['nu1', 'nu2', 'nu3', 'm1', 'm2', 'm3', 'T1', 'T2']
 
 
 def sim_split_refugia_sym_mig_adjacent(params, ns, pts):
@@ -501,6 +515,7 @@ def sim_split_refugia_sym_mig_adjacent(params, ns, pts):
         m12=m1, m21=m1, m23=m2, m32=m2, m13=0, m31=0)
     fs = Spectrum.from_phi(phi, ns, (xx, xx, xx))
     return fs
+sim_split_refugia_sym_mig_adjacent.__param_names__ = ['nu1', 'nu2', 'nu3', 'm1', 'm2', 'T1', 'T2']
 
 
 ###############################################################
@@ -539,6 +554,7 @@ def split_nomig_size(params, ns, pts):
         phi, xx, T3, nu1b, nu2b, nu3b, m12=0, m21=0, m23=0, m32=0, m13=0, m31=0)
     fs = Spectrum.from_phi(phi, ns, (xx, xx, xx))
     return fs
+split_nomig_size.__param_names__ = ['nu1a', 'nuA', 'nu2a', 'nu3a', 'nu1b', 'nu2b', 'nu3b', 'T1', 'T2', 'T3']
 
 
 def ancmig_2_size(params, ns, pts):
@@ -574,6 +590,7 @@ def ancmig_2_size(params, ns, pts):
         phi, xx, T3, nu1b, nu2b, nu3b, m12=0, m21=0, m23=0, m32=0, m13=0, m31=0)
     fs = Spectrum.from_phi(phi, ns, (xx, xx, xx))
     return fs
+ancmig_2_size.__param_names__ = ['nu1a', 'nuA', 'nu2a', 'nu3a', 'nu1b', 'nu2b', 'nu3b', 'mA', 'T1', 'T2', 'T3']
 
 
 def sim_split_refugia_sym_mig_adjacent_size(params, ns, pts):
@@ -612,6 +629,7 @@ def sim_split_refugia_sym_mig_adjacent_size(params, ns, pts):
         phi, xx, T3, nu1b, nu2b, nu3b, m12=m1, m21=m1, m23=m2, m32=m2, m13=0, m31=0)
     fs = Spectrum.from_phi(phi, ns, (xx, xx, xx))
     return fs
+sim_split_refugia_sym_mig_adjacent_size.__param_names__ = ['nu1a', 'nu2a', 'nu3a', 'nu1b', 'nu2b', 'nu3b', 'm1', 'm2', 'T1', 'T2', 'T3']
 
 
 ###############################################################
@@ -652,6 +670,7 @@ def refugia_adj_2_var_sym(params, ns, pts):
 
     fs = Spectrum.from_phi(phi, ns, (xx, xx, xx))
     return fs
+refugia_adj_2_var_sym.__param_names__ = ['nu1', 'nuA', 'nu2', 'nu3', 'm2', 'm3', 'T1', 'T2']
 
 
 # but with pop 3 treated as 'middle' population
@@ -685,6 +704,7 @@ def refugia_adj_2_var_uni(params, ns, pts):
 
     fs = Spectrum.from_phi(phi, ns, (xx, xx, xx))
     return fs
+refugia_adj_2_var_uni.__param_names__ = ['nu1', 'nuA', 'nu2', 'nu3', 'm32', 'm31', 'T1', 'T2']
 
 
 # but with pop 3 treated as 'middle' population
@@ -721,6 +741,7 @@ def refugia_adj_3_var_sym(params, ns, pts):
 
     fs = Spectrum.from_phi(phi, ns, (xx, xx, xx))
     return fs
+refugia_adj_3_var_sym.__param_names__ = ['nu1', 'nuA', 'nu2', 'nu3', 'mA', 'm2', 'm3', 'T1a', 'T1b', 'T2']
 
 
 # but with pop 3 treated as 'middle' population
@@ -756,6 +777,7 @@ def refugia_adj_3_var_uni(params, ns, pts):
 
     fs = Spectrum.from_phi(phi, ns, (xx, xx, xx))
     return fs
+refugia_adj_3_var_uni.__param_names__ = ['nu1', 'nuA', 'nu2', 'nu3', 'mA', 'm32', 'm31', 'T1a', 'T1b', 'T2']
 
 
 # but with pop 3 treated as 'middle' population
@@ -790,6 +812,7 @@ def split_sym_mig_adjacent_var1(params, ns, pts):
 
     fs = Spectrum.from_phi(phi, ns, (xx, xx, xx))
     return fs
+split_sym_mig_adjacent_var1.__param_names__ = ['nu1', 'nuA', 'nu2', 'nu3', 'mA', 'm2', 'm3', 'T1', 'T2']
 
 # but with pop 3 treated as 'middle' population
 
@@ -824,6 +847,7 @@ def split_uni_mig_adjacent_var1(params, ns, pts):
 
     fs = Spectrum.from_phi(phi, ns, (xx, xx, xx))
     return fs
+split_uni_mig_adjacent_var1.__param_names__ = ['nu1', 'nuA', 'nu2', 'nu3', 'mA', 'm32', 'm31', 'T1', 'T2']
 
 # but with pop 3 treated as 'middle' population
 
@@ -859,6 +883,7 @@ def split_sym_mig_adjacent_var2(params, ns, pts):
 
     fs = Spectrum.from_phi(phi, ns, (xx, xx, xx))
     return fs
+split_sym_mig_adjacent_var2.__param_names__ = ['nu1', 'nuA', 'nu2', 'nu3', 'mA', 'm3', 'T1', 'T2']
 
 
 # but with pop 3 treated as 'middle' population
@@ -891,6 +916,7 @@ def split_uni_mig_adjacent_var2(params, ns, pts):
 
     fs = Spectrum.from_phi(phi, ns, (xx, xx, xx))
     return fs
+split_uni_mig_adjacent_var2.__param_names__ = ['nu1', 'nuA', 'nu2', 'nu3', 'mA', 'm31', 'T1', 'T2']
 
 
 ###############################################################
@@ -923,6 +949,7 @@ def sim_split_sym_mig_adjacent_var(params, ns, pts):
         phi, xx, T1, nu1=nu1, nu2=nu2, nu3=nu3, m12=0, m21=0, m23=m2, m32=m2, m13=m3, m31=m3)
     fs = Spectrum.from_phi(phi, ns, (xx, xx, xx))
     return fs
+sim_split_sym_mig_adjacent_var.__param_names__ = ['nu1', 'nu2', 'nu3', 'm2', 'm3', 'T1']
 
 # but with pop 3 treated as 'middle' population
 
@@ -950,6 +977,7 @@ def sim_split_uni_mig_adjacent_var(params, ns, pts):
         phi, xx, T1, nu1=nu1, nu2=nu2, nu3=nu3, m12=0, m21=0, m23=0, m32=m32, m13=0, m31=m31)
     fs = Spectrum.from_phi(phi, ns, (xx, xx, xx))
     return fs
+sim_split_uni_mig_adjacent_var.__param_names__ = ['nu1', 'nu2', 'nu3', 'm32', 'm31', 'T1']
 
 
 # but with pop 3 treated as 'middle' population
@@ -981,6 +1009,7 @@ def sim_split_refugia_sym_mig_adjacent_var(params, ns, pts):
         phi, xx, T2, nu1=nu1, nu2=nu2, nu3=nu3, m12=0, m21=0, m23=m2, m32=m2, m13=m3, m31=m3)
     fs = Spectrum.from_phi(phi, ns, (xx, xx, xx))
     return fs
+sim_split_refugia_sym_mig_adjacent_var.__param_names__ = ['nu1', 'nu2', 'nu3', 'm2', 'm3', 'T1', 'T2']
 
 # but with pop 3 treated as 'middle' population
 
@@ -1012,6 +1041,7 @@ def sim_split_refugia_uni_mig_adjacent_var(params, ns, pts):
         phi, xx, T2, nu1=nu1, nu2=nu2, nu3=nu3, m12=0, m21=0, m23=0, m32=m32, m13=0, m31=m31)
     fs = Spectrum.from_phi(phi, ns, (xx, xx, xx))
     return fs
+sim_split_refugia_uni_mig_adjacent_var.__param_names__ = ['nu1', 'nu2', 'nu3', 'm32', 'm31', 'T1', 'T2']
 
 
 ###############################################################
@@ -1046,6 +1076,7 @@ def admix_origin_no_mig(params, ns, pts):
 
     fs = Spectrum.from_phi(phi, ns, (xx, xx, xx))
     return fs
+admix_origin_no_mig.__param_names__ = ['nu1', 'nu2', 'nu3', 'T1', 'T2', 'f']
 
 
 def admix_origin_sym_mig_adj(params, ns, pts):
@@ -1078,6 +1109,7 @@ def admix_origin_sym_mig_adj(params, ns, pts):
 
     fs = Spectrum.from_phi(phi, ns, (xx, xx, xx))
     return fs
+admix_origin_sym_mig_adj.__param_names__ = ['nu1', 'nu2', 'nu3', 'm2', 'm3', 'T1', 'T2', 'f']
 
 
 def admix_origin_uni_mig_adj(params, ns, pts):
@@ -1111,3 +1143,4 @@ def admix_origin_uni_mig_adj(params, ns, pts):
 
     fs = Spectrum.from_phi(phi, ns, (xx, xx, xx))
     return fs
+admix_origin_uni_mig_adj.__param_names__ = ['nu1', 'nu2', 'nu3', 'm32', 'm31', 'T1', 'T2', 'f']

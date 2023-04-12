@@ -5,17 +5,6 @@ Adapted from https://github.com/dportik
 from dadi import Numerics, PhiManip, Integration, Spectrum
 
 
-def no_divergence(_, ns, pts):
-    """
-    Standard neutral model, populations never diverge.
-    """
-    xx = Numerics.default_grid(pts)
-    phi = PhiManip.phi_1D(xx)
-    phi = PhiManip.phi_1D_to_2D(xx, phi)
-    fs = Spectrum.from_phi(phi, ns, (xx, xx))
-    return fs
-
-
 def no_mig(params, ns, pts):
     """
     Split into two populations, no migration.
@@ -30,6 +19,7 @@ def no_mig(params, ns, pts):
     phi = Integration.two_pops(phi, xx, T, nu1, nu2, m12=0, m21=0)
     fs = Spectrum.from_phi(phi, ns, (xx, xx))
     return fs
+no_mig.__param_names__ = ['nu1', 'nu2', 'T']
 
 
 def sym_mig(params, ns, pts):
@@ -47,6 +37,7 @@ def sym_mig(params, ns, pts):
     phi = Integration.two_pops(phi, xx, T, nu1, nu2, m12=m, m21=m)
     fs = Spectrum.from_phi(phi, ns, (xx, xx))
     return fs
+sym_mig.__param_names__ = ['nu1', 'nu2', 'm', 'T']
 
 
 def asym_mig(params, ns, pts):
@@ -65,6 +56,7 @@ def asym_mig(params, ns, pts):
     phi = Integration.two_pops(phi, xx, T, nu1, nu2, m12=m12, m21=m21)
     fs = Spectrum.from_phi(phi, ns, (xx, xx))
     return fs
+asym_mig.__param_names__ = ['nu1', 'nu2', 'm12', 'm21', 'T']
 
 
 def anc_sym_mig(params, ns, pts):
@@ -84,6 +76,7 @@ def anc_sym_mig(params, ns, pts):
     phi = Integration.two_pops(phi, xx, T2, nu1, nu2, m12=0, m21=0)
     fs = Spectrum.from_phi(phi, ns, (xx, xx))
     return fs
+anc_sym_mig.__param_names__ = ['nu1', 'nu2', 'm', 'T1', 'T2']
 
 
 def anc_asym_mig(params, ns, pts):
@@ -105,6 +98,7 @@ def anc_asym_mig(params, ns, pts):
     fs = Spectrum.from_phi(phi, ns, (xx, xx))
 
     return fs
+anc_asym_mig.__param_names__ = ['nu1', 'nu2', 'm12', 'm21', 'T1', 'T2']
 
 
 def sec_contact_sym_mig(params, ns, pts):
@@ -124,6 +118,7 @@ def sec_contact_sym_mig(params, ns, pts):
     phi = Integration.two_pops(phi, xx, T2, nu1, nu2, m12=m, m21=m)
     fs = Spectrum.from_phi(phi, ns, (xx, xx))
     return fs
+sec_contact_sym_mig.__param_names__ = ['nu1', 'nu2', 'm', 'T1', 'T2']
 
 
 def sec_contact_asym_mig(params, ns, pts):
@@ -144,6 +139,7 @@ def sec_contact_asym_mig(params, ns, pts):
     phi = Integration.two_pops(phi, xx, T2, nu1, nu2, m12=m12, m21=m21)
     fs = Spectrum.from_phi(phi, ns, (xx, xx))
     return fs
+sec_contact_asym_mig.__param_names__ = ['nu1', 'nu2', 'm12', 'm21', 'T1', 'T2']
 
 
 ###############################################################################
@@ -167,6 +163,7 @@ def no_mig_size(params, ns, pts):
     phi = Integration.two_pops(phi, xx, T2, nu1b, nu2b, m12=0, m21=0)
     fs = Spectrum.from_phi(phi, ns, (xx, xx))
     return fs
+no_mig_size.__param_names__ = ['nu1a', 'nu2a', 'nu1b', 'nu2b', 'T1', 'T2']
 
 
 def sym_mig_size(params, ns, pts):
@@ -189,6 +186,7 @@ def sym_mig_size(params, ns, pts):
     phi = Integration.two_pops(phi, xx, T2, nu1b, nu2b, m12=m, m21=m)
     fs = Spectrum.from_phi(phi, ns, (xx, xx))
     return fs
+sym_mig_size.__param_names__ = ['nu1a', 'nu2a', 'nu1b', 'nu2b', 'm', 'T1', 'T2']
 
 
 def asym_mig_size(params, ns, pts):
@@ -212,6 +210,7 @@ def asym_mig_size(params, ns, pts):
     phi = Integration.two_pops(phi, xx, T2, nu1b, nu2b, m12=m12, m21=m21)
     fs = Spectrum.from_phi(phi, ns, (xx, xx))
     return fs
+asym_mig_size.__param_names__ = ['nu1a', 'nu2a', 'nu1b', 'nu2b', 'm12', 'm21', 'T1', 'T2']
 
 
 def anc_sym_mig_size(params, ns, pts):
@@ -234,6 +233,7 @@ def anc_sym_mig_size(params, ns, pts):
     phi = Integration.two_pops(phi, xx, T2, nu1b, nu2b, m12=0, m21=0)
     fs = Spectrum.from_phi(phi, ns, (xx, xx))
     return fs
+anc_sym_mig_size.__param_names__ = ['nu1a', 'nu2a', 'nu1b', 'nu2b', 'm', 'T1', 'T2']
 
 
 def anc_asym_mig_size(params, ns, pts):
@@ -257,6 +257,7 @@ def anc_asym_mig_size(params, ns, pts):
     phi = Integration.two_pops(phi, xx, T2, nu1b, nu2b, m12=0, m21=0)
     fs = Spectrum.from_phi(phi, ns, (xx, xx))
     return fs
+anc_asym_mig_size.__param_names__ = ['nu1a', 'nu2a', 'nu1b', 'nu2b', 'm12', 'm21', 'T1', 'T2']
 
 
 def sec_contact_sym_mig_size(params, ns, pts):
@@ -278,6 +279,7 @@ def sec_contact_sym_mig_size(params, ns, pts):
     phi = Integration.two_pops(phi, xx, T2, nu1b, nu2b, m12=m, m21=m)
     fs = Spectrum.from_phi(phi, ns, (xx, xx))
     return fs
+sec_contact_sym_mig_size.__param_names__ = ['nu1a', 'nu2a', 'nu1b', 'nu2b', 'm', 'T1', 'T2']
 
 
 def sec_contact_asym_mig_size(params, ns, pts):
@@ -300,6 +302,7 @@ def sec_contact_asym_mig_size(params, ns, pts):
     phi = Integration.two_pops(phi, xx, T2, nu1b, nu2b, m12=m12, m21=m21)
     fs = Spectrum.from_phi(phi, ns, (xx, xx))
     return fs
+sec_contact_asym_mig_size.__param_names__ = ['nu1a', 'nu2a', 'nu1b', 'nu2b', 'm12', 'm21', 'T1', 'T2']
 
 
 ###############################################################################
@@ -323,6 +326,7 @@ def sym_mig_twoepoch(params, ns, pts):
     phi = Integration.two_pops(phi, xx, T2, nu1, nu2, m12=m2, m21=m2)
     fs = Spectrum.from_phi(phi, ns, (xx, xx))
     return fs
+sym_mig_twoepoch.__param_names__ = ['nu1', 'nu2', 'm1', 'm2', 'T1', 'T2']
 
 
 def asym_mig_twoepoch(params, ns, pts):
@@ -349,6 +353,7 @@ def asym_mig_twoepoch(params, ns, pts):
     fs = Spectrum.from_phi(phi, ns, (xx, xx))
 
     return fs
+asym_mig_twoepoch.__param_names__ = ['nu1', 'nu2', 'm12a', 'm21a', 'm12b', 'm21b', 'T1', 'T2']
 
 ###############################################################################
 # Three Epoch: Divergence and Isolation, Secondary Contact, Isolation
@@ -378,6 +383,7 @@ def sec_contact_sym_mig_three_epoch(params, ns, pts):
     phi = Integration.two_pops(phi, xx, T3, nu1, nu2, m12=0, m21=0)
     fs = Spectrum.from_phi(phi, ns, (xx, xx))
     return fs
+sec_contact_sym_mig_three_epoch.__param_names__ = ['nu1', 'nu2', 'm', 'T1', 'T2', 'T3']
 
 
 def sec_contact_asym_mig_three_epoch(params, ns, pts):
@@ -394,7 +400,7 @@ def sec_contact_asym_mig_three_epoch(params, ns, pts):
     T2: The scaled time between the secondary contact and third epoch.
     T3 (not used): The scaled time between the isolation and present.
     """
-    nu1, nu2, m12, m21, T1, T2, _ = params
+    nu1, nu2, m12, m21, T1, T2 = params
     xx = Numerics.default_grid(pts)
     phi = PhiManip.phi_1D(xx)
     phi = PhiManip.phi_1D_to_2D(xx, phi)
@@ -403,6 +409,7 @@ def sec_contact_asym_mig_three_epoch(params, ns, pts):
     phi = Integration.two_pops(phi, xx, T2, nu1, nu2, m12=0, m21=0)
     fs = Spectrum.from_phi(phi, ns, (xx, xx))
     return fs
+sec_contact_asym_mig_three_epoch.__param_names__ = ['nu1', 'nu2', 'm12', 'm21', 'T1', 'T2']
 
 
 def sec_contact_sym_mig_size_three_epoch(params, ns, pts):
@@ -432,6 +439,7 @@ def sec_contact_sym_mig_size_three_epoch(params, ns, pts):
 
     fs = Spectrum.from_phi(phi, ns, (xx, xx))
     return fs
+sec_contact_sym_mig_size_three_epoch.__param_names__ = ['nu1a', 'nu2a', 'nu1b', 'nu2b', 'm', 'T1', 'T2', 'T3']
 
 
 def sec_contact_asym_mig_size_three_epoch(params, ns, pts):
@@ -462,6 +470,7 @@ def sec_contact_asym_mig_size_three_epoch(params, ns, pts):
 
     fs = Spectrum.from_phi(phi, ns, (xx, xx))
     return fs
+sec_contact_asym_mig_size_three_epoch.__param_names__ = ['nu1a', 'nu2a', 'nu1b', 'nu2b', 'm12', 'm21', 'T1', 'T2', 'T3']
 
 
 ################################################################################
@@ -500,6 +509,7 @@ def vic_no_mig(params, ns, pts):
     phi = Integration.two_pops(phi, xx, T, nu1=1-s, nu2=s, m12=0, m21=0)
     fs = Spectrum.from_phi(phi, ns, (xx, xx))
     return fs
+vic_no_mig.__param_names__ = ['T', 's']
 
 
 def vic_anc_sym_mig(params, ns, pts):
@@ -529,6 +539,7 @@ def vic_anc_sym_mig(params, ns, pts):
 
     fs = Spectrum.from_phi(phi, ns, (xx, xx))
     return fs
+vic_anc_sym_mig.__param_names__ = ['m', 'T1', 'T2', 's']
 
 
 def vic_anc_asym_mig(params, ns, pts):
@@ -559,6 +570,7 @@ def vic_anc_asym_mig(params, ns, pts):
 
     fs = Spectrum.from_phi(phi, ns, (xx, xx))
     return fs
+vic_anc_asym_mig.__param_names__ = ['m12', 'm21', 'T1', 'T2', 's']
 
 
 def vic_sec_contact_sym_mig(params, ns, pts):
@@ -591,6 +603,7 @@ def vic_sec_contact_sym_mig(params, ns, pts):
 
     fs = Spectrum.from_phi(phi, ns, (xx, xx))
     return fs
+vic_sec_contact_sym_mig.__param_names__ = ['m', 'T1', 'T2', 's']
 
 
 def vic_sec_contact_asym_mig(params, ns, pts):
@@ -624,6 +637,7 @@ def vic_sec_contact_asym_mig(params, ns, pts):
 
     fs = Spectrum.from_phi(phi, ns, (xx, xx))
     return fs
+vic_sec_contact_asym_mig.__param_names__ = ['m12', 'm21', 'T1', 'T2', 's']
 
 
 def founder_nomig(params, ns, pts):
@@ -656,6 +670,7 @@ def founder_nomig(params, ns, pts):
 
     fs = Spectrum.from_phi(phi, ns, (xx, xx))
     return fs
+founder_nomig.__param_names__ = ['nu2', 'T', 's']
 
 
 def founder_sym(params, ns, pts):
@@ -689,6 +704,7 @@ def founder_sym(params, ns, pts):
 
     fs = Spectrum.from_phi(phi, ns, (xx, xx))
     return fs
+founder_sym.__param_names__ = ['nu2', 'm', 'T', 's']
 
 
 def founder_asym(params, ns, pts):
@@ -724,6 +740,7 @@ def founder_asym(params, ns, pts):
 
     fs = Spectrum.from_phi(phi, ns, (xx, xx))
     return fs
+founder_asym.__param_names__ = ['nu2', 'm12', 'm21', 'T', 's']
 
 
 ################################################################################
@@ -768,6 +785,7 @@ def vic_no_mig_admix_early(params, ns, pts):
 
     fs = Spectrum.from_phi(phi, ns, (xx, xx))
     return fs
+vic_no_mig_admix_early.__param_names__ = ['T', 's', 'f']
 
 
 def vic_no_mig_admix_late(params, ns, pts):
@@ -798,6 +816,7 @@ def vic_no_mig_admix_late(params, ns, pts):
 
     fs = Spectrum.from_phi(phi, ns, (xx, xx))
     return fs
+vic_no_mig_admix_late.__param_names__ = ['T', 's', 'f']
 
 
 def vic_two_epoch_admix(params, ns, pts):
@@ -832,6 +851,7 @@ def vic_two_epoch_admix(params, ns, pts):
 
     fs = Spectrum.from_phi(phi, ns, (xx, xx))
     return fs
+vic_two_epoch_admix.__param_names__ = ['T1', 'T2', 's', 'f']
 
 
 def founder_nomig_admix_early(params, ns, pts):
@@ -867,6 +887,7 @@ def founder_nomig_admix_early(params, ns, pts):
 
     fs = Spectrum.from_phi(phi, ns, (xx, xx))
     return fs
+founder_nomig_admix_early.__param_names__ = ['nu2', 'T', 's', 'f']
 
 
 def founder_nomig_admix_late(params, ns, pts):
@@ -903,6 +924,7 @@ def founder_nomig_admix_late(params, ns, pts):
 
     fs = Spectrum.from_phi(phi, ns, (xx, xx))
     return fs
+founder_nomig_admix_late.__param_names__ = ['nu2', 'T', 's', 'f']
 
 
 def founder_nomig_admix_two_epoch(params, ns, pts):
@@ -943,3 +965,4 @@ def founder_nomig_admix_two_epoch(params, ns, pts):
 
     fs = Spectrum.from_phi(phi, ns, (xx, xx))
     return fs
+founder_nomig_admix_two_epoch.__param_names__ = ['nu2', 'T1', 'T2', 's', 'f']
