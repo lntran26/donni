@@ -12,7 +12,7 @@ from donni.train import prep_data, tune, get_best_specs, train
 def test_exists():
     """ Test program exists """
 
-    PRG = '../donni/train.py'
+    PRG = 'donni/train.py'
     assert os.path.isfile(PRG)
 
 
@@ -20,7 +20,7 @@ def test_prep_data():
     """ Test prep_data() method """
 
     for data_file in ['two_epoch_500', 'split_mig_100_subset']:
-        data = pickle.load(open(f'test_data/{data_file}', 'rb'))
+        data = pickle.load(open(f'tests/test_data/{data_file}', 'rb'))
         X, y = prep_data(data)
         # test that X has the correct n_samples
         assert len(X) == len(data)
@@ -64,7 +64,7 @@ def run_tune(data_file, param_dist, max_iter=243, eta=3, cv=5):
 def test_run_tune1():
     ''' Test tuning with two_epoch '''
 
-    data = 'test_data/two_epoch_500'
+    data = 'tests/test_data/two_epoch_500'
     param_dist = {'hidden_layer_sizes': [(64,), (64, 64)],
                   'activation': ['tanh', 'relu'],
                   'solver': ['lbfgs', 'adam'],
@@ -76,7 +76,7 @@ def test_run_tune1():
 def test_run_tune2():
     ''' Test tuning with split_mig'''
 
-    data = 'test_data/split_mig_100_subset'
+    data = 'tests/test_data/split_mig_100_subset'
     param_dist = {'hidden_layer_sizes': [(randint.rvs(50, 100),),
                                          (randint.rvs(50, 100),
                                           randint.rvs(50, 100)),
@@ -99,7 +99,7 @@ def test_get_best_specs():
     for data_file in ['two_epoch_500', 'split_mig_1500']:
         # this data is tune based on mapie regressor, so 1 mlpr/param
         tune_results = pickle.load(
-            open(f'test_data/{data_file}_tune_results_full', 'rb'))
+            open(f'tests/test_data/{data_file}_tune_results_full', 'rb'))
         specs, scores = get_best_specs(tune_results)
         # test that specs is a list of dictionary
         assert isinstance(specs, list)
@@ -114,7 +114,7 @@ def test_get_best_specs():
 def run_train(data_file, mlpr_specs, mapie=True):
     """ Template method for testing train() method """
 
-    data = pickle.load(open(f'test_data/{data_file}', 'rb'))
+    data = pickle.load(open(f'tests/test_data/{data_file}', 'rb'))
     X, y = prep_data(data)  # mapie=True by default
 
     trained_mlpr = train(X, y, mlpr_specs, mapie=mapie)
@@ -140,7 +140,7 @@ def test_run_train1():
 
     data = 'two_epoch_500'
     tune_results = pickle.load(
-        open(f'test_data/{data}_tune_results_full', 'rb'))
+        open(f'tests/test_data/{data}_tune_results_full', 'rb'))
     specs, _ = get_best_specs(tune_results)
     # note: these tune results are created with mapie=True
     run_train(data, specs)
