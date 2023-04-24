@@ -15,7 +15,7 @@ PRG = 'donni'
 def random_string():
     """generate a random filename"""
 
-    return ''.join(random.choices(string.ascii_lowercase + string.digits, k=5))
+    return 'tests/'+''.join(random.choices(string.ascii_lowercase + string.digits, k=5))
 
 
 def test_usage():
@@ -128,7 +128,7 @@ def test_run_train_sub_1():
     '''First train test: provide data and run default:
     Generate mapie MLPRs without tuning, use default hyperparams'''
 
-    args = ['--data_file test_data/two_epoch_500']
+    args = ['--data_file tests/test_data/two_epoch_500']
     run_train_sub(args)
 
 
@@ -137,7 +137,7 @@ def test_run_train_sub_2():
     Generate mapie MLPRs using tuned hyperparams
     Require inputing ranges of value to tune from'''
 
-    args = ['--data_file test_data/two_epoch_500', '--tune', '--max_iter 27',
+    args = ['--data_file tests/test_data/two_epoch_500', '--tune', '--max_iter 27',
             '--hidden_layer_sizes 100 50,50 25,25,25,25 100,100 200',
             '--activation logistic tanh relu', '--solver lbfgs adam']
     run_train_sub(args)
@@ -148,7 +148,7 @@ def test_run_train_sub_3():
     Generate mapie MLPRs using tuned hyperparams
     Tuning from pickled dict file'''
 
-    args = ['--data_file test_data/two_epoch_500', '--tune',
+    args = ['--data_file tests/test_data/two_epoch_500', '--tune',
             '--max_iter 25', '--eta 5',
-            '--hyperparam test_data/param_dist']
+            '--hyperparam tests/test_data/param_dist']
     run_train_sub(args)

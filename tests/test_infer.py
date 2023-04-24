@@ -9,7 +9,7 @@ from donni.infer import *
 
 @pytest.fixture
 def models_list():
-    mlprs = glob.glob("test_models/split_mig_tuned_20_20/param_*_predictor")
+    mlprs = glob.glob("tests/test_models/split_mig_tuned_20_20/param_*_predictor")
     mlprs.sort()
     return [pickle.load(open(filename,'rb')) for filename in mlprs]
 
@@ -87,28 +87,29 @@ def test_infer_split_mig(models_list, split_mig_fs, ci_list):
     assert cis.shape == (5, len(ci_list), 2)
 
 
+@pytest.mark.skip("Skip incase server is down")
 def test_irods_download(capfd):
     import shutil
     try:
-        shutil.rmtree("temp")
+        shutil.rmtree("tests/temp")
     except FileNotFoundError:
         pass
     dem_model = "two_epoch"
     sample_sizes = [10]
     fold = True
-    datadir = "temp"
+    datadir = "tests/temp"
     irods_download(dem_model, sample_sizes, fold, datadir)
-    assert os.path.isfile("temp/two_epoch_folded_ns_10/param_01_predictor")
-    assert os.path.isfile("temp/two_epoch_folded_ns_10/param_02_predictor")
-    assert os.path.isfile("temp/two_epoch_folded_ns_10_QC/theta_1000_coverage.png")
-    assert os.path.isfile("temp/two_epoch_folded_ns_10_QC/theta_1000_param_01_accuracy.png")
-    assert os.path.isfile("temp/two_epoch_folded_ns_10_QC/theta_1000_param_02_accuracy.png")
+    assert os.path.isfile("tests/temp/two_epoch_folded_ns_10/param_01_predictor")
+    assert os.path.isfile("tests/temp/two_epoch_folded_ns_10/param_02_predictor")
+    assert os.path.isfile("tests/temp/two_epoch_folded_ns_10_QC/theta_1000_coverage.png")
+    assert os.path.isfile("tests/temp/two_epoch_folded_ns_10_QC/theta_1000_param_01_accuracy.png")
+    assert os.path.isfile("tests/temp/two_epoch_folded_ns_10_QC/theta_1000_param_02_accuracy.png")
 
     irods_download(dem_model, sample_sizes, fold, datadir)
     out, err = capfd.readouterr()
     assert '\n'.join([out.split('\n')[-5],out.split('\n')[-4]]) == f"Files for the requested model and configuration have already been downloaded to the temp/two_epoch_folded_ns_10 folder.\nIf you want to redownload delete the directory"
 
-    shutil.rmtree("temp")
+    shutil.rmtree("tests/temp")
 
 
 

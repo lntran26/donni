@@ -7,14 +7,12 @@ dependencies:
   - mapie=0.6.1
   - python-irodsclient=1.1.6
   - appdirs=1.4.4
-  - matplotlib
-  - numpy
-  - scipy
-  - nlopt
   - pytest
+  - pytest-cov
+  - codecov
   - gfortran
   - pip
   - dadi
+  - dadi-cli
   - pip:
-    - git+https://github.com/xin-huang/dadi-cli
     - .

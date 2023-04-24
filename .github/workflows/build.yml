@@ -24,6 +24,11 @@ jobs:
         environment-file: environment.yml
     - name: Test with pytest
       run: |
-        cd tests
-        micromamba run -n donni pytest -xv *.py
-
+        micromamba run -n donni pytest --cov=. --cov-report term-missing -vv tests/test_*.py
+        micromamba run -n donni coverage xml
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        name: codecov-umbrella
+        fail_ci_if_error: true
+        env_vars: OS,PYTHON
