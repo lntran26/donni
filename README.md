@@ -93,7 +93,7 @@ Check the plots in /Users/tjstruck/Library/Caches/donni/0.0.1/three_epoch_unfold
 ```
 ## Supported models and sample sizes
 
-donni currently supports all demographic models in the [dadi API](https://dadi.readthedocs.io/en/latest/api/dadi/) as well as the models from [Portik et al.](https://github.com/dportik/dadi_pipeline). The supported sample sizes are 10, 20, 40, 80, and 160 chromosomes per population (up to 40 chromosomes only for three-population models). Input allele frequency spectra with a different sample size will be automatically down-projected to the closest available supported size before inference. donni will also automatically detect whether the input data is a folded or unfolded spectra.
+donni currently supports all demographic models in the [dadi API](https://dadi.readthedocs.io/en/latest/api/dadi/) as well as the models from [Portik et al.](https://github.com/dportik/dadi_pipeline). The supported sample sizes are 10, 20, 40, 80, and 160 chromosomes per population (up to 20 chromosomes only for three-population models). Input allele frequency spectra with a different sample size will be automatically down-projected to the closest available supported size before inference. donni will also automatically detect whether the input data is a folded or unfolded spectra.
 
 If the requested model is not available, users will see this message:
 ```console
