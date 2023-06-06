@@ -3,6 +3,9 @@
 # Introduction
 Diffusion Approximation of Demographic Inference ([dadi](https://dadi.readthedocs.io/en/latest/)) is a powerful software tool for simulating the joint frequency spectrum (FS) of genetic variation among multiple populations and employing the FS for population-genetic inference. Here we introduce donni, a supervised machine learning-based framework for easier application of dadi's underlying demographic models. These machine learning models were trained on dadi-simulated data and can be used to make quick predictions on dadi demographic model parameters given FS input data from user and specified demographic model. The pipeline we used to train the machine learning models are also available here for users interested in using the same framework to train a new predictor for their customized demographic models.
 
+# Getting help
+If you've found an apparent bug, please submit an Issue so we can address it. You can submit questions about usage to the dadi-user Google Group (http://groups.google.com/group/dadi-user).
+
 # Installation
 ## Get the donni repo
 Clone this repo to your local directory and `cd` into the `donni` dir
