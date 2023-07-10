@@ -152,3 +152,30 @@ def test_run_train_sub_3():
             '--max_iter 25', '--eta 5',
             '--hyperparam tests/test_data/param_dist']
     run_train_sub(args)
+
+
+# test infer subcommand
+def run_infer_sub(args):
+    """Template method for testing train subcommand"""
+    outdir = random_string()
+    os.mkdir(outdir)
+    try:
+        rv, _ = getstatusoutput(
+            f'{PRG} infer {" ".join(args)} --output_prefix {outdir}/test_infer_output --export_dadi_cli {outdir}/test_infer_output')
+
+        # check that program executed without errors
+        assert rv == 0
+        # check that program produces some output file(s)
+        assert len(os.listdir(outdir)) != 0
+        # can expand this later to test correct number of outfiles
+        # for each use case
+
+    finally:  # remove output dir
+        shutil.rmtree(outdir, ignore_errors=True)
+
+
+def test_run_infer():
+    '''
+    '''
+    args = ['--input_fs tests/test_data/split_mig_syn.fs', '--model split_mig']
+    run_infer_sub(args)
