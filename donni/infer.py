@@ -112,22 +112,27 @@ def irods_download(dem_model, sample_sizes, fold, datadir):
     return datadir, plotdir
 
 
-def irods_cleanup(dem_model, sample_sizes, unfold=True):
+def irods_cleanup(dem_model, sample_sizes, fold=True):
 
     # Prep naming for model configuration directory
     # If polarization is determined by a flag
-    if unfold:
-        polarization = 'unfolded'
-    else:
+    if fold:
         polarization = 'folded'
+    else:
+        polarization = 'unfolded'
 
     # Name model configuration directory
+    datadir=AppDirs("donni", "Linh Tran", version=pkg_resources.get_distribution("donni").version).user_cache_dir
     datadir = datadir + f"/{dem_model}_{polarization}_ns_{'_'.join([str(ele) for ele in sample_sizes])}"
+    print(f"Attempting to rermove: {datadir} and QC")
 
     # Remove downloaded files
     # Seperate into a cleanup function for actual donni code?
     try:
         shutil.rmtree(datadir)
+        print(f"Removed: {datadir}")
+        shutil.rmtree(datadir+"_QC")
+        print(f"Removed: {datadir}_QC")
     except FileNotFoundError:
         print("Directory for model configuration not found.")
 
