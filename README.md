@@ -94,6 +94,16 @@ Once downloaded, donni will use the trained MLPRs to infer the demographic param
 
 Check the plots in /Users/tjstruck/Library/Caches/donni/0.0.1/three_epoch_unfolded_ns_20_QC for performance of download MLPR models.
 ```
+
+If users want to use `dadi` with the results from donni to do plotting or further analysis, they can export a file that can be read by [`dadi-cli`](https://dadi-cli.readthedocs.io/en/latest/), a command line interface for `dadi`. Users can use the `--export_dadi_cli` flag to store results that can be read by `dadi-cli` in a file with a user specified name which will have `.donni.pseudofit` as an extension.
+For example the command
+
+```console
+$ donni infer --input_fs examples/data/1d_ns20_sfs.fs --model three_epoch --export_dadi_cli three_epoch_ns20
+```
+
+Will generate a file `three_epoch_ns20.donni.pseudofit`, which can then be read by `dadi-cli` subcommands that use the `--demo-pop` and `--bestfit-p0-file` flags.
+
 ## Supported models and sample sizes
 
 donni currently supports all demographic models in the [dadi API](https://dadi.readthedocs.io/en/latest/api/dadi/) as well as the models from [Portik et al.](https://github.com/dportik/dadi_pipeline). The supported sample sizes are 10, 20, 40, 80, and 160 chromosomes per population (up to 20 chromosomes only for three-population models). Input allele frequency spectra with a different sample size will be automatically down-projected to the closest available supported size before inference. donni will also automatically detect whether the input data is a folded or unfolded spectra.

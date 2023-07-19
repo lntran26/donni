@@ -241,10 +241,12 @@ def _load_trained_mlpr(args):
 def run_infer(args):
     '''Method to get prediction given inputs from the
     predict subcommand'''
-
     # open input FS from file
     fs = dadi.Spectrum.from_file(args.input_fs)
     args.folded = fs.folded
+    if args.cleanup:
+        irods_cleanup(args.model, fs.sample_sizes, args.folded)
+        return
     if args.mlpr_dir != None:
         # load trained MLPRs and demographic model logs; TODO: remove for cloud support
         mlpr_list, mapie, logs, param_names = _load_trained_mlpr(args)
@@ -295,6 +297,15 @@ def run_infer(args):
         output_stream.close()
     if qc_dir != False:
         print(f"\nCheck the plots in {qc_dir} for performance of download MLPR models.")
+    if args.export_dadi_cli != None:
+        from donni.generate_data import pts_l_func
+        pts_l = pts_l_func(fs.sample_sizes)
+        fid = open(args.export_dadi_cli+".donni.pseudofit", "w")
+        fid.write("# {0}\n".format(" ".join(sys.argv)))
+        fid.write(f"# grid points used: {pts_l}\n")
+        fid.write("# Log(likelihood)\t{0}\ttheta\n".format('\t'.join(param_names)))
+        fid.write("-0\t{0}\t".format("\t".join([str(ele) for ele in pred[:len(param_names)+1]])))
+
 
 
 def run_plot(args):
@@ -542,6 +553,13 @@ def donni_parser():
     infer_parser.add_argument("--output_prefix", type=str,
                                 help="Optional output file to write out results\
                                    (default stdout)")
+    infer_parser.add_argument("--export_dadi_cli", type=str, default=None,
+                                help='Optional. Pass a file name to generate a\
+                                dadi-cli bestfit file to analyze with dadi-cli.\
+                                Filename will end in ".donni.pseudofit".')
+    infer_parser.add_argument("--cleanup", action='store_true', default=False,
+                                help="Optional. Delete the default directory for a given model configuration's\
+                                MLPRs and QC files downloaded from Cyverse.")
 
     # subcommand for plot
     plot_parser = subparsers.add_parser(
