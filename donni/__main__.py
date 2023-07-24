@@ -237,6 +237,10 @@ def _load_trained_mlpr(args):
 
     return mlpr_list, mapie, logs, param_names
 
+def _make_file_dir(path):
+    parent_dir = os.path.dirname(path)
+    if parent_dir != '':
+        os.makedirs(parent_dir, exist_ok=True)
 
 def run_infer(args):
     '''Method to get prediction given inputs from the
@@ -261,8 +265,9 @@ def run_infer(args):
     func, _, _= get_model(args.model, args.model_file, args.folded)
     cis_list = sorted(args.cis)
     # infer params using input FS
-    pred, theta, cis = infer(mlpr_list, func, fs, logs, mapie=mapie, cis=cis_list)
+    pred, theta, ll, cis = infer(mlpr_list, func, fs, logs, mapie=mapie, cis=cis_list)
     # write output
+    _make_file_dir(args.output_prefix)
     if args.output_prefix:
         output_stream = open(args.output_prefix, 'w')
     else:
@@ -300,11 +305,12 @@ def run_infer(args):
     if args.export_dadi_cli != None:
         from donni.generate_data import pts_l_func
         pts_l = pts_l_func(fs.sample_sizes)
+        _make_file_dir(args.export_dadi_cli)
         fid = open(args.export_dadi_cli+".donni.pseudofit", "w")
         fid.write("# {0}\n".format(" ".join(sys.argv)))
         fid.write(f"# grid points used: {pts_l}\n")
         fid.write("# Log(likelihood)\t{0}\ttheta\n".format('\t'.join(param_names)))
-        fid.write("-0\t{0}\t".format("\t".join([str(ele) for ele in pred[:len(param_names)+1]])))
+        fid.write("{0}\t{1}\t".format(ll, "\t".join([str(ele) for ele in pred[:len(param_names)+1]])))
 
 
 

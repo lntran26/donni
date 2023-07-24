@@ -45,7 +45,7 @@ def estimate_theta(pred, func, fs):
     func_ex = dadi.Numerics.make_extrap_func(func)
     grid_pts = pts_l_func(fs.sample_sizes)
     model_fs = func_ex(pred, fs.sample_sizes, grid_pts)
-    return dadi.Inference.optimal_sfs_scaling(model_fs, fs)
+    return dadi.Inference.optimal_sfs_scaling(model_fs, fs), dadi.Inference.ll_multinom(model_fs, fs)
 
 
 def prep_fs_for_ml(input_fs):
@@ -179,7 +179,7 @@ def infer(models: list, func, input_fs, logs, mapie=True, cis=[95]):
         if sum([ele < 0 for ele in pred_list]) > 0:
             raise ValueError("Model inferred a negative parameter value - try a different model.")
         else:
-            theta = estimate_theta(pred_list, func, input_fs)
+            theta, ll = estimate_theta(pred_list, func, input_fs)
 
     else:  # sklearn multioutput case: don't know if this works yet
         pred_list = models[0].predict([input_x])
@@ -187,4 +187,4 @@ def infer(models: list, func, input_fs, logs, mapie=True, cis=[95]):
         # log transformed prediction results
         pred_list = [10**pred_list[i] if logs[i] else pred_list[i]
                      for i in range(len(logs))]
-    return pred_list, theta, ci_list
+    return pred_list, theta, ll, ci_list
