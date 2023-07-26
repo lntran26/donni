@@ -12,7 +12,7 @@ from donni.generate_data import generate_fs, get_hyperparam_tune_dict,\
 from donni.train import prep_data, tune, report,\
     get_best_specs, train, get_cv_score
 from donni.infer import infer, prep_fs_for_ml, irods_download, irods_cleanup, project_fs
-from donni.plot import plot
+from donni.validate import validate
 
 
 # run_ methods for importing methods from other modules
@@ -209,7 +209,7 @@ def run_train(args):
 
 
 def _load_trained_mlpr(args):
-    """Helper method to read in trained MLPR models for predict and plot"""
+    """Helper method to read in trained MLPR models for predict and validate"""
 
     mlpr_list = []
     mapie = True
@@ -229,11 +229,6 @@ def _load_trained_mlpr(args):
     # need to get logs to de-log prediction
     _, param_names, logs = get_model(args.model, args.model_file,
                                      args.folded)  # now included misid
-    # this way of getting logs misses one log value for misid,
-    # which is currently added only in after running generate_data
-    # module helper function
-    # check hot fix in plot.py line #228
-    # and line #208 below in run_predict()
 
     return mlpr_list, mapie, logs, param_names
 
@@ -254,14 +249,16 @@ def run_infer(args):
     else:
         fs = project_fs(fs)
         ss = fs.sample_sizes
-        args.mlpr_dir, qc_dir = irods_download(args.model, ss, args.folded, args.download_dir)
+        args.mlpr_dir, qc_dir = irods_download(
+            args.model, ss, args.folded, args.download_dir)
         # load trained MLPRs and demographic model logs; TODO: remove for cloud support
         mlpr_list, mapie, logs, param_names = _load_trained_mlpr(args)
     # load func
-    func, _, _= get_model(args.model, args.model_file, args.folded)
+    func, _, _ = get_model(args.model, args.model_file, args.folded)
     cis_list = sorted(args.cis)
     # infer params using input FS
-    pred, theta, cis = infer(mlpr_list, func, fs, logs, mapie=mapie, cis=cis_list)
+    pred, theta, cis = infer(mlpr_list, func, fs, logs,
+                             mapie=mapie, cis=cis_list)
     # write output
     if args.output_prefix:
         output_stream = open(args.output_prefix, 'w')
@@ -296,19 +293,21 @@ def run_infer(args):
     if args.output_prefix:
         output_stream.close()
     if qc_dir != False:
-        print(f"\nCheck the plots in {qc_dir} for performance of download MLPR models.")
+        print(
+            f"\nCheck the plots in {qc_dir} for performance of download MLPR models.")
     if args.export_dadi_cli != None:
         from donni.generate_data import pts_l_func
         pts_l = pts_l_func(fs.sample_sizes)
         fid = open(args.export_dadi_cli+".donni.pseudofit", "w")
         fid.write("# {0}\n".format(" ".join(sys.argv)))
         fid.write(f"# grid points used: {pts_l}\n")
-        fid.write("# Log(likelihood)\t{0}\ttheta\n".format('\t'.join(param_names)))
-        fid.write("-0\t{0}\t".format("\t".join([str(ele) for ele in pred[:len(param_names)+1]])))
+        fid.write("# Log(likelihood)\t{0}\ttheta\n".format(
+            '\t'.join(param_names)))
+        fid.write(
+            "-0\t{0}\t".format("\t".join([str(ele) for ele in pred[:len(param_names)+1]])))
 
 
-
-def run_plot(args):
+def run_validate(args):
     '''Method to plot outputs'''
 
     # load trained MLPRs and demographic model logs
@@ -322,6 +321,10 @@ def run_plot(args):
     prep_test_dict = {}
     for params_key in test_dict:
         prep_test_dict[params_key] = prep_fs_for_ml(test_dict[params_key])
+
+    # get fs sample sizes to generate more test data as needed by retrain
+    fs = next(iter(test_dict.values()))
+    sample_sizes = fs.sample_sizes
 
     # parse test dict into test FS and corresponding labels
     X_test, y_test = prep_data(prep_test_dict, mapie=mapie)
@@ -338,11 +341,13 @@ def run_plot(args):
     except FileExistsError:
         pass
 
-    # plot results
+    # run validate and plot results
     plot_prefix = os.path.join(args.results_dir, args.plot_prefix)
-    plot(mlpr_list, X_test, y_test, X_input, y_label, plot_prefix,
-         args.mlpr_dir, logs, mapie=mapie, coverage=args.coverage,
-         theta=args.theta, params=param_names)
+
+    validate(mlpr_list, X_test, y_test, X_input, y_label, plot_prefix,
+             args.mlpr_dir, logs, args.model, args.model_file, args.folded,
+             sample_sizes, seeds=args.seeds, mapie=mapie, coverage=args.coverage,
+             theta=args.theta, params=param_names)
 
 
 # helper methods for custom type checks and parsing
@@ -532,66 +537,71 @@ def donni_parser():
     # need to handle dir for multiple models for mapie
     # single dir for sklearn models
     infer_parser.add_argument("--input_fs", type=str, required=True,
-                                help="Path to FS file for generating\
+                              help="Path to FS file for generating\
                                      inference")
     infer_parser.add_argument('--model', type=str,
-                                required=True,
-                                help="Name of dadi demographic model")
+                              required=True,
+                              help="Name of dadi demographic model")
     infer_parser.add_argument("--download_dir", type=str, required=False,
-                                help="Path to saved, trained MLPR(s) downloaded from the University of Arizona CyVerse Data Store.")
+                              help="Path to saved, trained MLPR(s) downloaded from the University of Arizona CyVerse Data Store.")
     infer_parser.add_argument("--mlpr_dir", type=str, required=False,
-                                help="Path to saved, trained MLPR(s). Required if user is not downloading MLPRs for inference.")
+                              help="Path to saved, trained MLPR(s). Required if user is not downloading MLPRs for inference.")
     # optional
     infer_parser.add_argument("--cis", type=_pos_int,
-                                nargs='+', default=[95],
-                                help="Optional list of values for\
+                              nargs='+', default=[95],
+                              help="Optional list of values for\
                                     confidence intervals,\
                                     e.g., [80 90 95]; default [95]")
     infer_parser.add_argument('--model_file', type=str,
-                                help="Name of file containing custom dadi\
+                              help="Name of file containing custom dadi\
                                      demographic model(s)",)
     infer_parser.add_argument("--output_prefix", type=str,
-                                help="Optional output file to write out results\
+                              help="Optional output file to write out results\
                                    (default stdout)")
     infer_parser.add_argument("--export_dadi_cli", type=str, default=None,
-                                help='Optional. Pass a file name to generate a\
+                              help='Optional. Pass a file name to generate a\
                                 dadi-cli bestfit file to analyze with dadi-cli.\
                                 Filename will end in ".donni.pseudofit".')
     infer_parser.add_argument("--cleanup", action='store_true', default=False,
-                                help="Optional. Delete the default directory for a given model configuration's\
+                              help="Optional. Delete the default directory for a given model configuration's\
                                 MLPRs and QC files downloaded from Cyverse.")
 
-    # subcommand for plot
-    plot_parser = subparsers.add_parser(
-        "plot", help='Plot trained MLPRs inference accuracy and CI coverage')
-    plot_parser.set_defaults(func=run_plot)
+    # subcommand for validate
+    validate_parser = subparsers.add_parser(
+        "validate", help='Validate trained MLPRs inference accuracy and CI coverage')
+    validate_parser.set_defaults(func=run_validate)
 
-    plot_parser.add_argument("--mlpr_dir", type=str, required=True,
-                             help="Path to trained MLPR(s)")
-    plot_parser.add_argument("--test_dict", type=str, required=True,
-                             help="Path to test data dictionary file")
-    plot_parser.add_argument("--train_dict", type=str, required=True,
-                             help="Path to train data dictionary file")
-    plot_parser.add_argument("--results_dir", type=str, required=True,
-                             help="Directory to save output plots")
-    plot_parser.add_argument("--plot_prefix", type=str, required=True,
-                             help="Prefix for plot filenames")
-    plot_parser.add_argument('--model', type=str,
-                             required=True,
-                             help="Name of dadi demographic model")
+    validate_parser.add_argument("--mlpr_dir", type=str, required=True,
+                                 help="Path to trained MLPR(s)")
+    validate_parser.add_argument("--test_dict", type=str, required=True,
+                                 help="Path to test data dictionary file")
+    validate_parser.add_argument("--train_dict", type=str, required=True,
+                                 help="Path to train data dictionary file")
+    validate_parser.add_argument("--results_dir", type=str, required=True,
+                                 help="Directory to save output plots")
+    validate_parser.add_argument("--plot_prefix", type=str, required=True,
+                                 help="Prefix for plot filenames")
+    validate_parser.add_argument('--model', type=str,
+                                 required=True,
+                                 help="Name of dadi demographic model")
+    # add arg seeds
+    validate_parser.add_argument('--seeds', type=_pos_int,
+                                 nargs='+', required=True,
+                                 help="Seeds already used in train and test data",)
+    # make theta required
+    validate_parser.add_argument('--theta', type=_pos_int,
+                                 required=True,
+                                 help="Theta used to generate test_dict for\
+                                 labeling plots")
 
     # optional
-    plot_parser.add_argument('--model_file', type=str,
-                             help="Name of file containing custom dadi\
+    validate_parser.add_argument('--model_file', type=str,
+                                 help="Name of file containing custom dadi\
                                  demographic model(s)")
-    plot_parser.add_argument('--coverage', action='store_true', default=False,
-                             help="Generate coverage plot (used with mapie)")
-    plot_parser.add_argument('--theta', type=_pos_int,
-                             help="Theta used to generate test_dict for\
-                                 labeling plots",
-                             default=None)
-    plot_parser.add_argument('--folded', action="store_true",
-                             help="Specify if the test FS is folded")
+    validate_parser.add_argument('--coverage', action='store_true', default=False,
+                                 help="Generate coverage plot (used with mapie)")
+    validate_parser.add_argument('--folded', action="store_true",
+                                 help="Specify if the test FS is folded")
 
     return parser
 
