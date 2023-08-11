@@ -230,30 +230,14 @@ def retrain(
     reason,
     count,
     mlpr_dir,
-    results_prefix,
-    dem_model,
-    dem_model_file,
-    folded,
-    sample_sizes,
-    theta,
-    seeds,
+    results_prefix
 ):
     """Method for retraining one mapie MLPR"""
+
     # open QC text file to record information
-
-    # generate new seed for new test data
-    seed = random.randint(0, 1e6)
-    # regenerate seed if already used
-    while seed in seeds:
-        seed = random.randint(0, 1e6)
-    # append new seed to seeds list for keeping track
-    seeds.append(seed)
-
     with open(f"{results_prefix}_QC.txt", "a") as fh:
         fh.write(f"Retraining param {i+1:02d}: ")
-        fh.write(f"Retrain count #{count} reason index: {reason}\n")
-        # write regenerating test data
-        fh.write(f"Regenerating test data using seed {seed}.\n")
+        fh.write(f"Retrain count #{count} reason: {reason}\n")
 
     # get current mlpr hyperparam
     mlpr_spec = mlpr.__dict__["estimator"].get_params()
@@ -268,20 +252,7 @@ def retrain(
     # save new mlpr
     pickle.dump(new_mlpr, open(f"{mlpr_dir}/param_{i+1:02d}_predictor", "wb"))
 
-    # generate new test data
-    # load demographic model info
-    dadi_func, param_names, logs = get_model(dem_model, dem_model_file, folded)
-    # generate new demographic parameters for test data
-    params_list = get_param_values(param_names, n_samples=1000, seed=seed)
-    # calculate grids used for dadi extrapolation based on sample sizes
-    grids = pts_l_func(sample_sizes)
-    # simulate dadi SFS for new test data, skipping qual check for now
-    data, _ = generate_fs(
-        dadi_func, params_list, logs, theta, sample_sizes, grids, folded=folded)
-    # parse data into input and corresponding labels, only support mapie
-    new_X_test, new_y_label = prep_data(data, mapie=True)
-
-    return new_mlpr, new_X_test, new_y_label, seeds
+    return new_mlpr
 
 
 def validate(
@@ -306,17 +277,18 @@ def validate(
 ):
     """Main method to plot both accuracy and coverage plots"""
 
-    # make prediction with trained mlpr models
-    rerun_n = 5  # max retrain times
     if mapie:
         rerun = False
+        rerun_n = 10  # max retrain times in case training fails
+
+        # first for loop to check if performance for all MLPRs meet standard
         for i, (mlpr_model, log) in enumerate(zip(mlpr_models, logs)):
             # internal QC per trained MLP
             rerun_count = 0
             while rerun_count < rerun_n:  # limit retrain to certain # times
-                # get prediction and accuracy score
+                # get prediction and accuracy score using validating set
                 raw_pred = mlpr_model.predict(X_test)
-                true, pred, r2, rho, rmse = process_inference(
+                true, pred, _, rho, _ = process_inference(
                     y_test[i], raw_pred, log)
 
                 # retrain conditions
@@ -329,12 +301,12 @@ def validate(
                     (not log and abs(min(pred)) > max(true) * 10),
                 ]
 
-                # if triggered will retrain the mlpr and generate a new test set
-                # each run will cause mlpr_model, X_test, y_test, seeds to be updated
+                # if any condition applies, retrain the mlpr using the input validating set
                 if any(rules):
                     rerun = True
                     rerun_count += 1
-                    mlpr_model, X_test, y_test, seeds = retrain(
+                    # retrain with the same train data and replace mlpr_model with a new model
+                    mlpr_model = retrain(
                         mlpr_model,
                         i,
                         X_input,
@@ -343,16 +315,69 @@ def validate(
                         rerun_count,
                         mlpr_dir,
                         results_prefix,
-                        dem_model,
-                        dem_model_file,
-                        folded,
-                        sample_sizes,
-                        theta,
-                        seeds,
                     )
-
-                else:
+                    # if max rerun times allowed is reached, print info
+                    if rerun_count == rerun_n:
+                        with open(f"{results_prefix}_QC.txt", "a") as fh:
+                            fh.write(
+                                f"Maximum retrain times ({rerun_n}) reached. ")
+                            fh.write(
+                                "Check accuracy plots for poor performance.\n")
+                else:  # break out of while loop if retrain conditions don't apply
                     break
+
+        if rerun:  # update test set and rerun test for the other params
+            # generate new seed for new test data
+            seed = random.randint(0, 1e6)
+            # regenerate seed if already used
+            while seed in seeds:
+                seed = random.randint(0, 1e6)
+            # append new seed to seeds list for keeping track
+            seeds.append(seed)
+
+            # print keys to retrain reasons if retrained and seed for the new (final) test data
+            with open(f"{results_prefix}_QC.txt", "a") as fh:
+                fh.write(f"Regenerating test data using seed {seed}.\n")
+                fh.write("\nRetrain reasons: \n")
+                fh.write("1: rho is nan\n")
+                fh.write("2: rho <= 0.2\n")
+                fh.write(
+                    "3: log param inferred 4 logs higher than simulated upper bound\n")
+                fh.write(
+                    "4: log param inferred 4 logs lower than simulated lower bound\n")
+                fh.write(
+                    "5: param inferred 10x higher than simulated upper bound\n")
+                fh.write(
+                    "6: param inferred 10x lower than simulated lower bound\n")
+
+            # generate new test data
+            # load demographic model info
+            dadi_func, param_names, logs = get_model(
+                dem_model, dem_model_file, folded)
+            # generate new demographic parameters for test data
+            params_list = get_param_values(
+                param_names, n_samples=1000, seed=seed)
+            # calculate grids used for dadi extrapolation based on sample sizes
+            grids = pts_l_func(sample_sizes)
+            # simulate dadi SFS for new test data, skipping qual check for now
+            data, _ = generate_fs(
+                dadi_func, params_list, logs, theta, sample_sizes, grids, folded=folded)
+            # save new test data
+            pickle.dump(data, open(
+                f"{results_prefix}_retrain_test_1000_theta_1000_seed_{seed}", "wb"))
+            # parse data into input and corresponding labels for mapie
+            new_X_test, new_y_test = prep_data(data, mapie=True)
+
+        # second for loop for generating plots for all params (with new test data if retrained)
+        for i, (mlpr_model, log) in enumerate(zip(mlpr_models, logs)):
+            if rerun:
+                new_raw_pred = mlpr_model.predict(new_X_test)
+                true, pred, r2, rho, rmse = process_inference(
+                    new_y_test[i], new_raw_pred, log)
+            else:
+                raw_pred = mlpr_model.predict(X_test)
+                true, pred, r2, rho, rmse = process_inference(
+                    y_test[i], raw_pred, log)
 
             title = get_title(params, i, theta)
             plot_accuracy_single(
@@ -370,20 +395,12 @@ def validate(
             )
             plt.clf()
 
-        # print keys to retrain reasons if retrained
-        if rerun:
-            with open(f"{results_prefix}_QC.txt", "a") as fh:
-                if rerun_count == rerun_n:
-                    fh.write(f"Maximum retrain times ({rerun_n}) reached. ")
-                    fh.write("Check accuracy plots for poor performance.\n")
-                fh.write("\nRetrain condition index keys: \n")
-                fh.write("1: rho is nan\n")
-                fh.write("2: rho <= 0.2\n")
-                fh.write("3 & 4: log param inferred 4 logs out of bounds\n")
-                fh.write("5 & 6: param inferred 10x out of bounds\n")
-
         if coverage:
-            all_coverage = get_coverage(mlpr_models, X_test, y_test, alpha)
+            if rerun:
+                all_coverage = get_coverage(
+                    mlpr_models, new_X_test, new_y_test, alpha)
+            else:
+                all_coverage = get_coverage(mlpr_models, X_test, y_test, alpha)
             plot_coverage(all_coverage, alpha, theta, params)
             plt.savefig(f"{results_prefix}_coverage", bbox_inches="tight")
             plt.clf()
