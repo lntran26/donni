@@ -8,7 +8,7 @@ import dadi
 from scipy.stats._distn_infrastructure import rv_frozen as distribution
 from donni.dadi_dem_models import get_model, get_param_values
 from donni.generate_data import generate_fs, get_hyperparam_tune_dict,\
-    fs_quality_check
+    fs_quality_check, pts_l_func
 from donni.train import prep_data, tune, report,\
     get_best_specs, train, get_cv_score
 from donni.infer import infer, prep_fs_for_ml, irods_download, irods_cleanup, project_fs
@@ -292,11 +292,10 @@ def run_infer(args):
         print(file=output_stream)
     if args.output_prefix:
         output_stream.close()
-    if qc_dir != False:
+    if qc_dir is not False:
         print(
             f"\nCheck the plots in {qc_dir} for performance of download MLPR models.")
-    if args.export_dadi_cli != None:
-        from donni.generate_data import pts_l_func
+    if args.export_dadi_cli is not None:
         pts_l = pts_l_func(fs.sample_sizes)
         fid = open(args.export_dadi_cli+".donni.pseudofit", "w")
         fid.write("# {0}\n".format(" ".join(sys.argv)))
@@ -347,7 +346,7 @@ def run_validate(args):
     validate(mlpr_list, X_test, y_test, X_input, y_label, plot_prefix,
              args.mlpr_dir, logs, args.model, args.model_file, args.folded,
              sample_sizes, seeds=args.seeds, mapie=mapie, coverage=args.coverage,
-             theta=args.theta, params=param_names)
+             theta=args.theta, params=param_names, run_retrain=args.no_retrain)
 
 
 # helper methods for custom type checks and parsing
@@ -602,6 +601,8 @@ def donni_parser():
                                  help="Generate coverage plot (used with mapie)")
     validate_parser.add_argument('--folded', action="store_true",
                                  help="Specify if the test FS is folded")
+    validate_parser.add_argument('--no_retrain', action="store_false", default=True,
+                                 help="Turn off default retrain QC")
 
     return parser
 
