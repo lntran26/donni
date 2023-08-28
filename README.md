@@ -8,9 +8,9 @@ If you've found an apparent bug, please submit an Issue so we can address it. Yo
 
 # Installation
 ## Get the donni repo
-Clone this repo to your local directory and `cd` into the `donni` dir
+Shallow clone this repo to your local directory and `cd` into the `donni` dir. We recommend using shallow clone for faster cloning.
 ```console
-$ git clone https://github.com/lntran26/donni.git
+$ git clone https://github.com/lntran26/donni.git --depth 1
 $ cd donni/
 ```
 
@@ -27,16 +27,16 @@ $ conda activate donni
 After installation, users can check for successful installation or get help information using:
 ```console
 $ donni -h
-usage: donni [-h] {generate_data,train,infer,plot} ...
+usage: donni [-h] {generate_data,train,infer,validate} ...
 
 Demography Optimization via Neural Network Inference
 
 positional arguments:
-  {generate_data,train,infer,plot}
+  {generate_data,train,infer,validate}
     generate_data       Simulate allele frequency data from demographic history models
     train               Train MLPR with simulated allele frequency data
     infer               Infer demographic history parameters from allele frequency with trained MLPRs
-    plot                Plot trained MLPRs inference accuracy and CI coverage
+    validate            Validate trained MLPRs inference accuracy and CI coverage
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -46,7 +46,7 @@ There are four subcommands in `donni` and the detailed usage for each subcommand
 - [`generate_data`](#generating-simulated-afs)
 - [`train`](#hyperparameter-tuning-and-training-the-MLPR)
 - [`infer`](#inferring-demographic-history-parameters-from-allele-frequency-data)
-- [`plot`](#plotting-trained-MLPRs-accuracy-and-confidence-interval-coverage)
+- [`validate`](#validating-trained-MLPRs-accuracy-and-confidence-interval-coverage)
 
 To display help information for each subcommand, users can use `-h`. For example:
 ```console
@@ -153,7 +153,7 @@ $ donni infer --input_fs examples/data/1d_ns20_sfs.fs --model two_epoch --mlpr_d
 ```
 
 # Training custom MLPRs
-The three subcommands `generate_data`, `train`, and `plot` are for training and testing trained MLPRs. This is the procedure we used to produce all the MLPRs in the current library. Users can use the same method outlined below to create their custom demographic model with dadi and produce the corresponding trained MLPRs.
+The three subcommands `generate_data`, `train`, and `validate` are for training and testing trained MLPRs. This is the procedure we used to produce all the MLPRs in the current library. Users can use the same method outlined below to create their custom demographic model with dadi and produce the corresponding trained MLPRs.
 
 ## Generating simulated AFS
 
@@ -255,26 +255,27 @@ For descriptions of other optional arguments, use:
 $ donni train -h
 ```
 
-## Plotting trained MLPRs accuracy and confidence interval coverage
-Finally, we can use the simulated test data to measure the accuracy performance of the trained MLPRs with the subcommand `plot`. The two required arguments are `--mlpr_dir` and `--test_dict` to indicate the path to the trained MLPRs and test data, respectively.
+## Validating trained MLPRs accuracy and confidence interval coverage
+Finally, we can use the simulated test data to measure the accuracy performance of the trained MLPRs with the subcommand `validate`. The two required arguments are `--mlpr_dir` and `--test_dict` to indicate the path to the trained MLPRs and test data, respectively.
 
-Because training can sometimes fail due to the stochasticity of the training optimization algorithm, this step also acts as a quality control step where training will be automatically repeated for a demographic parameter if its accuracy score rho is <= 0.2. The retraining is limited to a maximum of 10 reruns. Because of this, the path to the training data is also required and should be provided using the argument `--train_dict`.
+Because training can sometimes fail due to the stochasticity of the training optimization algorithm, this step also acts as a quality control step where training will be automatically repeated for a demographic parameter if failure in training is detected. The retraining is limited to a maximum of 10 reruns. Because of this, the path to the training data is also required and should be provided using the argument `--train_dict`. If retraining is triggered, a new test set (default 1000 FS with theta=1000) will also be simulated and used as the final test set used for plotting. Additionally, the argument `--seeds` are required, which should contain the seeds already used for simulating the train and original test sets, so that a different seed will be used for the new simulated test set after retraining.
 
-Other required arguments include `--results_dir` to indicate the path to save the output plots to, `--plot_prefix` for the prefix of each plot's filename, and `--model` for the demographic model used (required to obtain the demographic model parameters).
+Other required arguments include `--results_dir` to indicate the path to save the output plots (and new test data set if retrained) to, `--plot_prefix` for the prefix of each plot's filename, and `--model` for the demographic model used (required to obtain the demographic model parameters).
 
-The optional arguments `--theta` can be used to indicate the noise level of the test set (used for plot labeling purpose only) and `--coverage` will output the confidence interval coverage plot in addition to the accuracy plots for each demographic history model parameter.
+The optional arguments `--theta` can be used to indicate the noise level of the test set (default: 1000, used for labeling and for simulating new test set after retraining) and `--coverage` will output the confidence interval coverage plot in addition to the accuracy plots for each demographic history model parameter.
 
 Below is an example of a full command for a sample size of the split migration demographic model:
 ```console
-$ donni plot --mlpr_dir tuned_models --test_dict data/test_1000_theta_1000 \
+$ donni validate --mlpr_dir tuned_models --test_dict data/test_1000_theta_1000 \
 --train_dict data/train_5000 --results_dir plots --plot_prefix theta_1000 \
---model split_mig --theta 1000 --coverage
+--model split_mig --theta 1000 --coverage --seeds 1 100
 ```
+Note: while `validate` can be used to plot accuracy results for sklearn multioutput MLPRs (param_all_predictors), retraining procedure and coverage plotting only apply to mapie MLPRs.
 
 ### Other optional arguments:
 For descriptions of other optional arguments, use:
 ```console
-$ donni plot -h
+$ donni validate -h
 ```
 
 # Requirements
