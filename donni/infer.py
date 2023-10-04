@@ -1,7 +1,6 @@
 '''Module for using trained MLPR to make demographic param predictions'''
 import numpy as np
 import dadi
-import math
 from donni.generate_data import pts_l_func
 
 # irods packages
@@ -107,8 +106,9 @@ def irods_download(dem_model, sample_sizes, fold, datadir):
             session.data_objects.get(qc.path, plotdir, force=True)
     except exception.OVERWRITE_WITHOUT_FORCE_FLAG:
         # If we have users name a folder rather than making it automaticly named based on their requested model and configuration:
-        print(f"Files for the requested model and configuration have already been downloaded to the {datadir} folder.\nIf you want to redownload delete the directory")
-    print(f"\nFinished downloading files to {datadir} folder")
+        print(f"\nFiles for the requested model and configuration have already been downloaded to the {datadir} folder."
+              "\nTo redownload, delete the existing directory.")
+    print(f"\nFinished downloading files to {datadir} folder.")
     return datadir, plotdir
 
 
@@ -177,7 +177,7 @@ def infer(models: list, func, input_fs, logs, mapie=True, cis=[95]):
             pred_list.append(pred)
             ci_list.append(cis.T)
         if sum([ele < 0 for ele in pred_list]) > 0:
-            raise ValueError("Model inferred a negative parameter value - try a different model.")
+            theta = np.nan
         else:
             theta = estimate_theta(pred_list, func, input_fs)
 

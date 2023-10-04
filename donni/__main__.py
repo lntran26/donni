@@ -5,6 +5,7 @@ import re
 import sys
 import os
 import dadi
+import numpy as np
 from scipy.stats._distn_infrastructure import rv_frozen as distribution
 from donni.dadi_dem_models import get_model, get_param_values
 from donni.generate_data import generate_fs, get_hyperparam_tune_dict,\
@@ -273,6 +274,7 @@ def run_infer(args):
             pred.append(cis[j][i][0])
             pred.append(cis[j][i][1])
     print_names = param_names + ["theta"] + ci_names
+    print("\n***Inferred demographic model parameters***")
     # print parameter names
     print("# ", end="", file=output_stream)
     print(*print_names, sep='\t', file=output_stream)
@@ -294,7 +296,10 @@ def run_infer(args):
         output_stream.close()
     if qc_dir is not False:
         print(
-            f"\nCheck the plots in {qc_dir} for performance of download MLPR models.")
+            f"\nCheck the plots in {qc_dir} for accuracy scores of the downloaded model.")
+    if theta is np.nan:
+        print(
+            f"\nWARNING: Theta is not defined. Check inferred demographic model parameters for negative values.")
     if args.export_dadi_cli is not None:
         pts_l = pts_l_func(fs.sample_sizes)
         fid = open(args.export_dadi_cli+".donni.pseudofit", "w")
