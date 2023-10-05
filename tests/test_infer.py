@@ -107,7 +107,7 @@ def test_irods_download(capfd):
 
     irods_download(dem_model, sample_sizes, fold, datadir)
     out, err = capfd.readouterr()
-    assert '\n'.join([out.split('\n')[-5],out.split('\n')[-4]]) == f"Files for the requested model and configuration have already been downloaded to the temp/two_epoch_folded_ns_10 folder.\nIf you want to redownload delete the directory"
+    assert '\n'.join([out.split('\n')[-5],out.split('\n')[-4]]) == f"Files for the requested model and configuration have already been downloaded to the temp/two_epoch_folded_ns_10 folder.\nTo redownload, delete the existing directory."
 
     shutil.rmtree("tests/temp")
 
