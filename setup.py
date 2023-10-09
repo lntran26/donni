@@ -12,13 +12,6 @@ setup(
         "mapie == 0.6.1",
         "python-irodsclient == 1.1.6",
         "appdirs == 1.4.4",
-        "pytest",
-        "pylint",
-        "flake8",
-        "mypy",
-        "pytest-pylint",
-        "pytest-flake8",
-        "pytest-mypy"
         ],
     entry_points={"console_scripts": ["donni=donni.__main__:main"]},
 )
