@@ -10,7 +10,6 @@ dependencies:
   - pytest
   - pytest-cov
   - codecov
-  - gfortran
   - pip
   - dadi
   - dadi-cli
