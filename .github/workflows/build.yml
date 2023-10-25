@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.8", "3.9"]
+        python-version: ["3.9"]
       max-parallel: 5
 
     steps:
@@ -24,11 +24,14 @@ jobs:
         environment-file: environment.yml
     - name: Test with pytest
       run: |
-        micromamba run -n donni pytest --cov=. --cov-report term-missing -vv tests/test_*.py
+        pip install pytest
+        pip install pytest-cov
+        micromamba run -n donni pytest --cov=./ --cov-report=xml
         micromamba run -n donni coverage xml
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v3
       with:
+        token: ${{ secrets.CODECOV_TOKEN }}
         name: codecov-umbrella
         fail_ci_if_error: true
         env_vars: OS,PYTHON
