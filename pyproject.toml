@@ -4,16 +4,19 @@ build-backend = "hatchling.build"
 
 [project]
 name = "donni"
-version = "0.0.1"
+version = "0.1.0"
 description = "Demography Optimization via Neural Network Inference"
 readme = "README.md"
+requires-python = ">=3.7"
 license = ""
 dependencies = [
     "dadi",
-    "mapie == 0.6.1",
-    "scikit-learn == 1.2.0",
     "python-irodsclient == 1.1.6",
     "appdirs == 1.4.4",
+    "matplotlib",
+    "numpy",
+    "scipy",
+    "nlopt",
 ]
 
 [project.scripts]
@@ -26,5 +29,3 @@ path = "donni/__init__.py"
 include = [
     "/donni",
 ]
-
-
