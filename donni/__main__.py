@@ -107,10 +107,11 @@ def run_train(args):
         # get tuned hyperparams
         if args.tune or args.tune_only:
             best_hp = tune(X_input, np.array(param))
+            train(best_hp, X_input, np.array(param), model_path, tune=True)
         # or generate a default
         else:
-            best_hp = default_hyperparams()
-        train(best_hp, X_input, np.array(param), model_path)
+            best_hp = default_hyperparams() # not being used right now
+            train(best_hp, X_input, np.array(param), model_path)
 
 
 def _load_trained_mlpr(args):

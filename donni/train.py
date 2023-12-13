@@ -86,10 +86,10 @@ def tune(train_in, train_out, max_epochs=50):
     def model_builder(hp):
         """Hyperparam tuning"""
         # hyperparameters to be tuned
-        units_1 = hp.Int("units_1", min_value=16, max_value=64, step=16)
-        units_2 = hp.Int("units_2", min_value=4, max_value=16, step=4)
+        units_1 = hp.Int("units_1", min_value=16, max_value=64, step=16, default=32)
+        units_2 = hp.Int("units_2", min_value=4, max_value=16, step=4, default=16)
         dropout = hp.Boolean("dropout")
-        lr = hp.Float("lr", min_value=1e-4, max_value=1e-2, sampling="log")
+        lr = hp.Float("lr", min_value=1e-4, max_value=1e-2, sampling="log", default=0.001)
 
         # call existing model-building code with the hyperparameter values.
         tuned_train_model = mvenn_base_model(
@@ -102,7 +102,7 @@ def tune(train_in, train_out, max_epochs=50):
         model_builder,
         objective="val_loss",
         max_epochs=max_epochs,
-        distribution_strategy=tf.distribute.MirroredStrategy(),
+        # distribution_strategy=tf.distribute.MirroredStrategy(),
         directory="tuning_outdir",
         overwrite=True,
     )
@@ -129,21 +129,22 @@ def tune(train_in, train_out, max_epochs=50):
     return best_hp
 
 
-def train(best_hp, train_in, train_out, model_path, epochs=50):
+def train(best_hp, train_in, train_out, model_path, epochs=50, tune=False):
     inp = Input(shape=train_in.shape[1])
     disable_eager_execution()
-    x = Dense(best_hp.get("units_1"), activation="relu")(inp)
-    dropout = best_hp.get("dropout")
+    x = Dense(best_hp.get("units_1"), activation="relu")(inp) if tune else Dense(32, activation="relu")(inp)
+    dropout = best_hp.get("dropout") if tune else False
     if dropout:
         x = Dropout(0.2)(x)
-    x = Dense(best_hp.get("units_2"), activation="relu")(x)
+    x = Dense(best_hp.get("units_2"), activation="relu")(x) if tune else Dense(16, activation="relu")(x)
     mean = Dense(1, activation="linear")(x)
     var = Dense(1, activation="softplus")(x)  # softplus to ensure positive value
 
     train_model = Model(inp, mean)
+    lr = best_hp.get("lr") if tune else 0.001
     train_model.compile(
         loss=regression_nll_loss(var),
-        optimizer=keras.optimizers.legacy.Adam(learning_rate=best_hp.get("lr")),
+        optimizer=keras.optimizers.legacy.Adam(learning_rate=lr),
         metrics=[keras.metrics.RootMeanSquaredError()],
     )
     pred_model = Model(inp, [mean, var])
@@ -152,7 +153,7 @@ def train(best_hp, train_in, train_out, model_path, epochs=50):
     train_model.fit(
         train_in,
         train_out,
-        epochs=epochs,
+        epochs=epochs,  
         validation_split=0.2,
         callbacks=[callback],
         verbose=0,
