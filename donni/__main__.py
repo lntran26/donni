@@ -8,9 +8,11 @@ import numpy as np
 from scipy.stats._distn_infrastructure import rv_frozen as distribution
 from donni.dadi_dem_models import get_model, get_param_values
 from donni.generate_data import generate_fs, get_hyperparam_tune_dict, fs_quality_check
-from donni.train import prep_data, tune, train, default_hyperparams
+from donni.train import prep_data, train
 from donni.infer import infer, prep_fs_for_ml, irods_download, irods_cleanup, project_fs
 from donni.validate import validate
+from tensorflow.python.framework.ops import disable_eager_execution
+# disable_eager_execution() # avoid lots of keras' errors
 
 
 # run_ methods for importing methods from other modules
@@ -94,24 +96,14 @@ def run_train(args):
     # Load training data
     data = pickle.load(open(args.data_file, "rb"))
     # parse data into input and corresponding labels
-    X_input, y_label = prep_data(data, mapie=args.multioutput)
+    X_input, all_y_label = prep_data(data, mapie=args.multioutput)
     # make dir to save trained MLPs
     try:
         os.makedirs(args.mlpr_dir)
     except FileExistsError:
         pass
-    # iterate through each param in the demographic model
-    for index, param in enumerate(y_label):
-        # define path to save trained model
-        model_path = f"{args.mlpr_dir}/param_{index}_predictor.keras"
-        # get tuned hyperparams
-        if args.tune or args.tune_only:
-            best_hp = tune(X_input, np.array(param))
-            train(best_hp, X_input, np.array(param), model_path, tune=True)
-        # or generate a default
-        else:
-            best_hp = default_hyperparams() # not being used right now
-            train(best_hp, X_input, np.array(param), model_path)
+    
+    train(X_input, all_y_label, args.mlpr_dir, args.tune)
 
 
 def _load_trained_mlpr(args):
@@ -402,19 +394,11 @@ def donni_parser():
         action="store_false",
         help="Train multioutput sklearn MLPR instead of\
                                   default mapie single-output MLPRs",
-    )
-    train_parser.add_argument(
-        "--tune",
-        action="store_true",
-        help="Whether to try a range of hyperparameters\
-                                   to find the best performing MLPRs",
-    )
-    train_parser.add_argument(
-        "--tune_only",
-        action="store_true",
-        help="When use will not refit to train\
-                                 on the full data set after tuning",
-    )
+    ) 
+    train_parser.add_argument("--tune", action='store_true',
+                            help="Whether to try a range of hyperparameters\
+                                to find the best performing MLPRs")   
+    
     # subcommand for infer
     infer_parser = subparsers.add_parser(
         "infer",

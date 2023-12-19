@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from scipy.stats import norm, spearmanr
 from mapie.metrics import regression_coverage_score
 from tensorflow import keras
+import keras.backend as K
 
 def get_coverage(pis_all_params, y_test, alpha):
     """Get coverage scores for mapie MLP models"""
@@ -245,6 +246,8 @@ def validate(filename_list, mlpr_dir, X_test, y_test, params, logs, plot_prefix)
             with open(plot_prefix + '_report.txt','a') as fh:
                 # Pass the file handle in as a lambda function to make it callable
                 mlpr.summary(print_fn=lambda x: fh.write(x + '\n'))
+                # print model learning rate
+                print(f"Learning rate: {K.eval(mlpr.optimizer.lr)}", file=fh)
             mean, var = mlpr.predict(X_test)
             all_means.append(mean)
             all_vars.append(var)

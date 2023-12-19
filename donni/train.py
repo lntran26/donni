@@ -3,22 +3,21 @@ Module for training and tuning MVEnn with dadi-simulated data
 """
 import logging
 import os
+from multiprocessing import Pool
+import numpy as np
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"  # FATAL
 logging.getLogger("tensorflow").setLevel(logging.FATAL)
-from tensorflow.python.framework.ops import disable_eager_execution
-from multiprocessing import Pool
-
-import numpy as np
+# from tensorflow.python.framework.ops import disable_eager_execution
 import tensorflow as tf
 from tensorflow import keras
 from keras.models import Model
 from keras.layers import Dense, Input, Dropout
 from keras.callbacks import EarlyStopping
-from tensorflow.python.framework.ops import disable_eager_execution
+import pickle
+
 import keras.backend as K
 import keras_tuner as kt
-
 
 def prep_data(data: dict, mapie=True):
     """
@@ -43,39 +42,35 @@ def prep_data(data: dict, mapie=True):
 
 def regression_nll_loss(sigma_sq, epsilon=1e-6):
     """Custom loss function to train both mean and variance"""
-
     def nll_loss(y_true, y_pred):
         return 0.5 * K.mean(
             K.log(sigma_sq + epsilon) + K.square(y_true - y_pred) / (sigma_sq + epsilon)
-        )
-
+            )
     return nll_loss
 
 
-def default_hyperparams():
-    default_hp = kt.HyperParameters()
-    default_hp.Choice(name="units_1", values=[32])
-    default_hp.Choice(name="units_2", values=[16])
-    default_hp.Boolean(name="dropout")
-    default_hp.Choice(name="lr", values=[0.001])
-    return default_hp
+def _train_worker_func(args):
+    X_input, y_label, param_idx, outdir, tuning = args
+    # disable_eager_execution()
 
-
-def tune(train_in, train_out, max_epochs=50):
-    input_shape = train_in.shape[1]
-    disable_eager_execution()
-
-    def mvenn_base_model(units_1, units_2, dropout, lr):
-        """Base network structure for all MVEnn"""
-        inp = Input(shape=input_shape)
-        x = Dense(units_1, activation="relu")(inp)
-        if dropout:
-            x = Dropout(0.2)(x)
-        x = Dense(units_2, activation="relu")(x)
+    def model_builder(hp):
+        """Hyperparam tuning"""
+        inp = Input(shape=X_input.shape[1])
+        x = Dense(
+            units=hp.Int("units_1", min_value=16, max_value=64, step=16),
+            activation="relu",
+        )(inp)
+        x = Dense(
+            units=hp.Int("units_2", min_value=4, max_value=16, step=4),
+            activation="relu",
+        )(x)
         mean = Dense(1, activation="linear")(x)
-        var = Dense(1, activation="softplus")(x)  # softplus to ensure positive value
+        var = Dense(1, activation="softplus")(x)
 
         train_model = Model(inp, mean)
+        lr = hp.Float(
+            "lr", min_value=1e-4, max_value=1e-2, sampling="log", default=0.001
+        )
         train_model.compile(
             loss=regression_nll_loss(var),
             optimizer=keras.optimizers.legacy.Adam(learning_rate=lr),
@@ -83,80 +78,78 @@ def tune(train_in, train_out, max_epochs=50):
         )
         return train_model
 
-    def model_builder(hp):
-        """Hyperparam tuning"""
-        # hyperparameters to be tuned
-        units_1 = hp.Int("units_1", min_value=16, max_value=64, step=16, default=32)
-        units_2 = hp.Int("units_2", min_value=4, max_value=16, step=4, default=16)
-        dropout = hp.Boolean("dropout")
-        lr = hp.Float("lr", min_value=1e-4, max_value=1e-2, sampling="log", default=0.001)
-
-        # call existing model-building code with the hyperparameter values.
-        tuned_train_model = mvenn_base_model(
-            units_1=units_1, units_2=units_2, dropout=dropout, lr=lr
+    if tuning:  # run tuning to return best_hp
+        # instantiate the Hyperband tuner
+        tuner = kt.Hyperband(
+            model_builder,
+            objective="val_loss",
+            max_epochs=100,
+            directory="tuning_outdir",
+            project_name=f"mvenn_tuning_{param_idx}",
+            overwrite=True,
         )
-        return tuned_train_model
 
-    # instantiate the Hyperband tuner
-    tuner = kt.Hyperband(
-        model_builder,
-        objective="val_loss",
-        max_epochs=max_epochs,
-        # distribution_strategy=tf.distribute.MirroredStrategy(),
-        directory="tuning_outdir",
-        overwrite=True,
-    )
+        # Run the hyperparameter search
+        tuner.search(
+            X_input,
+            y_label,
+            epochs=30,
+            validation_split=0.2,
+            callbacks=[EarlyStopping(monitor="val_loss", patience=5)],
+            verbose=0,
+        )
+        # print tuner results to stdout
+        tuner.results_summary()  # to do: print this to specified file path
 
-    # Create a callback to stop training early after reaching a certain value for the val_loss
-    stop_early = tf.keras.callbacks.EarlyStopping(monitor="val_loss", patience=5)
+        # Get the optimal hyperparameters
+        best_hp = tuner.get_best_hyperparameters()[0]
 
-    # Run the hyperparameter search
-    tuner.search(
-        train_in,
-        train_out,
-        epochs=30,
-        validation_split=0.2,
-        callbacks=[stop_early],
-        verbose=0,
-    )
+    else:
+        # use default hyperparams if not tuning
+        best_hp = kt.HyperParameters()
+        best_hp.Choice(name="units_1", values=[32])
+        best_hp.Choice(name="units_2", values=[16])
+        best_hp.Choice(name="lr", values=[0.001])
 
-    # tentative print tuner results
-    tuner.results_summary()
+    # initiate model from chosen hyperparams and train
+    # K.clear_session() # clear any previous model setting from tuning
+    inp = Input(shape=X_input.shape[1])
+    x = Dense(best_hp.get("units_1"), activation="relu")(inp)
+    x = Dense(best_hp.get("units_2"), activation="relu")(x)
 
-    # Get the optimal hyperparameters
-    best_hp = tuner.get_best_hyperparameters()[0]
-
-    return best_hp
-
-
-def train(best_hp, train_in, train_out, model_path, epochs=50, tune=False):
-    inp = Input(shape=train_in.shape[1])
-    disable_eager_execution()
-    x = Dense(best_hp.get("units_1"), activation="relu")(inp) if tune else Dense(32, activation="relu")(inp)
-    dropout = best_hp.get("dropout") if tune else False
-    if dropout:
-        x = Dropout(0.2)(x)
-    x = Dense(best_hp.get("units_2"), activation="relu")(x) if tune else Dense(16, activation="relu")(x)
     mean = Dense(1, activation="linear")(x)
-    var = Dense(1, activation="softplus")(x)  # softplus to ensure positive value
+    var = Dense(1, activation="softplus")(x)
 
     train_model = Model(inp, mean)
-    lr = best_hp.get("lr") if tune else 0.001
+    pred_model = Model(inp, [mean, var])
+
+    lr = best_hp.get("lr")
     train_model.compile(
         loss=regression_nll_loss(var),
         optimizer=keras.optimizers.legacy.Adam(learning_rate=lr),
         metrics=[keras.metrics.RootMeanSquaredError()],
     )
-    pred_model = Model(inp, [mean, var])
 
-    callback = EarlyStopping(monitor="val_loss", patience=5)
     train_model.fit(
-        train_in,
-        train_out,
-        epochs=epochs,  
+        X_input,
+        np.array(y_label),
+        epochs=100,
         validation_split=0.2,
-        callbacks=[callback],
+        callbacks=[EarlyStopping(monitor="val_loss", patience=5)],
         verbose=0,
     )
+    pred_model.save(f"{outdir}/param_{param_idx+1:02d}_predictor.keras")
 
-    pred_model.save(f"{model_path}")
+
+def train(X_input, all_y_label, outdir: str, tuning: bool):
+    args_list = []
+    # convert input FS to TF format
+    X_input_tf = tf.data.Dataset.from_tensor_slices(X_input)
+
+    for param_idx, y_label in enumerate(all_y_label):
+        # convert labels to TF format
+        y_label_tf = tf.data.Dataset.from_tensor_slices(np.array(y_label))
+        args_list.append((X_input_tf, y_label_tf, param_idx, outdir, tuning))
+
+    with Pool(processes=len(all_y_label)) as pool:
+        pool.map(_train_worker_func, args_list)
