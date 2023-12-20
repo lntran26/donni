@@ -247,7 +247,7 @@ def validate(filename_list, mlpr_dir, X_test, y_test, params, logs, plot_prefix)
                 # Pass the file handle in as a lambda function to make it callable
                 mlpr.summary(print_fn=lambda x: fh.write(x + '\n'))
                 # print model learning rate
-                print(f"Learning rate: {K.eval(mlpr.optimizer.lr)}", file=fh)
+                # print(f"Learning rate: {K.eval(mlpr.optimizer.lr)}", file=fh)
             mean, var = mlpr.predict(X_test)
             all_means.append(mean)
             all_vars.append(var)

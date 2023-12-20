@@ -11,8 +11,8 @@ from donni.generate_data import generate_fs, get_hyperparam_tune_dict, fs_qualit
 from donni.train import prep_data, train
 from donni.infer import infer, prep_fs_for_ml, irods_download, irods_cleanup, project_fs
 from donni.validate import validate
-from tensorflow.python.framework.ops import disable_eager_execution
-# disable_eager_execution() # avoid lots of keras' errors
+# from tensorflow.python.framework.ops import disable_eager_execution
+# disable_eager_execution()
 
 
 # run_ methods for importing methods from other modules

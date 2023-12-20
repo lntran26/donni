@@ -8,15 +8,13 @@ import numpy as np
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"  # FATAL
 logging.getLogger("tensorflow").setLevel(logging.FATAL)
-# from tensorflow.python.framework.ops import disable_eager_execution
+
 import tensorflow as tf
 from tensorflow import keras
 from keras.models import Model
 from keras.layers import Dense, Input, Dropout
 from keras.callbacks import EarlyStopping
 import pickle
-
-import keras.backend as K
 import keras_tuner as kt
 
 def prep_data(data: dict, mapie=True):
@@ -43,6 +41,7 @@ def prep_data(data: dict, mapie=True):
 def regression_nll_loss(sigma_sq, epsilon=1e-6):
     """Custom loss function to train both mean and variance"""
     def nll_loss(y_true, y_pred):
+        import keras.backend as K
         return 0.5 * K.mean(
             K.log(sigma_sq + epsilon) + K.square(y_true - y_pred) / (sigma_sq + epsilon)
             )
@@ -51,8 +50,9 @@ def regression_nll_loss(sigma_sq, epsilon=1e-6):
 
 def _train_worker_func(args):
     X_input, y_label, param_idx, outdir, tuning = args
-    # disable_eager_execution()
-
+    from tensorflow.python.framework.ops import disable_eager_execution
+    disable_eager_execution()
+    
     def model_builder(hp):
         """Hyperparam tuning"""
         inp = Input(shape=X_input.shape[1])
@@ -112,7 +112,7 @@ def _train_worker_func(args):
         best_hp.Choice(name="lr", values=[0.001])
 
     # initiate model from chosen hyperparams and train
-    # K.clear_session() # clear any previous model setting from tuning
+
     inp = Input(shape=X_input.shape[1])
     x = Dense(best_hp.get("units_1"), activation="relu")(inp)
     x = Dense(best_hp.get("units_2"), activation="relu")(x)
@@ -138,18 +138,30 @@ def _train_worker_func(args):
         callbacks=[EarlyStopping(monitor="val_loss", patience=5)],
         verbose=0,
     )
+    
     pred_model.save(f"{outdir}/param_{param_idx+1:02d}_predictor.keras")
-
+    
 
 def train(X_input, all_y_label, outdir: str, tuning: bool):
     args_list = []
     # convert input FS to TF format
-    X_input_tf = tf.data.Dataset.from_tensor_slices(X_input)
+    # X_input_tf = tf.data.Dataset.from_tensor_slices(X_input)
+    # X_input_tf = tf.convert_to_tensor(X_input)
 
     for param_idx, y_label in enumerate(all_y_label):
         # convert labels to TF format
-        y_label_tf = tf.data.Dataset.from_tensor_slices(np.array(y_label))
-        args_list.append((X_input_tf, y_label_tf, param_idx, outdir, tuning))
+        # y_label_tf = tf.data.Dataset.from_tensor_slices(np.array(y_label))
+        # y_label_tf = tf.convert_to_tensor(np.array(y_label))
+        
+        args_list.append((X_input, np.array(y_label), param_idx, outdir, tuning))
+        # args_list.append((X_input_tf, y_label_tf, param_idx, outdir, tuning))
 
     with Pool(processes=len(all_y_label)) as pool:
+        # pred_models = pool.map(_train_worker_func, args_list)
         pool.map(_train_worker_func, args_list)
+        
+        # for param_idx, pred_model in enumerate(pred_models):
+        #     pred_model.save(f"{outdir}/param_{param_idx+1:02d}_predictor.keras")
+        
+        
+        
