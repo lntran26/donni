@@ -83,7 +83,7 @@ def _train_worker_func(args):
         tuner = kt.Hyperband(
             model_builder,
             objective="val_loss",
-            max_epochs=100,
+            max_epochs=100, # default is 100
             directory="tuning_outdir",
             project_name=f"mvenn_tuning_{param_idx}",
             overwrite=True,
@@ -93,15 +93,43 @@ def _train_worker_func(args):
         tuner.search(
             X_input,
             y_label,
-            epochs=30,
             validation_split=0.2,
-            callbacks=[EarlyStopping(monitor="val_loss", patience=5)],
             verbose=0,
-        )
+            )
         # print tuner results to stdout
         tuner.results_summary()  # to do: print this to specified file path
 
         # Get the optimal hyperparameters
+        best_hp = tuner.get_best_hyperparameters()[0]
+        
+        # fix the layer sizes and tune the learning rate some more
+        hp = kt.HyperParameters()
+        hp.Fixed("units_1", value=best_hp.get("units_1"))
+        hp.Fixed("units_2", value=best_hp.get("units_2"))
+        
+        tuner = kt.RandomSearch(
+            model_builder,
+            hyperparameters=hp,
+            tune_new_entries=True, # retune the learning rate (not fixed)
+            objective="val_loss",
+            max_trials=100, # default to 10
+            directory="tuning_outdir",
+            project_name=f"lr_random_{param_idx}",
+            overwrite=True,
+            )
+        
+        tuner.search(
+            X_input,
+            y_label,
+            epochs=50,
+            validation_split=0.2,
+            verbose=0,
+            )
+            
+        # print tuner results to stdout
+        tuner.results_summary()  # to do: print this to specified file path
+            
+        # Get the final optimal hyperparameters
         best_hp = tuner.get_best_hyperparameters()[0]
 
     else:
