@@ -96,7 +96,7 @@ def run_train(args):
     # Load training data
     data = pickle.load(open(args.data_file, "rb"))
     # parse data into input and corresponding labels
-    X_input, all_y_label = prep_data(data, mapie=args.multioutput)
+    X_input, all_y_label = prep_data(data, single_output=args.multioutput)
     # make dir to save trained MLPs
     try:
         os.makedirs(args.mlpr_dir)
@@ -110,10 +110,10 @@ def _load_trained_mlpr(args):
     """Helper method to read in trained MLPR models for predict and validate"""
 
     mlpr_list = []
-    mapie = True
+    single_output = True
     filename_list = sorted(os.listdir(args.mlpr_dir))
     if "param_all_predictor" in filename_list:
-        mapie = False  # this is the sklearn case
+        single_output = False  # this is the multioutput case
         mlpr = pickle.load(
             open(os.path.join(args.mlpr_dir, "param_all_predictor"), "rb")
         )
@@ -129,7 +129,7 @@ def _load_trained_mlpr(args):
         args.model, args.model_file, args.folded
     )  # now included misid
 
-    return mlpr_list, mapie, logs, param_names
+    return mlpr_list, single_output, logs, param_names
 
 
 def run_infer(args):
@@ -143,7 +143,7 @@ def run_infer(args):
         return
     if args.mlpr_dir != None:
         # load trained MLPRs and demographic model logs; TODO: remove for cloud support
-        mlpr_list, mapie, logs, param_names = _load_trained_mlpr(args)
+        mlpr_list, single_output, logs, param_names = _load_trained_mlpr(args)
         qc_dir = False
     else:
         fs = project_fs(fs)
@@ -152,7 +152,7 @@ def run_infer(args):
             args.model, ss, args.folded, args.download_dir
         )
         # load trained MLPRs and demographic model logs; TODO: remove for cloud support
-        mlpr_list, mapie, logs, param_names = _load_trained_mlpr(args)
+        mlpr_list, single_output, logs, param_names = _load_trained_mlpr(args)
     # load func
     func, _, _ = get_model(args.model, args.model_file, args.folded)
     cis_list = sorted(args.cis)
@@ -222,7 +222,7 @@ def run_validate(args):
         prep_test_dict[params_key] = prep_fs_for_ml(test_dict[params_key])
 
     # parse test dict into test FS and corresponding labels
-    X_test, y_test = prep_data(prep_test_dict, mapie=True)
+    X_test, y_test = prep_data(prep_test_dict, single_output=True)
 
     # load mlpr dir name list
     filename_list = sorted(os.listdir(args.mlpr_dir))
@@ -393,7 +393,7 @@ def donni_parser():
         "--multioutput",
         action="store_false",
         help="Train multioutput sklearn MLPR instead of\
-                                  default mapie single-output MLPRs",
+                                  default single-output MLPRs",
     ) 
     train_parser.add_argument("--tune", action='store_true',
                             help="Whether to try a range of hyperparameters\

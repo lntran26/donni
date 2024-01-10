@@ -2,9 +2,20 @@ import pickle
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import norm, spearmanr
-from mapie.metrics import regression_coverage_score
+# from mapie.metrics import regression_coverage_score
 from tensorflow import keras
 import keras.backend as K
+
+
+def regression_coverage_score(y_true,
+                            y_pred_low,
+                            y_pred_up):
+    "Replacing dependency for mapie.metrics.regression_coverage_score"
+    coverage = np.mean(
+        ((y_pred_low <= y_true) & (y_pred_up >= y_true))
+    )
+    return float(coverage)
+
 
 def get_coverage(pis_all_params, y_test, alpha):
     """Get coverage scores for mapie MLP models"""
@@ -22,11 +33,9 @@ def get_coverage(pis_all_params, y_test, alpha):
     
 def plot_coverage(cov_scores, alpha, results_prefix, eps=None, params=None):
     """Helper method to plot coverage plot"""
-
-    fig = plt.figure(figsize=(3, 3), dpi=300)
-    # make square plots with two axes the same size
-    ax = plt.gca()
-    ax.set_aspect("equal", "box")
+    
+    font = {"size": 22}
+    plt.rc("font", **font)
 
     expected = [100 * (1 - a) for a in alpha]
     observed = []
@@ -40,16 +49,9 @@ def plot_coverage(cov_scores, alpha, results_prefix, eps=None, params=None):
     if eps:
         title += f"eps={eps}"
 
-    # ax.set_title(title, fontsize=15)
-    ax.text(0.05, 0.95, title, transform=ax.transAxes, va="top", 
-            # fontsize=18
-            )
-    ax.set_xlabel("Expected", 
-                #   fontsize=20
-                  )
-    ax.set_ylabel("Observed", 
-                #   fontsize=20
-                  )
+    ax.text(0.05, 0.95, title, transform=ax.transAxes, va="top", fontsize=18)
+    ax.set_xlabel("Expected", fontsize=20)
+    ax.set_ylabel("Observed", fontsize=20)
 
     for i in range(len(cov_scores)):
         label = params[i] if params is not None else "param " + str(i + 1)
@@ -59,17 +61,12 @@ def plot_coverage(cov_scores, alpha, results_prefix, eps=None, params=None):
     plt.xticks(ticks=list(range(0, 101, 25)))
     plt.yticks(ticks=list(range(0, 101, 25)))
     plt.tick_params(length=10, which="major")
-    plt.rc("xtick", 
-        #    labelsize=20
-           )
-    plt.rc("ytick", 
-        #    labelsize=20
-           )
+    plt.rc("xtick", labelsize=22)
+    plt.rc("ytick", labelsize=22)
     # define axis range
     plt.xlim([0, 100])
     plt.ylim([0, 100])
-    ax.legend(
-        # fontsize=15, 
+    ax.legend(fontsize=15, 
               frameon=False,
               bbox_to_anchor=(1, 0), loc="lower left")
     plt.tight_layout()
