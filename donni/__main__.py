@@ -106,58 +106,40 @@ def run_train(args):
     train(X_input, all_y_label, args.mlpr_dir, args.tune)
 
 
-def _load_trained_mlpr(args):
-    """Helper method to read in trained MLPR models for predict and validate"""
-
-    mlpr_list = []
-    single_output = True
-    filename_list = sorted(os.listdir(args.mlpr_dir))
-    if "param_all_predictor" in filename_list:
-        single_output = False  # this is the multioutput case
-        mlpr = pickle.load(
-            open(os.path.join(args.mlpr_dir, "param_all_predictor"), "rb")
-        )
-        mlpr_list = [mlpr]
-    else:
-        for filename in filename_list:
-            if filename.startswith("param") and filename.endswith("predictor"):
-                mlpr = pickle.load(open(os.path.join(args.mlpr_dir, filename), "rb"))
-                mlpr_list.append(mlpr)
-
-    # need to get logs to de-log prediction
-    _, param_names, logs = get_model(
-        args.model, args.model_file, args.folded
-    )  # now included misid
-
-    return mlpr_list, single_output, logs, param_names
-
-
 def run_infer(args):
     """Method to get prediction given inputs from the
     predict subcommand"""
+    
     # open input FS from file
     fs = dadi.Spectrum.from_file(args.input_fs)
     args.folded = fs.folded
+    # TODO: option to specify whether to project in project_fs
+    # rather than placing it inside args.mlpr_dir != None
+    fs = project_fs(fs)
+
     if args.cleanup:
         irods_cleanup(args.model, fs.sample_sizes, args.folded)
         return
     if args.mlpr_dir != None:
-        # load trained MLPRs and demographic model logs; TODO: remove for cloud support
-        mlpr_list, single_output, logs, param_names = _load_trained_mlpr(args)
         qc_dir = False
     else:
-        fs = project_fs(fs)
-        ss = fs.sample_sizes
         args.mlpr_dir, qc_dir = irods_download(
-            args.model, ss, args.folded, args.download_dir
+            args.model, fs.sample_sizes, args.folded, args.download_dir
         )
-        # load trained MLPRs and demographic model logs; TODO: remove for cloud support
-        mlpr_list, single_output, logs, param_names = _load_trained_mlpr(args)
+    
     # load func
     func, _, _ = get_model(args.model, args.model_file, args.folded)
     cis_list = sorted(args.cis)
+    
+    # get logs to de-log prediction
+    _, param_names, logs = get_model(args.model, args.model_file, args.folded)
+    
+    # load mlpr dir name list
+    filename_list = sorted(os.listdir(args.mlpr_dir))
+    
     # infer params using input FS
-    pred, theta, cis = infer(mlpr_list, func, fs, logs, mapie=mapie, cis=cis_list)
+    pred, theta, cis = infer(filename_list, args.mlpr_dir, func, fs, logs, cis=cis_list)
+    
     # write output
     if args.output_prefix:
         output_stream = open(args.output_prefix, "w")
