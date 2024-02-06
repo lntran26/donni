@@ -96,14 +96,17 @@ def run_train(args):
     # Load training data
     data = pickle.load(open(args.data_file, "rb"))
     # parse data into input and corresponding labels
-    X_input, all_y_label = prep_data(data, single_output=args.multioutput)
+    X_input, all_y_label = prep_data(data, single_output=True)
     # make dir to save trained MLPs
     try:
         os.makedirs(args.mlpr_dir)
     except FileExistsError:
         pass
     
-    train(X_input, all_y_label, args.mlpr_dir, args.tune)
+    # get dem params specifications for model
+    _, param_names, _ = get_model(args.model, args.model_file, args.folded)
+
+    train(X_input, all_y_label, param_names, args.mlpr_dir, args.tune)
 
 
 def run_infer(args):
@@ -113,8 +116,6 @@ def run_infer(args):
     # open input FS from file
     fs = dadi.Spectrum.from_file(args.input_fs)
     args.folded = fs.folded
-    # TODO: option to specify whether to project in project_fs
-    # rather than placing it inside args.mlpr_dir != None
     fs = project_fs(fs)
 
     if args.cleanup:
@@ -206,7 +207,7 @@ def run_validate(args):
     # parse test dict into test FS and corresponding labels
     X_test, y_test = prep_data(prep_test_dict, single_output=True)
 
-    # load mlpr dir name list
+    # load mvenn dir name list
     filename_list = sorted(os.listdir(args.mlpr_dir))
 
     # make result dir to save results
@@ -361,6 +362,20 @@ def donni_parser():
     train_parser = subparsers.add_parser(
         "train", help="Train MLPR with simulated allele frequency data"
     )
+    train_parser.add_argument(
+        "--model",
+        type=str,
+        required=True,
+        help="Name of dadi demographic model",
+    )
+    train_parser.add_argument(
+        "--model_file",
+        type=str,
+        help="Name of file containing custom dadi\
+                                         demographic model(s)",
+    )
+    train_parser.add_argument('--folded', action="store_true",
+                                help="Specify if the training FS is folded")
     train_parser.set_defaults(func=run_train)
     train_parser.add_argument(
         "--data_file", type=str, required=True, help="Path to input training data"
@@ -371,12 +386,6 @@ def donni_parser():
         required=True,
         help="Path to save output trained MLPR(s)",
     )
-    train_parser.add_argument(
-        "--multioutput",
-        action="store_false",
-        help="Train multioutput sklearn MLPR instead of\
-                                  default single-output MLPRs",
-    ) 
     train_parser.add_argument("--tune", action='store_true',
                             help="Whether to try a range of hyperparameters\
                                 to find the best performing MLPRs")   

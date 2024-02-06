@@ -5,6 +5,14 @@ from scipy.stats import norm, spearmanr
 # from mapie.metrics import regression_coverage_score
 from tensorflow import keras
 import keras.backend as K
+from donni.train import CustomLayer
+
+
+def root_mean_squared_error(pred_pre: np.ndarray, true_pre: np.ndarray):
+    # exclude nans
+    pred_post = pred_pre[~np.isnan(pred_pre)]
+    true_post = true_pre[~np.isnan(pred_pre)]
+    return ((true_post - pred_post) ** 2).mean() ** 0.5
 
 
 def regression_coverage_score(y_true,
@@ -238,7 +246,8 @@ def validate(filename_list, mlpr_dir, X_test, y_test, params, logs, plot_prefix)
     all_vars = []
     for filename in filename_list:
         if filename.startswith("param") and filename.endswith("predictor.keras"):
-            mlpr = keras.models.load_model(f'{mlpr_dir}/{filename}')
+            mlpr = keras.models.load_model(f'{mlpr_dir}/{filename}', 
+                                    custom_objects={'CustomLayer': CustomLayer})
             # tentatively print model structure
             with open(plot_prefix + '_report.txt','a') as fh:
                 # Pass the file handle in as a lambda function to make it callable
@@ -258,7 +267,7 @@ def validate(filename_list, mlpr_dir, X_test, y_test, params, logs, plot_prefix)
             pis_per_param.append(np.squeeze(pis))
         all_pis.append(pis_per_param)
     
-    # plote coverage
+    # plot coverage
     cov_scores = get_coverage(np.array(all_pis), np.array(y_test), alpha)
     plot_coverage(np.array(cov_scores), alpha, f"{plot_prefix}_coverage", params=params)
     
@@ -275,6 +284,7 @@ def validate(filename_list, mlpr_dir, X_test, y_test, params, logs, plot_prefix)
                             pred,
                             log=logs[i],
                             rho=spearmanr(true, pred)[0],
+                            rmse=root_mean_squared_error(np.array(pred), np.array(true)),
                             title=params[i])
         plt.savefig(f"{plot_prefix}_param_{i + 1:02d}_accuracy.png", bbox_inches="tight")
         plt.clf()
