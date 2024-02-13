@@ -46,24 +46,10 @@ def regression_nll_loss(sigma_sq, epsilon=1e-6):
             K.log(sigma_sq + epsilon) + K.square(y_true - y_pred) / (sigma_sq + epsilon)
             )
     return nll_loss
-
-
-class CustomLayer(keras.layers.Layer):
-    """Custom activation layer to scale the param output to the simulated range"""
-    def __init__(self, p_range, **kwargs):
-        super(CustomLayer, self).__init__(**kwargs)
-        self.p_range = p_range
-
-    def call(self, inputs):
-        a, b, c = self.p_range
-        return (K.sigmoid(inputs) * a + b) / c
-    
-    def get_config(self):
-        return {'p_range': self.p_range}
         
 
 def _train_worker_func(args):
-    X_input, y_label, param_idx, param_range, outdir, tuning = args
+    X_input, y_label, param_idx, outdir, tuning = args
     from tensorflow.python.framework.ops import disable_eager_execution
     disable_eager_execution()
     
@@ -78,7 +64,7 @@ def _train_worker_func(args):
             units=hp.Int("units_2", min_value=4, max_value=16, step=4),
             activation="relu",
         )(x)
-        mean = Dense(1, activation=CustomLayer(param_range))(x)
+        mean = Dense(1, activation="linear")(x)
         var = Dense(1, activation="softplus")(x)
 
         train_model = Model(inp, mean)
@@ -159,7 +145,7 @@ def _train_worker_func(args):
     x = Dense(best_hp.get("units_1"), activation="relu")(inp)
     x = Dense(best_hp.get("units_2"), activation="relu")(x)
 
-    mean = Dense(1, activation=CustomLayer(param_range))(x)
+    mean = Dense(1, activation="linear")(x)
     var = Dense(1, activation="softplus")(x)
 
     train_model = Model(inp, mean)
@@ -182,28 +168,11 @@ def _train_worker_func(args):
     )
     
     pred_model.save(f"{outdir}/param_{param_idx+1:02d}_predictor.keras")
-    
-def get_param_range(param_type):
-    range_dict = {"nu": (4, -2, 1),
-                    "T": (1.99, 0.01, 1),
-                    "m": (10, 0, 1),
-                    "s": (0.98, 0.01, 1),
-                    "F": (1, 0, 1),
-                    "f": (1, 0, 1),
-                    "misid": (1, 0, 4)}
-    return range_dict[param_type]
 
-def train(X_input, all_y_label, param_names, outdir: str, tuning: bool):
+
+def train(X_input, all_y_label, outdir: str, tuning: bool):
     args_list = []
-    for param_idx, (y_label, label_name) in enumerate(zip(all_y_label, param_names)):
-        # process special case labels
-        if label_name.startswith("nu"):
-            param_type = "nu"
-        elif label_name == "misid": # to separate from param m
-            param_type = "misid"
-        else:
-            param_type = label_name[0]
-        p_range = get_param_range(param_type) # tuple of a,b,c
-        args_list.append((X_input, np.array(y_label), param_idx, p_range, outdir, tuning))
+    for param_idx, y_label in enumerate(all_y_label):
+        args_list.append((X_input, np.array(y_label), param_idx, outdir, tuning))
     with Pool(processes=len(all_y_label)) as pool:
         pool.map(_train_worker_func, args_list)

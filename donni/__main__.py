@@ -102,11 +102,8 @@ def run_train(args):
         os.makedirs(args.mlpr_dir)
     except FileExistsError:
         pass
-    
-    # get dem params specifications for model
-    _, param_names, _ = get_model(args.model, args.model_file, args.folded)
 
-    train(X_input, all_y_label, param_names, args.mlpr_dir, args.tune)
+    train(X_input, all_y_label, args.mlpr_dir, args.tune)
 
 
 def run_infer(args):
@@ -362,20 +359,6 @@ def donni_parser():
     train_parser = subparsers.add_parser(
         "train", help="Train MLPR with simulated allele frequency data"
     )
-    train_parser.add_argument(
-        "--model",
-        type=str,
-        required=True,
-        help="Name of dadi demographic model",
-    )
-    train_parser.add_argument(
-        "--model_file",
-        type=str,
-        help="Name of file containing custom dadi\
-                                         demographic model(s)",
-    )
-    train_parser.add_argument('--folded', action="store_true",
-                                help="Specify if the training FS is folded")
     train_parser.set_defaults(func=run_train)
     train_parser.add_argument(
         "--data_file", type=str, required=True, help="Path to input training data"

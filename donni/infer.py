@@ -4,7 +4,6 @@ import dadi
 from donni.generate_data import pts_l_func
 from tensorflow import keras
 from scipy.stats import norm
-from donni.train import CustomLayer
 
 # irods packages
 from irods.session import iRODSSession
@@ -171,8 +170,7 @@ def infer(filename_list, mlpr_dir, func, input_fs, logs, cis=[95]):
     pred_list = []
     for i, filename in enumerate(filename_list):
         if filename.startswith("param") and filename.endswith("predictor.keras"):
-            mlpr = keras.models.load_model(f'{mlpr_dir}/{filename}', 
-                                custom_objects={'CustomLayer': CustomLayer})
+            mlpr = keras.models.load_model(f'{mlpr_dir}/{filename}')
             mean, var = mlpr.predict(np.array(input_x))
             pred = float(np.squeeze(mean))
             sd = float(np.squeeze(np.sqrt(var)))

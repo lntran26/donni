@@ -5,7 +5,6 @@ from scipy.stats import norm, spearmanr
 # from mapie.metrics import regression_coverage_score
 from tensorflow import keras
 import keras.backend as K
-from donni.train import CustomLayer
 
 
 def root_mean_squared_error(pred_pre: np.ndarray, true_pre: np.ndarray):
@@ -246,8 +245,7 @@ def validate(filename_list, mlpr_dir, X_test, y_test, params, logs, plot_prefix)
     all_vars = []
     for filename in filename_list:
         if filename.startswith("param") and filename.endswith("predictor.keras"):
-            mlpr = keras.models.load_model(f'{mlpr_dir}/{filename}', 
-                                    custom_objects={'CustomLayer': CustomLayer})
+            mlpr = keras.models.load_model(f'{mlpr_dir}/{filename}')
             # tentatively print model structure
             with open(plot_prefix + '_report.txt','a') as fh:
                 # Pass the file handle in as a lambda function to make it callable
