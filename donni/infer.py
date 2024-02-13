@@ -174,8 +174,8 @@ def infer(filename_list, mlpr_dir, func, input_fs, logs, cis=[95]):
             mlpr = keras.models.load_model(f'{mlpr_dir}/{filename}', 
                                 custom_objects={'CustomLayer': CustomLayer})
             mean, var = mlpr.predict(np.array(input_x))
-            pred = np.squeeze(mean)
-            sd = np.squeeze(np.sqrt(var))
+            pred = float(np.squeeze(mean))
+            sd = float(np.squeeze(np.sqrt(var)))
 
             cis_per_param = []
             for a in alpha:
