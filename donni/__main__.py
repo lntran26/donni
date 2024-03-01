@@ -34,60 +34,42 @@ def run_generate_data(args):
     # get demographic param values
     params_list = get_param_values(param_names, args.n_samples, args.seed)
 
-    if not args.generate_tune_hyperparam_only:
-        # generate data
-        data, qual = generate_fs(
-            dadi_func,
-            params_list,
-            logs,
-            args.theta,
-            args.sample_sizes,
-            args.grids,
-            args.non_normalize,
-            args.no_sampling,
-            args.folded,
-            args.bootstrap,
-            args.n_bstr,
-            args.n_cpu,
-        )
+    # generate data
+    data, qual = generate_fs(
+        dadi_func,
+        params_list,
+        logs,
+        args.theta,
+        args.sample_sizes,
+        args.grids,
+        args.non_normalize,
+        args.no_sampling,
+        args.folded,
+        args.bootstrap,
+        args.n_bstr,
+        args.n_cpu,
+    )
 
-        # output fs quality check results
-        if not args.no_fs_qual_check:
-            fs_quality_check(qual, args.outfile, params_list, param_names, logs)
+    # output fs quality check results
+    if not args.no_fs_qual_check:
+        fs_quality_check(qual, args.outfile, params_list, param_names, logs)
 
-        # save data as a dictionary or as individual files
-        # (in addition to saving as a single file)
-        if args.save_individual_fs:
-            # make dir to save individual fs and true params to
-            if not os.path.exists(args.outdir):
-                os.makedirs(args.outdir)
-            # process data dict to individual fs and save
-            # index in fs file name matches index in true_log_params list
-            true_log_params = list(data.keys())
-            for i, p in enumerate(true_log_params):
-                fs = data[p]
-                fs.tofile(f"{args.outdir}/fs_{i:03d}")
-            pickle.dump(true_log_params, open(f"{args.outdir}/true_log_params", "wb"))
+    # save data as a dictionary or as individual files
+    # (in addition to saving as a single file)
+    if args.save_individual_fs:
+        # make dir to save individual fs and true params to
+        if not os.path.exists(args.outdir):
+            os.makedirs(args.outdir)
+        # process data dict to individual fs and save
+        # index in fs file name matches index in true_log_params list
+        true_log_params = list(data.keys())
+        for i, p in enumerate(true_log_params):
+            fs = data[p]
+            fs.tofile(f"{args.outdir}/fs_{i:03d}")
+        pickle.dump(true_log_params, open(f"{args.outdir}/true_log_params", "wb"))
 
-        # save data dict as one pickled file (default)
-        pickle.dump(data, open(args.outfile, "wb"))
-
-    # generate and save hyperparams dict for tuning
-    if args.generate_tune_hyperparam_only or args.generate_tune_hyperparam:
-        tune_dict = get_hyperparam_tune_dict(args.sample_sizes)
-        pickle.dump(tune_dict, open(f"{args.hyperparam_outfile}", "wb"))
-
-        # output text file for details of hyper param tune dict
-        with open(f"{args.hyperparam_outfile}.txt", "w") as fh:
-            for hyperparam, option in tune_dict.items():
-                if isinstance(option, distribution):
-                    distribution_name = vars(option.dist)["name"]
-                    distribution_vals = vars(option)["args"]
-                    fh.write(
-                        f"{hyperparam}: {distribution_name}, " f"{distribution_vals}\n"
-                    )
-                else:
-                    fh.write(f"{hyperparam}: {option}\n")
+    # save data dict as one pickled file (default)
+    pickle.dump(data, open(args.outfile, "wb"))
 
 
 def run_train(args):
@@ -334,25 +316,6 @@ def donni_parser():
         "--no_fs_qual_check",
         action="store_true",
         help="Turn off default FS quality check",
-    )
-    generate_data_parser.add_argument(
-        "--generate_tune_hyperparam",
-        action="store_true",
-        help="Generate hyperparam spec for\
-                                         tuning",
-    )
-    generate_data_parser.add_argument(
-        "--generate_tune_hyperparam_only",
-        action="store_true",
-        help="Generate hyperparam spec for tuning\
-                                      only without generating any data",
-    )
-    generate_data_parser.add_argument(
-        "--hyperparam_outfile",
-        type=str,
-        default="param_dict_tune",
-        help="Path to save hyperparam dict\
-                                         for tuning",
     )
 
     # subcommand for train

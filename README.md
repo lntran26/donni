@@ -60,39 +60,45 @@ To infer demographic model parameters with donni, users need to specify the desi
 ```console
 $ donni infer --input_fs examples/data/1d_ns20_sfs.fs --model three_epoch
 ```
-This command will automatically download the relevant trained MLPRs used for inference to the user's home directory and the download location will be printed to the command line. The file size of one trained MLPR varies from a few Kb to ~100 Mb depending on the sample size of the input data and the number of populations in the demographic model. The number of trained MLPRs downloaded will correspond to the number of parameters in the requested demographic model (i.e. one trained MLPR per parameter.)
+This command will automatically download the relevant trained MLPRs used for inference to the user's home directory and the download location will be printed to the command line. The file size of one trained MLPR varies from a few Kb to a few Mb, depending on the sample size of the input data and the number of populations in the demographic model. The number of trained MLPRs downloaded will correspond to the number of parameters in the requested demographic model (i.e. one trained MLPR per parameter.)
 
 ```console
-Downloading model: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.0.1/tuned_models/param_01_predictor to /Users/username/Library/Caches/donni/0.0.1/three_epoch_unfolded_ns_20
-Downloading model: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.0.1/tuned_models/param_02_predictor to /Users/username/Library/Caches/donni/0.0.1/three_epoch_unfolded_ns_20
-Downloading model: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.0.1/tuned_models/param_03_predictor to /Users/username/Library/Caches/donni/0.0.1/three_epoch_unfolded_ns_20
-Downloading model: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.0.1/tuned_models/param_04_predictor to /Users/username/Library/Caches/donni/0.0.1/three_epoch_unfolded_ns_20
-Downloading model: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.0.1/tuned_models/param_05_predictor to /Users/username/Library/Caches/donni/0.0.1/three_epoch_unfolded_ns_20
-Downloading QC: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.0.1/plots/theta_1000_coverage.png to /Users/username/Library/Caches/donni/0.0.1/three_epoch_unfolded_ns_20_QC
-Downloading QC: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.0.1/plots/theta_1000_param_01_accuracy.png to /Users/username/Library/Caches/donni/0.0.1/three_epoch_unfolded_ns_20_QC
-Downloading QC: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.0.1/plots/theta_1000_param_02_accuracy.png to /Users/username/Library/Caches/donni/0.0.1/three_epoch_unfolded_ns_20_QC
-Downloading QC: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.0.1/plots/theta_1000_param_03_accuracy.png to /Users/username/Library/Caches/donni/0.0.1/three_epoch_unfolded_ns_20_QC
-Downloading QC: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.0.1/plots/theta_1000_param_04_accuracy.png to /Users/username/Library/Caches/donni/0.0.1/three_epoch_unfolded_ns_20_QC
-Downloading QC: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.0.1/plots/theta_1000_param_05_accuracy.png to /Users/username/Library/Caches/donni/0.0.1/three_epoch_unfolded_ns_20_QC
-Downloading QC: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.0.1/plots/theta_1000_QC.txt to /Users/username/Library/Caches/donni/0.0.1/three_epoch_unfolded_ns_20_QC
+Downloading model: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.9.0/tuned_models/param_01_predictor.keras to /home/lntran/.cache/donni/0.9.0/three_epoch_unfolded_ns_20
+Downloading model: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.9.0/tuned_models/param_02_predictor.keras to /home/lntran/.cache/donni/0.9.0/three_epoch_unfolded_ns_20
+Downloading model: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.9.0/tuned_models/param_03_predictor.keras to /home/lntran/.cache/donni/0.9.0/three_epoch_unfolded_ns_20
+Downloading model: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.9.0/tuned_models/param_04_predictor.keras to /home/lntran/.cache/donni/0.9.0/three_epoch_unfolded_ns_20
+Downloading model: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.9.0/tuned_models/param_05_predictor.keras to /home/lntran/.cache/donni/0.9.0/three_epoch_unfolded_ns_20
+Downloading QC: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.9.0/plots/three_epoch_test_theta_1000_coverage_coverage.png to /home/lntran/.cache/donni/0.9.0/three_epoch_unfolded_ns_20_QC
+Downloading QC: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.9.0/plots/three_epoch_test_theta_1000_param_01_accuracy_95_ci.png to /home/lntran/.cache/donni/0.9.0/three_epoch_unfolded_ns_20_QC
+Downloading QC: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.9.0/plots/three_epoch_test_theta_1000_param_01_accuracy.png to /home/lntran/.cache/donni/0.9.0/three_epoch_unfolded_ns_20_QC
+Downloading QC: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.9.0/plots/three_epoch_test_theta_1000_param_02_accuracy_95_ci.png to /home/lntran/.cache/donni/0.9.0/three_epoch_unfolded_ns_20_QC
+Downloading QC: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.9.0/plots/three_epoch_test_theta_1000_param_02_accuracy.png to /home/lntran/.cache/donni/0.9.0/three_epoch_unfolded_ns_20_QC
+Downloading QC: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.9.0/plots/three_epoch_test_theta_1000_param_03_accuracy_95_ci.png to /home/lntran/.cache/donni/0.9.0/three_epoch_unfolded_ns_20_QC
+Downloading QC: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.9.0/plots/three_epoch_test_theta_1000_param_03_accuracy.png to /home/lntran/.cache/donni/0.9.0/three_epoch_unfolded_ns_20_QC
+Downloading QC: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.9.0/plots/three_epoch_test_theta_1000_param_04_accuracy_95_ci.png to /home/lntran/.cache/donni/0.9.0/three_epoch_unfolded_ns_20_QC
+Downloading QC: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.9.0/plots/three_epoch_test_theta_1000_param_04_accuracy.png to /home/lntran/.cache/donni/0.9.0/three_epoch_unfolded_ns_20_QC
+Downloading QC: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.9.0/plots/three_epoch_test_theta_1000_param_05_accuracy_95_ci.png to /home/lntran/.cache/donni/0.9.0/three_epoch_unfolded_ns_20_QC
+Downloading QC: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.9.0/plots/three_epoch_test_theta_1000_param_05_accuracy.png to /home/lntran/.cache/donni/0.9.0/three_epoch_unfolded_ns_20_QC
+Downloading QC: /iplant/home/shared/donni/three_epoch/unfolded/ss_20/v0.9.0/plots/three_epoch_test_theta_1000_report.txt to /home/lntran/.cache/donni/0.9.0/three_epoch_unfolded_ns_20_QC
 
-Finished downloading files to /Users/tjstruck/Library/Caches/donni/0.0.1/three_epoch_unfolded_ns_20 folder
+Finished downloading files to /home/lntran/.cache/donni/0.9.0/three_epoch_unfolded_ns_20 folder.
 ```
 
 Once downloaded, donni will use the trained MLPRs to infer the demographic parameter values and confidence intervals (default: 95% CI) for the user's input allele frequency data.
 
 ```console
-# nuB nuF TB  TF  misid theta nuB_lb_95 nuB_ub_95 nuF_lb_95 nuF_ub_95 TB_lb_95  TB_ub_95  TF_lb_95  TF_ub_95  misid_lb_95 misid_ub_95
-0.9527628534235858  0.19956875019233822 0.4168018273117252  0.5902604221985013  0.015964741573954666  4428.985227492066 0.013038512346691546  88.56064148838828 0.022324698206805948  2.597883255958737 -0.42283439971061865  1.3179671061405958  -0.24917414734478394  1.3873155264559491  -0.02168682787690837  0.09706661611677028
+***Inferred demographic model parameters***
+# nuB   nuF     TB      TF      misid   theta   nuB_lb_95       nuB_ub_95       nuF_lb_95       nuF_ub_95       TB_lb_95        TB_ub_95        TF_lb_95        TF_ub_95        misid_lb_95     misid_ub_95
+0.4146571254600148      0.3869760036609383      0.5405870676040649      0.6910597085952759      0.01265975832939148     2489.12434337297        0.0022699636903605234   75.74593920815283       0.033626422287440526    4.45335593924669 -0.3420185887813568     1.4231927239894868      -0.13996889114379885    1.5220883083343506      -0.028875216841697693   0.05419473350048065
 
-# CIs:    |----------95----------|  
-# nuB:    [  0.013039,  88.560641]  
-# nuF:    [  0.022325,   2.597883]  
-# TB:     [ -0.422834,   1.317967]  
-# TF:     [ -0.249174,   1.387316]  
-# misid:  [ -0.021687,   0.097067]  
+# CIs:    |----------95----------|
+# nuB:    [  0.002270,  75.745939]
+# nuF:    [  0.033626,   4.453356]
+# TB:     [ -0.342019,   1.423193]
+# TF:     [ -0.139969,   1.522088]
+# misid:  [ -0.028875,   0.054195]
 
-Check the plots in /Users/tjstruck/Library/Caches/donni/0.0.1/three_epoch_unfolded_ns_20_QC for performance of download MLPR models.
+Check the plots in /home/lntran/.cache/donni/0.9.0/three_epoch_unfolded_ns_20_QC for accuracy scores of the downloaded model.
 ```
 
 If users want to use `dadi` with the results from donni to do plotting or further analysis, they can export a file that can be read by [`dadi-cli`](https://dadi-cli.readthedocs.io/en/latest/), a command line interface for `dadi`. Users can use the `--export_dadi_cli` flag to store results that can be read by `dadi-cli` in a file with a user specified name which will have `.donni.pseudofit` as an extension.
@@ -102,7 +108,7 @@ For example the command
 $ donni infer --input_fs examples/data/1d_ns20_sfs.fs --model three_epoch --export_dadi_cli three_epoch_ns20
 ```
 
-Will generate a file `three_epoch_ns20.donni.pseudofit`, which can then be read by `dadi-cli` subcommands that use the `--demo-pop` and `--bestfit-p0-file` flags.
+will generate a file `three_epoch_ns20.donni.pseudofit`, which can then be read by `dadi-cli` subcommands that use the `--demo-pop` and `--bestfit-p0-file` flags.
 
 ## Supported models and sample sizes
 
@@ -111,7 +117,9 @@ donni currently supports all demographic models in the [dadi API](https://dadi.r
 If the requested model is not available, users will see this message:
 ```console
 $ donni infer --input_fs examples/data/1d_ns20_sfs.fs --model foo
-Files for the requested model and configuration do not exist.
+The requested demographic model does not exist on the CyVerse Data Store.
+Users can check for available models at https://de.cyverse.org/data/ds/iplant/home/shared/donni
+If the user has generated their own trained MLPRs, use --mlpr_dir
 ```
 ## Data availability
 The trained MLPRs (along with accuracy score and confidence interval coverage plots) are publicly available on the University of Arizona CyVerse Data Store (https://de.cyverse.org/data/ds/iplant/home/shared/donni).
@@ -125,15 +133,16 @@ $ donni infer --input_fs examples/data/1d_ns20_sfs.fs --model three_epoch --cis 
 ```
 
 ```console
-# nuB	nuF	TB	TF	misid	theta	nuB_lb_80	nuB_ub_80	nuF_lb_80	nuF_ub_80	TB_lb_80	TB_ub_80	TF_lb_80	TF_ub_80	misid_lb_80	misid_ub_80	nuB_lb_90	nuB_ub_90	nuF_lb_90	nuF_ub_90	TB_lb_90	TB_ub_90	TF_lb_90	TF_ub_90	misid_lb_90	misid_ub_90
-1.4589417590202813	0.27766527063507107	0.3348057792116058	0.678676374216568	0.016573499238520806	3078.400966873281	0.02634476337211434	44.583151697085455	0.007657835658415717	1.457465130942518	-0.14865156750354747	0.7857211494174595	0.15328463274251425	1.3291811726081775	0.002226777650249062	0.052656001753191906	0.008203718136729264	91.29726937105971	0.002174982530860171	5.389966821614843	-0.299796473057088	0.9892394295337347	0.011915808230589464	1.4608120551998374	-0.0020380172128151852	0.06658196470780856
+***Inferred demographic model parameters***
+# nuB   nuF     TB      TF      misid   theta   nuB_lb_80       nuB_ub_80       nuF_lb_80       nuF_ub_80       TB_lb_80        TB_ub_80        TF_lb_80        TF_ub_80        misid_lb_80     misid_ub_80     nuB_lb_90       nuB_ub_90        nuF_lb_90       nuF_ub_90       TB_lb_90        TB_ub_90        TF_lb_90        TF_ub_90        misid_lb_90     misid_ub_90
+0.4146571254600148      0.3869760036609383      0.5405870676040649      0.6910597085952759      0.01265975832939148     2489.12434337297        0.013825473303355517    12.436502383830257      0.07848449596883701     1.9080255986972294       -0.03580846309661867    1.1169825983047486      0.14834715366363527     1.2337722635269164      -0.014465123414993286   0.039784640073776245    0.005312160541557728    32.367344764837036      0.05010784243050499      2.9885626709447877      -0.19791970610618592    1.2790938413143158      -0.00429075241088861    1.3864101696014404      -0.0220939964056015     0.04741351306438446
 
-# CIs:    |----------80----------|	|----------90----------|	
-# nuB:    [  0.026345,  44.583152]	[  0.008204,  91.297269]	
-# nuF:    [  0.007658,   1.457465]	[  0.002175,   5.389967]	
-# TB:     [ -0.148652,   0.785721]	[ -0.299796,   0.989239]	
-# TF:     [  0.153285,   1.329181]	[  0.011916,   1.460812]	
-# misid:  [  0.002227,   0.052656]	[ -0.002038,   0.066582]
+# CIs:    |----------80----------|      |----------90----------|
+# nuB:    [  0.013825,  12.436502]      [  0.005312,  32.367345]
+# nuF:    [  0.078484,   1.908026]      [  0.050108,   2.988563]
+# TB:     [ -0.035808,   1.116983]      [ -0.197920,   1.279094]
+# TF:     [  0.148347,   1.233772]      [ -0.004291,   1.386410]
+# misid:  [ -0.014465,   0.039785]      [ -0.022094,   0.047414]
 ```
 
 If users have [trained their own MLPRs](#training-custom-mlprs), they can direct donni to the trained MLPRs file directory with the `--mlpr_dir` argument.
@@ -143,14 +152,38 @@ $ donni infer --input_fs examples/data/1d_ns20_sfs.fs --model two_epoch --mlpr_d
 ```
 
 ```console
-# nu	T	misid	theta	nu_lb_95	nu_ub_95	T_lb_95	T_ub_95	misid_lb_95	misid_ub_95
-0.14757507548097556	1.1754731225311374	0.03136719895731105	6925.010938463936	0.006715137102134652	2.6762432828151432	-0.1807778278375065	2.1900599819927873	-0.03685973417197391	0.08007636692730616
+***Inferred demographic model parameters***
+# nu    T       misid   theta   nu_lb_95        nu_ub_95        T_lb_95 T_ub_95 misid_lb_95     misid_ub_95
+0.24181668926375313     0.9589159488677979      0.0008354485034942627   4046.0925977734805      0.02504349414857273     2.334950181455216       0.1795339167118073      1.7382979810237884      -0.018864348903298377   0.020535245910286902
 
-# CIs:    |----------95----------|	
-# nu:     [  0.006715,   2.676243]	
-# T:      [ -0.180778,   2.190060]	
-# misid:  [ -0.036860,   0.080076]
+# CIs:    |----------95----------|
+# nu:     [  0.025043,   2.334950]
+# T:      [  0.179534,   1.738298]
+# misid:  [ -0.018864,   0.020535]
 ```
+
+## Undefined theta when an inferred parameter is negative
+Sometimes the trained MLPRs will output a negative parameter estimation, leading to an undefined theta value. An example is included and can be accessed by running the following command:
+
+```console
+$ donni infer --input_fs examples/data/1d_ns20_sfs.fs --model two_epoch --mlpr_dir examples/data/two_epoch_20_mlprs_negative/
+```
+
+When this is the case, the pipeline will output something like the below with a warning about undefined theta:
+
+```console
+***Inferred demographic model parameters***
+# nu    T       misid   theta   nu_lb_95        nu_ub_95        T_lb_95 T_ub_95 misid_lb_95     misid_ub_95
+0.13990851968127813     1.1827903985977173      -0.010053243488073349   nan     0.010451441687755284    1.8728893548092593      0.3536277294158936      2.011953067779541       -0.02659363556653261    0.006487148590385912
+
+# CIs:    |----------95----------|
+# nu:     [  0.010451,   1.872889]
+# T:      [  0.353628,   2.011953]
+# misid:  [ -0.026594,   0.006487]
+
+WARNING: Theta is not defined. Check inferred demographic model parameters for negative values.
+```
+As indicated in the output here, the misid parameter is very slightly negative (-0.010), causing theta to be undefined. Handling of cases like this depends on a case-by-case basis, such as which parameter is negative, how accurate the trained MLPRs are on predicting such parameter (should be reviewed in the uploaded QC validation plots), and the absolute value of the negative estimation. In this example, it is likely that misid is simply very close to 0, which is good, but further optimization with dadi/dadi-cli is recommended.
 
 # Training custom MLPRs
 The three subcommands `generate_data`, `train`, and `validate` are for training and testing trained MLPRs. This is the procedure we used to produce all the MLPRs in the current library. Users can use the same method outlined below to create their custom demographic model with dadi and produce the corresponding trained MLPRs.
@@ -191,24 +224,17 @@ The `--theta` argument is used to control the variance (noise) in the simulated 
 
 Users can use the `--folded` argument if they want to generate folded AFS. By default, unfolded AFS will be generated.
 ​
-
 donni can also generate bootstraped AFS data with the `--bootstrap` argument. For this usage, the `--n_bstr` argument is required to specify how many bootstraped AFS to generate per simulated AFS. 
 
 By default, donni will use all available CPUs to simulate the AFS in parallel. Users can control the number of CPUs used with `--n_cpu`.
 
-## Generating hyperparmeters for tuning:
-To prepare for the next step (tuning), we also generate a dictionary file containing the hyperparmeters for the MLPRs that will be used during automatic hyperparemeter tuning. Since the number of hidden layers and neurons in the MLPR depend on `--sample_sizes`, we also generate the appropriate hyperparmeters in this step. `donni generate_data` has three arguments for this purpose: `--generate_tune_hyperparam`, `--generate_tune_hyperparam_only` (no AFS simulation), and `--hyperparam_outfile`. An example command for generating the hyperparmeters dictionary would be:
-```console
---generate_tune_hyperparam --hyperparam_outfile data/param_dict_tune
-```
 
 ## Generating data: full example commands
 To generate 5000 training AFS for the out_of_africa model found in the donni/donni/custom_models.py file and the hyperparmeters:
 
 ```console
 $ donni generate_data --model out_of_africa --model_file donni/custom_models.py --n_samples 5000 \
---sample_sizes 10 10 10 --seed 1 --outfile data/train_5000 --generate_tune_hyperparam \
---hyperparam_outfile data/param_dict_tune
+--sample_sizes 10 10 10 --seed 1 --outfile data/train_5000
 ```
 To generate 1000 test AFS with moderate noise for the same model:
 
@@ -216,74 +242,56 @@ To generate 1000 test AFS with moderate noise for the same model:
 $ donni generate_data --model out_of_africa --model_file donni/custom_models.py --n_samples 1000 \
 --sample_sizes 10 10 10 --seed 100 --theta 1000 --outfile data/test_1000_theta_1000
 ```
-To generate only the hyperparmeters without simulating any AFS
-```console
-$ donni generate_data --model split_mig --n_samples 1 --sample_sizes 40 40 --outfile foo \
---generate_tune_hyperparam_only --hyperparam_outfile data/param_dict_tune
-```
-
-To generate 100 test AFS (non-normalized) and save them individually (used in optimization with dadi-cli)
-```console
-$ donni generate_data --model split_mig --n_samples 100 --sample_sizes 160 160 \
---theta 1000 --seed 100 --non_normalize --save_individual_fs \
---outdir test_fs --outfile test_fs/test_100_theta_1000"
-```
 
 ## Hyperparameter tuning and training the MLPR
 ​After we have generated the data for training and testing, we will now use these data to tune and train the MLPRs for each demographic model parameter. This can be done using the donni subcommand `train` with the two required flags: `--data_file` pointing to the training data output from the previous step, and `--mlpr_dir` indicating the path the save the output trained MLPR.
 
 ```console
-$ donni train --data_file data/train_5000 --mlpr_dir tuned_models
+$ donni train --data_file data/train_5000 --mlpr_dir trained_models
 ```
 
-While it is possible to train MLPR using the default set of hyperparameters, we recommend users to first run the tuning procedure to find the most optimized set of hyperparameters. This can be done by adding the argument `--tune` and input the dictionary file containing the hyperparmeters generated above with the argument `--hyperparam`.
+While it is possible to train MLPR using the default set of hyperparameters, we recommend users to first run the tuning procedure to find the most optimized set of hyperparameters. This can be done by adding the argument `--tune`.
 
 ```console
-$ donni train --data_file data/train_5000 --mlpr_dir tuned_models --tune \
---hyperparam data/param_dict_tune
-```
-The above command will run automatic hyperparameter optimization to retrieve the best hyperparameter set AND train the MLPR using this set to output trained MLPRs. If only tuning and no training is desired, use argument `--tune_only` instead of `--tune`.
-
-The optional arguments `--max_iter`, `--eta`, `--cv` can be used to customize the tuning procedure. The default settings are 
-```console
-$ --max_iter 243 --eta 3 --cv 5
-```
-
-### Other optional arguments:
-For descriptions of other optional arguments, use:
-```console
-$ donni train -h
+$ donni train --data_file data/train_5000 --mlpr_dir tuned_models --tune
 ```
 
 ## Validating trained MLPRs accuracy and confidence interval coverage
-Finally, we can use the simulated test data to measure the accuracy performance of the trained MLPRs with the subcommand `validate`. The two required arguments are `--mlpr_dir` and `--test_dict` to indicate the path to the trained MLPRs and test data, respectively.
+Finally, we can use the simulated test data to measure the accuracy performance of the trained MLPRs with the subcommand `validate`. The required arguments are:
 
-Because training can sometimes fail due to the stochasticity of the training optimization algorithm, this step also acts as a quality control step where training will be automatically repeated for a demographic parameter if failure in training is detected. The retraining is limited to a maximum of 10 reruns. Because of this, the path to the training data is also required and should be provided using the argument `--train_dict`. If retraining is triggered, a new test set (default 1000 FS with theta=1000) will also be simulated and used as the final test set used for plotting. Additionally, the argument `--seeds` are required, which should contain the seeds already used for simulating the train and original test sets, so that a different seed will be used for the new simulated test set after retraining.
+`--mlpr_dir`: path to the trained MLPRs to be validated
 
-Other required arguments include `--results_dir` to indicate the path to save the output plots (and new test data set if retrained) to, `--plot_prefix` for the prefix of each plot's filename, and `--model` for the demographic model used (required to obtain the demographic model parameters).
+`--test_dict`: path to the test data
 
-The optional arguments `--theta` can be used to indicate the noise level of the test set (default: 1000, used for labeling and for simulating new test set after retraining) and `--coverage` will output the confidence interval coverage plot in addition to the accuracy plots for each demographic history model parameter.
+`--results_dir`: path to save the output plots
 
-Below is an example of a full command for a sample size of the split migration demographic model:
+`--plot_prefix`: for the prefix of each plot's filename
+
+`--model`: for the demographic model used (required to obtain the demographic model parameters). If a custom model is used then also need to provide a path to it with `--model_file`.
+
+`--folded`: required if the MLPRs were trained on folded AFS data (no misid parameter in demographic model).
+
+Below is an example of a full command:
 ```console
-$ donni validate --mlpr_dir tuned_models --test_dict data/test_1000_theta_1000 \
---train_dict data/train_5000 --results_dir plots --plot_prefix theta_1000 \
---model split_mig --theta 1000 --coverage --seeds 1 100
+$ donni validate --model two_epoch --mlpr_dir examples/data/two_epoch_20_mlprs \
+--test_dict examples/data/two_epoch_test_1000_theta_1000 \
+--results_dir examples/data/plots --plot_prefix two_epoch_theta_1000
 ```
-Note: while `validate` can be used to plot accuracy results for sklearn multioutput MLPRs (param_all_predictors), retraining procedure and coverage plotting only apply to mapie MLPRs.
 
-### Other optional arguments:
-For descriptions of other optional arguments, use:
+### Description of arguments:
+For descriptions of all arguments, use:
 ```console
 $ donni validate -h
 ```
 
 # Requirements
-1. Python 3.9+
+1. Python 3.11+
 2. [dadi](https://dadi.readthedocs.io/en/latest/)
-3. [scikit-learn](https://scikit-learn.org/1.0/) 1.2.0
-4. [MAPIE](https://mapie.readthedocs.io/en/latest/) 0.6.1
+3. [Tensorflow](https://www.tensorflow.org/) 2.12
+4. [keras-tuner](https://keras.io/keras_tuner/) 1.4.6
 
 
 # References
-1. [Gutenkunst et al., *PLoS Genet*, 2009.](https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1000695)
+1. [Tran et al., bioRxiv, 2023.](https://www.biorxiv.org/content/10.1101/2023.05.24.542158v2)
+2. [Huang et al., bioRxiv, 2023.](https://www.biorxiv.org/content/10.1101/2023.06.15.545182v1.abstract)
+3. [Gutenkunst et al., *PLoS Genet*, 2009.](https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1000695)
