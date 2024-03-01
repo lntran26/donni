@@ -7,7 +7,7 @@ import dadi
 import numpy as np
 from scipy.stats._distn_infrastructure import rv_frozen as distribution
 from donni.dadi_dem_models import get_model, get_param_values
-from donni.generate_data import generate_fs, get_hyperparam_tune_dict, fs_quality_check
+from donni.generate_data import generate_fs, get_hyperparam_tune_dict, fs_quality_check, pts_l_func
 from donni.train import prep_data, train
 from donni.infer import infer, prep_fs_for_ml, irods_download, irods_cleanup, project_fs
 from donni.validate import validate
