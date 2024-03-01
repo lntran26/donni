@@ -15,7 +15,6 @@ from keras.models import Model
 from keras.layers import Dense, Input
 from keras.callbacks import EarlyStopping
 import keras.backend as K
-import pickle
 import keras_tuner as kt
 
 def prep_data(data: dict, single_output=True):

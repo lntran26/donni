@@ -7,12 +7,10 @@ import dadi
 import numpy as np
 from scipy.stats._distn_infrastructure import rv_frozen as distribution
 from donni.dadi_dem_models import get_model, get_param_values
-from donni.generate_data import generate_fs, get_hyperparam_tune_dict, fs_quality_check, pts_l_func
+from donni.generate_data import generate_fs, fs_quality_check, pts_l_func
 from donni.train import prep_data, train
 from donni.infer import infer, prep_fs_for_ml, irods_download, irods_cleanup, project_fs
 from donni.validate import validate
-# from tensorflow.python.framework.ops import disable_eager_execution
-# disable_eager_execution()
 
 
 # run_ methods for importing methods from other modules
@@ -30,7 +28,8 @@ def run_generate_data(args):
             )
 
     # get dem function and params specifications for model
-    dadi_func, param_names, logs = get_model(args.model, args.model_file, args.folded)
+    dadi_func, param_names, logs = get_model(args.model, 
+                                             args.model_file, args.folded)
     # get demographic param values
     params_list = get_param_values(param_names, args.n_samples, args.seed)
 
@@ -118,7 +117,8 @@ def run_infer(args):
     filename_list = sorted(os.listdir(args.mlpr_dir))
     
     # infer params using input FS
-    pred, theta, cis = infer(filename_list, args.mlpr_dir, func, fs, logs, cis=cis_list)
+    pred, theta, cis = infer(filename_list, args.mlpr_dir, 
+                             func, fs, logs, cis=cis_list)
     
     # write output
     if args.output_prefix:
