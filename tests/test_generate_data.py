@@ -8,13 +8,6 @@ from donni.dadi_dem_models import get_model, get_param_values
 from donni.generate_data import generate_fs
 
 
-def test_exists():
-    """ Test program exists """
-
-    PRG = 'donni/generate_data.py'
-    assert os.path.isfile(PRG)
-
-
 def run(model_name, sample_size, theta, n_samples,
         norm=True, sampling=True, folded=False):
     '''Template method for testing different models, sample sizes, thetas'''
