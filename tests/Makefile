@@ -1,23 +1,23 @@
 test:
-	pytest -xv --flake8 .
+	pytest -xv .
 	pylint tests
 
 test_generate_data:
-	pytest -xv --flake8 test_generate_data.py
+	pytest -xv test_generate_data.py
 	pylint test_generate_data.py
 	pylint generate_data.py
 
 test_train:
-	pytest -xv --flake8 test_train.py
+	pytest -xv test_train.py
 	pylint test_train.py
 	pylint train.py
 
 test_integration:
-	pytest -xv --flake8 test_integration.py
+	pytest -xv test_integration.py
 	pylint test_integration.py
 	pylint __main__.py
 
 test_predict:
-	pytest -xv --flake8 test_predict.py
+	pytest -xv test_predict.py
 	pylint test_predict.py
 	pylint predict.py
