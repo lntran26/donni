@@ -1,39 +1,83 @@
-"""Module for using trained MLPR to plot many demographic param predictions"""
-import pickle
-import random
 import numpy as np
-from sklearn.metrics import r2_score
-from sklearn.metrics import mean_squared_error
-from sklearn.neural_network import MLPRegressor
-from mapie.metrics import regression_coverage_score
-from mapie.regression import MapieRegressor
-from scipy import stats
 import matplotlib.pyplot as plt
-from donni.dadi_dem_models import get_model, get_param_values
-from donni.generate_data import generate_fs, pts_l_func
-from donni.train import prep_data
+from scipy.stats import norm, spearmanr
+from tensorflow import keras
+import keras.backend as K
 
 
-def sort_by_param(y_true, y_pred):
-    """
-    Sort the predictions by multioutput sklearn mlpr into lists of
-    true vs predict values by each param used in the model.
-    Returns: param_true and param_pred are each a list of lists,
-    each sublist contains true or pred values for one param
-    """
-    param_true, param_pred = [], []
-    n = 0
-    while n < len(y_true[0]):
-        param_list_true, param_list_pred = [], []
-        for true, pred in zip(y_true, y_pred):
-            param_list_true.append(true[n])
-            param_list_pred.append(pred[n])
-        param_true.append(param_list_true)
-        param_pred.append(param_list_pred)
-        n += 1
-    return param_true, param_pred
+def root_mean_squared_error(pred_pre: np.ndarray, true_pre: np.ndarray):
+    # exclude nans
+    pred_post = pred_pre[~np.isnan(pred_pre)]
+    true_post = true_pre[~np.isnan(pred_pre)]
+    return ((true_post - pred_post) ** 2).mean() ** 0.5
 
 
+def regression_coverage_score(y_true,
+                            y_pred_low,
+                            y_pred_up):
+    "Replacing dependency for mapie.metrics.regression_coverage_score"
+    coverage = np.mean(
+        ((y_pred_low <= y_true) & (y_pred_up >= y_true))
+    )
+    return float(coverage)
+
+
+def get_coverage(pis_all_params, y_test, alpha):
+    """Get coverage scores for mapie MLP models"""
+    all_coverage = []
+    for param_i, pis in enumerate(pis_all_params):
+        true = y_test[param_i] # labels
+        
+        coverage_scores = [
+            regression_coverage_score(true, pis[i, 0, :], pis[i, 1, :])
+            for i, _ in enumerate(alpha)
+        ]
+        
+        all_coverage.append(coverage_scores)
+    return all_coverage
+    
+def plot_coverage(cov_scores, alpha, results_prefix, eps=None, params=None):
+    """Helper method to plot coverage plot"""
+    
+    font = {"size": 22}
+    plt.rc("font", **font)
+
+    expected = [100 * (1 - a) for a in alpha]
+    observed = []
+    for cov_score in cov_scores:
+        observed.append([s * 100 for s in cov_score])
+
+    ax = plt.gca()
+    ax.set_aspect("equal", "box")
+
+    title = "C.I. coverage\n"
+    if eps:
+        title += f"eps={eps}"
+
+    ax.text(0.05, 0.95, title, transform=ax.transAxes, va="top", fontsize=18)
+    ax.set_xlabel("Expected", fontsize=20)
+    ax.set_ylabel("Observed", fontsize=20)
+
+    for i in range(len(cov_scores)):
+        label = params[i] if params is not None else "param " + str(i + 1)
+        ax.plot(expected, observed[i], label=label, linewidth=2)
+    ax.plot([0, 100], [0, 100], "-k", zorder=-100, lw=1)
+    # define ticks
+    plt.xticks(ticks=list(range(0, 101, 25)))
+    plt.yticks(ticks=list(range(0, 101, 25)))
+    plt.tick_params(length=10, which="major")
+    plt.rc("xtick", labelsize=22)
+    plt.rc("ytick", labelsize=22)
+    # define axis range
+    plt.xlim([0, 100])
+    plt.ylim([0, 100])
+    ax.legend(fontsize=15, 
+              frameon=False,
+              bbox_to_anchor=(1, 0), loc="lower left")
+    plt.tight_layout()
+    plt.savefig(f"{results_prefix}_coverage.png", bbox_inches="tight")
+    plt.clf()
+    
 def plot_accuracy_single(
     x,
     y,
@@ -80,6 +124,8 @@ def plot_accuracy_single(
     plt.ylabel(y_label, labelpad=size[2] / 2)
 
     # only plot in log scale if log specified for the param
+    x=x.tolist()
+    y=y.tolist()
     if log:
         plt.xscale("log")
         plt.yscale("log")
@@ -100,8 +146,7 @@ def plot_accuracy_single(
     plt.tick_params("both", length=size[2] / 2, which="major")
 
     # plot a line of slope 1 (perfect correlation)
-    plt.axline((0, 0), (1, 1),
-               linewidth=size[1] / 2, color="black", zorder=-100)
+    plt.axline((0, 0), (1, 1), linewidth=size[1] / 2, color="black", zorder=-100)
 
     # plot scores if specified
     if r2 is not None:
@@ -136,309 +181,139 @@ def plot_accuracy_single(
         ax.text(0.05, 0.98, title, transform=ax.transAxes, va="top")
     plt.tight_layout()
 
+def plot_interval(int_arr, log, param, results_prefix, fontsize=12):
 
-def plot_coverage(cov_scores, alpha, theta=None, params=None):
-    """Helper method to plot coverage plot"""
-
-    expected = [100 * (1 - a) for a in alpha]
-    observed = []
-    for cov_score in cov_scores:
-        observed.append([s * 100 for s in cov_score])
-
+    x = range(1, int_arr.shape[1]+1)
+    
+    fig = plt.figure(figsize=(8, 2), dpi=300)
     ax = plt.gca()
-    ax.set_aspect("equal", "box")
+    ax.margins(x=0.01)
 
-    title = "C.I. coverage\n"
-    if theta:
-        title += f"θ={theta}"
-
-    # ax.set_title(title, fontsize=15)
-    ax.text(0.05, 0.95, title, transform=ax.transAxes, va="top", fontsize=18)
-    ax.set_xlabel("Expected", fontsize=20)
-    ax.set_ylabel("Observed", fontsize=20)
-
-    for i in range(len(cov_scores)):
-        label = params[i] if params is not None else "param " + str(i + 1)
-        ax.plot(expected, observed[i], label=label, linewidth=2)
-    ax.plot([0, 100], [0, 100], "-k", zorder=-100, lw=1)
-    # define ticks
-    plt.xticks(ticks=list(range(0, 101, 25)))
-    plt.yticks(ticks=list(range(0, 101, 25)))
-    plt.tick_params(length=10, which="major")
-    plt.rc("xtick", labelsize=22)
-    plt.rc("ytick", labelsize=22)
-    # define axis range
-    plt.xlim([0, 100])
-    plt.ylim([0, 100])
-    ax.legend(fontsize=15, frameon=False,
-              bbox_to_anchor=(1, 0), loc="lower left")
-    plt.tight_layout()
-
-
-def process_inference(raw_true, raw_pred, log):
-    """
-    Convert log params and get accuracy scores
-    Input:
-        raw prediction and true values
-        log: whether param is in log scale
-    """
-    # log transform
+    # color the range of true parameter value
+    ax.fill_between(x, min(int_arr[0]), max(int_arr[0]), alpha=0.2)
+    
+    # only plot in log scale if log
     if log:
-        true = [10**p_true for p_true in raw_true]
-        pred = [10**p_pred for p_pred in raw_pred]
+        plt.yscale("log")
+        ax.set_ylim(1e-3, 1e3)
     else:
-        true = list(raw_true)
-        pred = list(raw_pred)
-    # get scores
-    r2 = r2_score(true, pred)
-    rho = stats.spearmanr(true, pred)[0]
-    rmse = mean_squared_error(true, pred, squared=False)
+        offset = (max(int_arr[0]) - min(int_arr[0])) / 3
+        ax.set_ylim(min(int_arr[0])-offset, max(int_arr[0])+offset)
 
-    return true, pred, r2, rho, rmse
+    ax.tick_params('y', length=4, which='major', labelsize=fontsize)
+    
+    # ax.get_xaxis().set_visible(False) # whether to have x axis
+    ax.tick_params(axis='x', labelsize=12)
+        
+    # show first and last value of x ticks only
+    # ax.set_xticks([1, 15, 30, 45, 60, int_arr.shape[1]])
+    x_first_tick = 1
+    x_last_tick = int_arr.shape[1]
+    x_major_ticks_count = 10
+    ax.set_xticks(
+    [int(x_first_tick + (x_last_tick - x_first_tick) * i / (x_major_ticks_count - 1)) for i in range(x_major_ticks_count)],
+    minor=False)
+        
+    plt.minorticks_off()
+    
+    # plot true values
+    ax.scatter(x, int_arr[0], s=3, zorder=2.5, alpha=0.6, marker='s')
+    
+    # plot prediction values and interval bars
+    neg_int = int_arr[1] - int_arr[2]
+    pos_int = int_arr[3] - int_arr[1]
+    ax.errorbar(x, int_arr[1], 
+                yerr=[
+                abs(neg_int), abs(pos_int)], 
+                # fmt='o',
+                fmt='.',
+                markersize='3',
+                elinewidth=0.5, 
+                label = 'inferred value, with interval', c="tab:brown")
+    
+    # figure title and legend location
+    ax.set_title(f'{param}, 95% confidence interval', fontsize=fontsize)
+    plt.savefig(f"{results_prefix}_{param}_95_CI.png", bbox_inches="tight")
+    plt.clf()
+    
+def validate(filename_list, mlpr_dir, X_test, y_test, params, logs, plot_prefix):
+    alpha=(0.05, 0.1, 0.2, 0.5, 0.7, 0.85)
+    all_pis = []
+    all_means = []
+    all_vars = []
+    for filename in filename_list:
+        if filename.startswith("param") and filename.endswith("predictor.keras"):
+            mlpr = keras.models.load_model(f'{mlpr_dir}/{filename}')
+            # tentatively print model structure
+            with open(plot_prefix + '_report.txt','a') as fh:
+                # Pass the file handle in as a lambda function to make it callable
+                mlpr.summary(print_fn=lambda x: fh.write(x + '\n'))
+                # print model learning rate
+                # print(f"Learning rate: {K.eval(mlpr.optimizer.lr)}", file=fh)
+            mean, var = mlpr.predict(X_test)
+            all_means.append(mean)
+            all_vars.append(var)
+            
+        pis_per_param = []
+        for a in alpha:
+            z_score = round(norm.ppf(1-(a)/2), 2)
+            lower = mean - z_score * np.sqrt(var)
+            upper = mean + z_score * np.sqrt(var)
+            pis = np.stack((lower, upper))
+            pis_per_param.append(np.squeeze(pis))
+        all_pis.append(pis_per_param)
+    
+    # plot coverage
+    cov_scores = get_coverage(np.array(all_pis), np.array(y_test), alpha)
+    plot_coverage(np.array(cov_scores), alpha, f"{plot_prefix}_coverage", params=params)
+    
+    # plot regular accuracy
+    for i, param in enumerate(params):
+        true = np.squeeze(np.array(y_test[i]))
+        pred = np.squeeze(np.array(all_means[i]))
+        if logs[i]:
+            true = 10**true
+            pred = 10**pred
 
+        fig = plt.figure()
+        plot_accuracy_single(true, 
+                            pred,
+                            log=logs[i],
+                            rho=spearmanr(true, pred)[0],
+                            rmse=root_mean_squared_error(np.array(pred), np.array(true)),
+                            title=params[i])
+        plt.savefig(f"{plot_prefix}_param_{i + 1:02d}_accuracy.png", bbox_inches="tight")
+        plt.clf()
+        
+    # plot accuracy with 95% CI width
+    for i, param in enumerate(params):
+        true = np.squeeze(np.array(y_test[i]))
+        pred = np.squeeze(np.array(all_means[i]))
+        err = np.squeeze(np.sqrt(all_vars[i]))
+        
+        fig = plt.figure()
+        ax = plt.gca()
 
-def get_coverage(models: list, X_test, y_test, alpha):
-    """Get coverage scores for mapie MLP models"""
-    all_coverage = []
-    for model_i, model in enumerate(models):
-        true = y_test[model_i]
-        _, pis = model.predict(X_test, alpha=list(alpha))
-        coverage_scores = [
-            regression_coverage_score(true, pis[:, 0, i], pis[:, 1, i])
-            for i, _ in enumerate(alpha)
-        ]
-        all_coverage.append(coverage_scores)
-    return all_coverage
-
-
-def get_title(params, i, theta):
-    """Get title for plot from param name and theta"""
-    if params is None:
-        title = f"param {i + 1}"
-    else:
-        title = f"{params[i]}"
-    if theta:
-        title += f" θ={theta}"
-    return title
-
-
-def retrain(mlpr, i, X_input, label, reason, count, mlpr_dir, results_prefix):
-    """Method for retraining one mapie MLPR"""
-
-    # open QC text file to record information
-    with open(f"{results_prefix}_QC.txt", "a") as fh:
-        fh.write(f"Retraining param {i+1:02d}: ")
-        fh.write(f"Retrain count #{count} reason: {reason}\n")
-
-    # get current mlpr hyperparam
-    mlpr_spec = mlpr.__dict__["estimator"].get_params()
-    # initialize a new sklearn mlpr
-    mlpr_init = MLPRegressor()
-    # load mlpr hyperparam
-    mlpr_init.set_params(**mlpr_spec)
-    # wrap sklearn mlpr into mapie mlpr
-    new_mlpr = MapieRegressor(mlpr_init)
-    # train new mlpr
-    new_mlpr.fit(X_input, label)
-    # save new mlpr
-    pickle.dump(new_mlpr, open(f"{mlpr_dir}/param_{i+1:02d}_predictor", "wb"))
-
-    return new_mlpr
-
-
-def validate(
-    mlpr_models: list,
-    X_test,
-    y_test,
-    X_input,
-    y_label,
-    results_prefix,
-    mlpr_dir,
-    logs,
-    dem_model,
-    dem_model_file,
-    folded,
-    sample_sizes,
-    seeds,
-    mapie=True,
-    coverage=False,
-    theta=None,
-    params=None,
-    run_retrain=True,
-    alpha=(0.05, 0.1, 0.2, 0.5, 0.7, 0.85),
-):
-    """Main method to plot both accuracy and coverage plots"""
-
-    if mapie:
-        rerun = False
-        rerun_n = 10  # max retrain times in case training fails
-
-        if run_retrain:  # turn this to False to turn off default QC & retrain procedure
-            # check accuracy for all MLPRs using the input test set
-            for i, (mlpr_model, log) in enumerate(zip(mlpr_models, logs)):
-                # internal QC per trained MLP
-                rerun_count = 0
-                while rerun_count < rerun_n:  # limit retrain to certain # times
-                    # get prediction and accuracy score using validating set
-                    raw_pred = mlpr_model.predict(X_test)
-                    true, pred, _, rho, _ = process_inference(
-                        y_test[i], raw_pred, log)
-
-                    # retrain conditions
-                    rules = [
-                        rho is np.nan,
-                        rho <= 0.2,
-                        (log and max(pred) > max(true) * 1e4),
-                        (log and min(pred) < min(true) / 1e4),
-                        (not log and max(pred) > max(true) * 10),
-                        (not log and abs(min(pred)) > max(true) * 10),
-                    ]
-
-                    # if any condition applies, retrain the mlpr using the input training set
-                    if any(rules):
-                        rerun = True
-                        rerun_count += 1
-                        # retrain and replace mlpr_model with a new model
-                        mlpr_model = retrain(
-                            mlpr_model,
-                            i,
-                            X_input,
-                            y_label[i],
-                            f"{rules.index(True)+1}",
-                            rerun_count,
-                            mlpr_dir,
-                            results_prefix,
-                        )
-                        # if max rerun times allowed is reached, print info
-                        if rerun_count == rerun_n:
-                            with open(f"{results_prefix}_QC.txt", "a") as fh:
-                                fh.write(
-                                    f"Maximum retrain times ({rerun_n}) reached. ")
-                                fh.write(
-                                    "Check accuracy plots for poor performance.\n")
-                    else:  # break out of while loop if retrain conditions don't apply
-                        break
-
-            if rerun:  # if retrain occurs for any param, generate new test set
-                # generate new seed for new test data
-                seed = random.randint(0, 1e6)
-                # regenerate seed if already used
-                while seed in seeds:
-                    seed = random.randint(0, 1e6)
-                # append new seed to seeds list for keeping track
-                seeds.append(seed)
-
-                # print keys to retrain reasons if retrained and seed for the new (final) test data
-                with open(f"{results_prefix}_QC.txt", "a") as fh:
-                    fh.write(f"Regenerating test data using seed {seed}.\n")
-                    fh.write("\nRetrain reasons: \n")
-                    fh.write("1: rho is nan\n")
-                    fh.write("2: rho <= 0.2\n")
-                    fh.write(
-                        "3: log param inferred 4 logs higher than simulated upper bound\n"
-                    )
-                    fh.write(
-                        "4: log param inferred 4 logs lower than simulated lower bound\n"
-                    )
-                    fh.write(
-                        "5: param inferred 10x higher than simulated upper bound\n"
-                    )
-                    fh.write(
-                        "6: param inferred 10x lower than simulated lower bound\n")
-
-                # generate new test data
-                # load demographic model info
-                dadi_func, param_names, logs = get_model(
-                    dem_model, dem_model_file, folded
+        # plot accuracy
+        plt.scatter(true, pred, 
+                    s=5, zorder=100)
+        # plot a line of slope 1 (perfect correlation)
+        plt.axline((0, 0), (0.1, 0.1), linewidth=0.5, color="black", zorder=-100)
+        # plot 95% confidence interval
+        ax.errorbar(true, pred,
+                yerr=1.96*err,
+                fmt='.',
+                markersize='3',
+                elinewidth=0.5)
+        # error score text
+        rho=spearmanr(true, pred)[0]
+        plt.text(   0.25,
+                    0.82,
+                    "ρ: " + str(round(rho, 3)),
+                    horizontalalignment="center",
+                    verticalalignment="center",
+                    transform=ax.transAxes,
                 )
-                # generate new demographic parameters for test data
-                params_list = get_param_values(
-                    param_names, n_samples=1000, seed=seed)
-                # calculate grids used for dadi extrapolation based on sample sizes
-                grids = pts_l_func(sample_sizes)
-                # simulate dadi SFS for new test data, skipping qual check for now
-                data, _ = generate_fs(
-                    dadi_func,
-                    params_list,
-                    logs,
-                    theta,
-                    sample_sizes,
-                    grids,
-                    folded=folded,
-                )
-                # save new test data
-                pickle.dump(
-                    data,
-                    open(
-                        f"{results_prefix}_retrain_test_1000_theta_1000_seed_{seed}",
-                        "wb",
-                    ),
-                )
-                # parse data into input and corresponding labels for mapie
-                new_X_test, new_y_test = prep_data(data, mapie=True)
-
-        # Generating plots for all params (with new test data if retrained)
-        for i, (mlpr_model, log) in enumerate(zip(mlpr_models, logs)):
-            if rerun:
-                new_raw_pred = mlpr_model.predict(new_X_test)
-                true, pred, r2, rho, rmse = process_inference(
-                    new_y_test[i], new_raw_pred, log
-                )
-            else:
-                raw_pred = mlpr_model.predict(X_test)
-                true, pred, r2, rho, rmse = process_inference(
-                    y_test[i], raw_pred, log)
-
-            title = get_title(params, i, theta)
-            plot_accuracy_single(
-                true,
-                pred,
-                size=[6, 2, 20],
-                log=log,
-                r2=r2,
-                rho=rho,
-                rmse=rmse,
-                title=title,
-            )
-            plt.savefig(
-                f"{results_prefix}_param_{i + 1:02d}_accuracy", bbox_inches="tight"
-            )
-            plt.clf()
-
-        if coverage:
-            if rerun:
-                all_coverage = get_coverage(
-                    mlpr_models, new_X_test, new_y_test, alpha)
-            else:
-                all_coverage = get_coverage(mlpr_models, X_test, y_test, alpha)
-            plot_coverage(all_coverage, alpha, theta, params)
-            plt.savefig(f"{results_prefix}_coverage", bbox_inches="tight")
-            plt.clf()
-
-    else:
-        # for sklearn multioutput, models is a list of one mlpr
-        mlpr_model = mlpr_models[0]
-        # and true is a list of one list containing all dem param tuples
-        true = y_test[0]
-        # get predictions from trained multioutput model
-        pred = mlpr_model.predict(X_test)
-        # have to sort true and pred by param to plot results by param
-        sorted_true, sorted_pred = sort_by_param(true, pred)
-
-        for i, (p_true, p_pred, log) in enumerate(zip(sorted_true, sorted_pred, logs)):
-            true, pred, r2, rho, rmse = process_inference(p_true, p_pred, log)
-            title = get_title(params, i, theta)
-            plot_accuracy_single(
-                true,
-                pred,
-                size=[6, 2, 20],
-                log=log,
-                r2=r2,
-                rho=rho,
-                rmse=rmse,
-                title=title,
-            )
-            plt.savefig(
-                f"{results_prefix}_param_{i + 1:02d}_accuracy", bbox_inches="tight"
-            )
-            plt.clf()
+        plt.title(f'{param}')
+        plt.savefig(f"{plot_prefix}_param_{i + 1:02d}_accuracy_95_ci.png", bbox_inches="tight")
+        plt.clf()

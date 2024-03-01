@@ -1,15 +1,17 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 
 setup(
     name="donni",
-    version="0.0.1",
+    version="0.9.0",
     description="Demography Optimization via Neural Network Inference",
     packages=["donni"],
-    # packges=find_packages(),
+
     install_requires=[
         "dadi",
-        "scikit-learn == 1.2.0",
-        "mapie == 0.6.1",
+        "matplotlib",
+        "numpy",
+        "scipy",
+        "nlopt",
         "python-irodsclient == 1.1.6",
         "appdirs == 1.4.4",
         ],

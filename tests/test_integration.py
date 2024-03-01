@@ -132,28 +132,6 @@ def test_run_train_sub_1():
     run_train_sub(args)
 
 
-def test_run_train_sub_2():
-    '''Second train test: provide data and run tuning:
-    Generate mapie MLPRs using tuned hyperparams
-    Require inputing ranges of value to tune from'''
-
-    args = ['--data_file tests/test_data/two_epoch_500', '--tune', '--max_iter 27',
-            '--hidden_layer_sizes 100 50,50 25,25,25,25 100,100 200',
-            '--activation logistic tanh relu', '--solver lbfgs adam']
-    run_train_sub(args)
-
-
-def test_run_train_sub_3():
-    '''Third train test: provide data and run tuning:
-    Generate mapie MLPRs using tuned hyperparams
-    Tuning from pickled dict file'''
-
-    args = ['--data_file tests/test_data/two_epoch_500', '--tune',
-            '--max_iter 25', '--eta 5',
-            '--hyperparam tests/test_data/param_dist']
-    run_train_sub(args)
-
-
 # test infer subcommand
 def run_infer_sub(args):
     """Template method for testing train subcommand"""

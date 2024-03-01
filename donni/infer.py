@@ -2,6 +2,8 @@
 import numpy as np
 import dadi
 from donni.generate_data import pts_l_func
+from tensorflow import keras
+from scipy.stats import norm
 
 # irods packages
 from irods.session import iRODSSession
@@ -81,8 +83,8 @@ def irods_download(dem_model, sample_sizes, fold, datadir):
 
     # Work with a directory
     try:
-        tuned_models = session.collections.get(f"/iplant/home/shared/donni/{dem_model}/{polarization}/ss_{'_'.join([str(ele) for ele in sample_sizes])}/v0.0.1/tuned_models")
-        plots = session.collections.get(f"/iplant/home/shared/donni/{dem_model}/{polarization}/ss_{'_'.join([str(ele) for ele in sample_sizes])}/v0.0.1/plots")
+        tuned_models = session.collections.get(f"/iplant/home/shared/donni/{dem_model}/{polarization}/ss_{'_'.join([str(ele) for ele in sample_sizes])}/v0.9.0/tuned_models")
+        plots = session.collections.get(f"/iplant/home/shared/donni/{dem_model}/{polarization}/ss_{'_'.join([str(ele) for ele in sample_sizes])}/v0.9.0/plots")
     except exception.CollectionDoesNotExist:
         print("The requested demographic model does not exist on the CyVerse Data Store.")
         print("Users can check for available models at https://de.cyverse.org/data/ds/iplant/home/shared/donni")
@@ -137,7 +139,7 @@ def irods_cleanup(dem_model, sample_sizes, fold=True):
         print("Directory for model configuration not found.")
 
 
-def infer(models: list, func, input_fs, logs, mapie=True, cis=[95]):
+def infer(filename_list, mlpr_dir, func, input_fs, logs, cis=[95]):
     '''
     Inputs:
         models: list of single mlpr object if sklearn,
@@ -164,27 +166,32 @@ def infer(models: list, func, input_fs, logs, mapie=True, cis=[95]):
     alpha = [(100 - ci) / 100 for ci in cis]
 
     # get prediction using trained ml models
-    if mapie:
-        pred_list = []
-        ci_list = []
-        for i, model in enumerate(models):
-            pred, cis = model.predict(input_x, alpha=alpha)
-            pred = pred[0]  # one sample
-            cis = cis[0]    # one sample
+    ci_list = []
+    pred_list = []
+    for i, filename in enumerate(filename_list):
+        if filename.startswith("param") and filename.endswith("predictor.keras"):
+            mlpr = keras.models.load_model(f'{mlpr_dir}/{filename}')
+            mean, var = mlpr.predict(np.array(input_x))
+            pred = float(np.squeeze(mean))
+            sd = float(np.squeeze(np.sqrt(var)))
+
+            cis_per_param = []
+            for a in alpha:
+                z_score = round(norm.ppf(1-(a)/2), 2)
+                lower = pred - z_score * sd
+                upper = pred + z_score * sd
+                cis_per_param.append([np.squeeze(lower), np.squeeze(upper)])
+            
             if logs[i]:
                 pred = 10 ** pred
-                cis = 10 ** cis
+                cis_per_param = 10 ** np.array(cis_per_param)
+            
             pred_list.append(pred)
-            ci_list.append(cis.T)
-        if sum([ele < 0 for ele in pred_list]) > 0:
-            theta = np.nan
-        else:
-            theta = estimate_theta(pred_list, func, input_fs)
-
-    else:  # sklearn multioutput case: don't know if this works yet
-        pred_list = models[0].predict([input_x])
-        ci_list = None
-        # log transformed prediction results
-        pred_list = [10**pred_list[i] if logs[i] else pred_list[i]
-                     for i in range(len(logs))]
+            ci_list.append(cis_per_param)
+       
+    if sum([inferred_p < 0 for inferred_p in pred_list]) > 0:
+        theta = np.nan
+    else:
+        theta = estimate_theta(pred_list, func, input_fs)
+    
     return pred_list, theta, ci_list

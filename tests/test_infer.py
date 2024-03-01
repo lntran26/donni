@@ -8,13 +8,6 @@ from donni.infer import *
 
 
 @pytest.fixture
-def models_list():
-    mlprs = glob.glob("tests/test_models/split_mig_tuned_20_20/param_*_predictor")
-    mlprs.sort()
-    return [pickle.load(open(filename,'rb')) for filename in mlprs]
-
-
-@pytest.fixture
 def split_mig_fs():
     p0 = [1, 1, 0.1, 0.5, 0.05]
     ns = [40, 30]
@@ -73,13 +66,14 @@ def test_project_fs_2d(input_size, exp_size):
 @pytest.mark.parametrize("ci_list",
                         [[95],
                          [95, 80, 70]])
-def test_infer_split_mig(models_list, split_mig_fs, ci_list):
-    # split_mig_fs = dadi.Spectrum.from_file("test_data/split_mig_40_30_infer_test.fs")
+def test_infer_split_mig(split_mig_fs, ci_list):
+    models_dir = 'tests/test_models/split_mig_tuned_20_20'
+    models_list = sorted(os.listdir(models_dir))
     split_mig_fs = project_fs(split_mig_fs)
     func = dadi.Demographics2D.split_mig
     logs = [True, True, False, False, False]
     print(models_list, func, split_mig_fs, logs)
-    pred_list, theta, cis = infer(models_list, func, split_mig_fs, logs, mapie=True, cis=ci_list)
+    pred_list, theta, cis = infer(models_list, models_dir, func, split_mig_fs, logs, cis=ci_list)
     pred_list = np.array(pred_list)
     cis = np.array(cis)
 
@@ -110,7 +104,3 @@ def test_irods_download(capfd):
     assert '\n'.join([out.split('\n')[-5],out.split('\n')[-4]]) == f"Files for the requested model and configuration have already been downloaded to the temp/two_epoch_folded_ns_10 folder.\nTo redownload, delete the existing directory."
 
     shutil.rmtree("tests/temp")
-
-
-
-

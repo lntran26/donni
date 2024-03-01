@@ -2,16 +2,19 @@ name: donni
 channels:
   - conda-forge
 dependencies:
-  - python=3.9
-  - scikit-learn=1.2.0
-  - mapie=0.6.1
+  - python==3.11.*
+  - matplotlib
+  - scipy
+  - numpy
   - python-irodsclient=1.1.6
   - appdirs=1.4.4
   - pytest
   - pytest-cov
   - codecov
-  - pip
+  - pip>=19.0
   - dadi
   - dadi-cli
   - pip:
     - .
+    - tensorflow==2.12.*
+    - keras-tuner==1.4.6
