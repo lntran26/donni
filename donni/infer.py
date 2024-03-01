@@ -83,8 +83,8 @@ def irods_download(dem_model, sample_sizes, fold, datadir):
 
     # Work with a directory
     try:
-        tuned_models = session.collections.get(f"/iplant/home/shared/donni/{dem_model}/{polarization}/ss_{'_'.join([str(ele) for ele in sample_sizes])}/v0.0.1/tuned_models")
-        plots = session.collections.get(f"/iplant/home/shared/donni/{dem_model}/{polarization}/ss_{'_'.join([str(ele) for ele in sample_sizes])}/v0.0.1/plots")
+        tuned_models = session.collections.get(f"/iplant/home/shared/donni/{dem_model}/{polarization}/ss_{'_'.join([str(ele) for ele in sample_sizes])}/v0.9.0/tuned_models")
+        plots = session.collections.get(f"/iplant/home/shared/donni/{dem_model}/{polarization}/ss_{'_'.join([str(ele) for ele in sample_sizes])}/v0.9.0/plots")
     except exception.CollectionDoesNotExist:
         print("The requested demographic model does not exist on the CyVerse Data Store.")
         print("Users can check for available models at https://de.cyverse.org/data/ds/iplant/home/shared/donni")

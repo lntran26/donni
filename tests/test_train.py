@@ -24,8 +24,8 @@ def test_prep_data():
         # test that each inner list in y has the correct n_samples
         assert all(len(y_unpack) == len(X) for y_unpack in y)
 
-        # test using sklearn instead of mapie
-        X, y = prep_data(data, mapie=False)
+        # test using multioutput instead of single output MLPR
+        X, y = prep_data(data, single_output=False)
         # test that X has the correct n_samples
         assert len(X) == len(data)
         # test that y contains only 1 inner list
