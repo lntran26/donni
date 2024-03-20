@@ -8,12 +8,10 @@ setup(
 
     install_requires=[
         "dadi",
-        "matplotlib",
-        "numpy",
-        "scipy",
-        "nlopt",
         "python-irodsclient == 1.1.6",
         "appdirs == 1.4.4",
+        "keras-tuner==1.4.6",
+        "tensorflow==2.13.*",
         ],
     entry_points={"console_scripts": ["donni=donni.__main__:main"]},
 )
