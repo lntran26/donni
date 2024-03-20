@@ -62,7 +62,7 @@ def prep_fs_for_ml(input_fs):
     return input_fs
 
 
-def irods_download(dem_model, sample_sizes, fold, datadir):
+def irods_download(dem_model, sample_sizes, fold, datadir, model_version):
     # Prep naming for model configuration directory
     if datadir == None:
         datadir=AppDirs("donni", "Linh Tran", version=pkg_resources.get_distribution("donni").version).user_cache_dir
@@ -80,11 +80,16 @@ def irods_download(dem_model, sample_sizes, fold, datadir):
     # Start irods with the Cyvers Data Store
     session = iRODSSession(host='data.cyverse.org', port=1247, user='anonymous', zone='iplant')
 
+    if model_version == None:
+        model_version = max([version.name for version in session.collections.get(f"/iplant/home/shared/donni/{dem_model}/{polarization}/ss_{'_'.join([str(ele) for ele in sample_sizes])}").subcollections])
+    else:
+        if 'v' not in model_version:
+            model_version = 'v'+model_version
 
     # Work with a directory
     try:
-        tuned_models = session.collections.get(f"/iplant/home/shared/donni/{dem_model}/{polarization}/ss_{'_'.join([str(ele) for ele in sample_sizes])}/v0.9.0/tuned_models")
-        plots = session.collections.get(f"/iplant/home/shared/donni/{dem_model}/{polarization}/ss_{'_'.join([str(ele) for ele in sample_sizes])}/v0.9.0/plots")
+        tuned_models = session.collections.get(f"/iplant/home/shared/donni/{dem_model}/{polarization}/ss_{'_'.join([str(ele) for ele in sample_sizes])}/{model_version}/tuned_models")
+        plots = session.collections.get(f"/iplant/home/shared/donni/{dem_model}/{polarization}/ss_{'_'.join([str(ele) for ele in sample_sizes])}/{model_version}/plots")
     except exception.CollectionDoesNotExist:
         print("The requested demographic model does not exist on the CyVerse Data Store.")
         print("Users can check for available models at https://de.cyverse.org/data/ds/iplant/home/shared/donni")
