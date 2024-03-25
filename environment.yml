@@ -13,5 +13,5 @@ dependencies:
   - dadi-cli
   - pip:
     - .
-    - tensorflow>=2.12.*
+    - tensorflow==2.12.*
     - keras-tuner==1.4.6
