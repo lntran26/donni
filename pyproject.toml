@@ -13,10 +13,8 @@ dependencies = [
     "dadi",
     "python-irodsclient == 1.1.6",
     "appdirs == 1.4.4",
-    "matplotlib",
-    "numpy",
-    "scipy",
-    "nlopt",
+    "keras-tuner==1.4.6",
+    "tensorflow>=2.12",
 ]
 
 [project.scripts]

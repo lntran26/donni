@@ -3,9 +3,6 @@ channels:
   - conda-forge
 dependencies:
   - python==3.11.*
-  - matplotlib
-  - scipy
-  - numpy
   - python-irodsclient=1.1.6
   - appdirs=1.4.4
   - pytest

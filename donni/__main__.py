@@ -103,7 +103,8 @@ def run_infer(args):
         qc_dir = False
     else:
         args.mlpr_dir, qc_dir = irods_download(
-            args.model, fs.sample_sizes, args.folded, args.download_dir
+            args.model, fs.sample_sizes, args.folded, 
+            args.download_dir, args.model_version
         )
     
     # load func
@@ -403,6 +404,13 @@ def donni_parser():
         default=False,
         help="Optional. Delete the default directory for a given model configuration's\
                                 MLPRs and QC files downloaded from Cyverse.",
+    )
+
+    infer_parser.add_argument(
+        "--model_version",
+        type=str,
+        default=None,
+        help="Optional. Pass in a specific version of MLPR models to download through iRODS. Default will be the latest version.",
     )
 
     # subcommand for validate
