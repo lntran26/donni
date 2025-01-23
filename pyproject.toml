@@ -8,7 +8,6 @@ version = "0.9.0"
 description = "Demography Optimization via Neural Network Inference"
 readme = "README.md"
 requires-python = ">=3.7"
-license = ""
 dependencies = [
     "dadi",
     "python-irodsclient == 1.1.6",

@@ -17,18 +17,11 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: Add micromamba to system path
-      uses: mamba-org/provision-with-micromamba@main
+      uses: mamba-org/setup-micromamba@main
       with:
         environment-name: donni
         activate-environment: donni
         environment-file: environment.yml
     - name: Test with pytest
       run: |
-        micromamba run -n donni pytest --cov=. --cov-report term-missing -vv tests/test_*.py
-        micromamba run -n donni coverage xml
-    - name: Upload coverage reports to Codecov
-      uses: codecov/codecov-action@v3
-      with:
-        name: codecov-umbrella
-        fail_ci_if_error: true
-        env_vars: OS,PYTHON
+        micromamba run -n donni pytest -vv tests/test_*.py
