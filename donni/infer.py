@@ -80,6 +80,27 @@ def irods_download(dem_model, sample_sizes, fold, datadir, model_version):
 
     # Start irods with the Cyvers Data Store
     session = iRODSSession(host='data.cyverse.org', port=1247, user='anonymous', zone='iplant')
+    try:
+        max([version.name for version in session.collections.get(f"/iplant/home/shared/donni/{dem_model}/{polarization}/ss_{'_'.join([str(ele) for ele in sample_sizes])}").subcollections])
+    except exception.CollectionDoesNotExist:
+        print("\nThe requested demographic model does not exist on the CyVerse Data Store or the site-frequency spectrum populations are missmatched with the model.\n" \
+        "Users can check for available models at https://de.cyverse.org/data/ds/iplant/home/shared/donni\n" \
+        "If the user has generated their own trained MLPRs, use --mlpr_dir")
+        # Exit without full error output
+        from sys import exit
+        exit()
+    except exception.NetworkException:
+        print(
+        "Error accessing donni MLPR(s) through irods/the Cyverse DataStore. This may be due to the DataStore being down or a firewall interupting the connection.\n" \
+        "If this issue persists, you can manually download the MLPRs and use --mlpr_dir to point donni infer to a directory that has the MLPRs.\n\n" \
+        "The URL for your requested MLPRs:\n" \
+        f"https://de.cyverse.org/data/ds/iplant/home/shared/donni/{dem_model}/{polarization}/ss_{'_'.join([str(ele) for ele in sample_sizes])}/\n" \
+        "Then navigate through the version you want or the latest and then tuned_models.\n" \
+        "ex.\n" \
+        f"https://de.cyverse.org/data/ds/iplant/home/shared/donni/{dem_model}/{polarization}/ss_{'_'.join([str(ele) for ele in sample_sizes])}/v0.9.0/tuned_models/ mlprs/\n")
+        # Exit without full error output
+        from sys import exit
+        exit()
 
     try:
         max([version.name for version in session.collections.get(f"/iplant/home/shared/donni/{dem_model}/{polarization}/ss_{'_'.join([str(ele) for ele in sample_sizes])}").subcollections])
